@@ -44,7 +44,7 @@ export async function ProductList({ storeId }: { storeId: string }) {
     );
 
   return (
-    <Table containerClass="border rounded-lg flex-none pb-6">
+    <Table containerClass="border rounded-lg flex-none">
       <TableHeader>
         <TableRow className="bg-muted/30">
           <TableHead className="w-9 text-center">

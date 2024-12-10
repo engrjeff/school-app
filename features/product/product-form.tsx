@@ -113,8 +113,6 @@ export function ProductForm({
   };
 
   const onSubmit: SubmitHandler<CreateProductInputs> = async (values) => {
-    console.log(values);
-
     const result = await action.executeAsync({
       ...values,
       storeId,
@@ -152,7 +150,7 @@ export function ProductForm({
               Discard
             </Link>
             <SubmitButton size="sm" type="submit" loading={action.isPending}>
-              Save
+              Save Product
             </SubmitButton>
           </div>
         </div>
@@ -185,6 +183,7 @@ export function ProductForm({
                 <FormControl>
                   <Input
                     placeholder="Product name"
+                    autoFocus={true}
                     {...field}
                     onChange={(e) => {
                       if (metaType === 'sku-only') {
@@ -395,9 +394,15 @@ export function ProductForm({
           key={JSON.stringify(form.watch('meta.attributes'))}
         />
 
-        <div className="flex items-center gap-4 justify-end">
+        <div className="flex items-center gap-4 justify-end pt-6">
+          <Link
+            href={`/${storeId}/products`}
+            className={buttonVariants({ size: 'sm', variant: 'secondary' })}
+          >
+            Discard
+          </Link>
           <SubmitButton size="sm" type="submit" loading={action.isPending}>
-            Save
+            Save Product
           </SubmitButton>
         </div>
       </form>
@@ -420,6 +425,43 @@ function AttributeFields() {
     name: 'meta.variants',
   });
 
+  async function addAttribute() {
+    const isValidSoFar = await form.trigger(
+      `meta.attributes.${attributes.fields.length - 1}`,
+      { shouldFocus: true }
+    );
+
+    if (!isValidSoFar) return;
+
+    attributes.append({ name: '', options: [{ value: '' }] });
+  }
+
+  function deleteAttribute(attrIndex: number) {
+    // find variants with this attr
+    const thisAttribute = form.getValues(`meta.attributes.${attrIndex}`);
+
+    if (attrIndex === 0) {
+      const affectedVariantIndexes = variants
+        ?.map((v, i) => ({ index: i, v }))
+        .filter((v) =>
+          thisAttribute.options.map((o) => o.value).includes(v.v.attr1)
+        )
+        .map((d) => d.index);
+
+      variantFields.remove(affectedVariantIndexes);
+    } else if (attrIndex === 1) {
+      const affectedVariantIndexes = variants
+        ?.map((v, i) => ({ index: i, v }))
+        .filter((v) =>
+          thisAttribute.options.map((o) => o.value).includes(v.v.attr2!)
+        )
+        .map((d) => d.index);
+
+      variantFields.remove(affectedVariantIndexes);
+    }
+
+    attributes.remove(attrIndex);
+  }
   return (
     <fieldset className="space-y-3 bg-gray-50 dark:bg-neutral-900/30 p-6 rounded-lg border">
       <div className="flex items-center justify-between">
@@ -430,18 +472,9 @@ function AttributeFields() {
             size="sm"
             variant="ghost"
             className="text-blue-500"
-            onClick={async () => {
-              const isValidSoFar = await form.trigger(
-                `meta.attributes.${attributes.fields.length - 1}`,
-                { shouldFocus: true }
-              );
-
-              if (!isValidSoFar) return;
-
-              attributes.append({ name: '', options: [{ value: '' }] });
-            }}
+            onClick={addAttribute}
           >
-            <PlusIcon /> Add Variant
+            <PlusIcon /> Add Attribute
           </Button>
         ) : null}
       </div>
@@ -455,38 +488,7 @@ function AttributeFields() {
               className="size-7 absolute top-1 right-1"
               aria-label="remove variant"
               disabled={attributes.fields.length === 1}
-              onClick={() => {
-                // find variants with this attr
-                const thisAttribute = form.getValues(
-                  `meta.attributes.${attrIndex}`
-                );
-
-                if (attrIndex === 0) {
-                  const affectedVariantIndexes = variants
-                    ?.map((v, i) => ({ index: i, v }))
-                    .filter((v) =>
-                      thisAttribute.options
-                        .map((o) => o.value)
-                        .includes(v.v.attr1)
-                    )
-                    .map((d) => d.index);
-
-                  variantFields.remove(affectedVariantIndexes);
-                } else if (attrIndex === 1) {
-                  const affectedVariantIndexes = variants
-                    ?.map((v, i) => ({ index: i, v }))
-                    .filter((v) =>
-                      thisAttribute.options
-                        .map((o) => o.value)
-                        .includes(v.v.attr2!)
-                    )
-                    .map((d) => d.index);
-
-                  variantFields.remove(affectedVariantIndexes);
-                }
-
-                attributes.remove(attrIndex);
-              }}
+              onClick={() => deleteAttribute(attrIndex)}
             >
               <XIcon strokeWidth={2} aria-hidden="true" />
             </Button>
@@ -540,6 +542,64 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
 
   const rootErr = errors.error?.root?.message;
 
+  function deleteOption(optionIndex: number) {
+    const thisOption = form.getValues(
+      `meta.attributes.${attrIndex}.options.${optionIndex}.value`
+    );
+
+    if (attrIndex === 0) {
+      const affectedVariantIndexes = variants
+        ?.map((v, i) => ({ index: i, v }))
+        .filter((v) => v.v.attr1 === thisOption)
+        .map((d) => d.index);
+
+      variantFields.remove(affectedVariantIndexes);
+    } else if (attrIndex === 1) {
+      const affectedVariantIndexes = variants
+        ?.map((v, i) => ({ index: i, v }))
+        .filter((v) => v.v.attr2 === thisOption)
+        .map((d) => d.index);
+
+      variantFields.remove(affectedVariantIndexes);
+    }
+
+    attributeValues.remove(optionIndex);
+  }
+
+  async function addOption() {
+    const isValidSoFar = await form.trigger(
+      `meta.attributes.${attrIndex}.options.${
+        attributeValues.fields.length - 1
+      }`,
+      { shouldFocus: true }
+    );
+
+    if (!isValidSoFar) return;
+
+    if (attrIndex === 1) {
+      const attr1Options = form.getValues(`meta.attributes.0.options`);
+
+      attr1Options.forEach((attr, outerIndex) => {
+        const insertIndex =
+          (attributeValues.fields.length + 1) * outerIndex +
+          attributeValues.fields.length;
+
+        variantFields.insert(insertIndex, {
+          attr1: attr.value,
+          attr2: '',
+          sku: '',
+          price: 0,
+          costPrice: 0,
+          stock: 0,
+          lowStockThreshold: 0,
+          imageUrl: undefined,
+        });
+      });
+    }
+
+    attributeValues.append({ value: '' });
+  }
+
   return (
     <ul className="space-y-2 pt-4 pl-4">
       <li>
@@ -556,71 +616,12 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
             attributeIndex={attrIndex}
             optionIndex={optionIndex}
             disabledDelete={attributeValues.fields.length === 1}
-            onDeleteClick={() => {
-              const thisOption = form.getValues(
-                `meta.attributes.${attrIndex}.options.${optionIndex}.value`
-              );
-
-              if (attrIndex === 0) {
-                const affectedVariantIndexes = variants
-                  ?.map((v, i) => ({ index: i, v }))
-                  .filter((v) => v.v.attr1 === thisOption)
-                  .map((d) => d.index);
-
-                variantFields.remove(affectedVariantIndexes);
-              } else if (attrIndex === 1) {
-                const affectedVariantIndexes = variants
-                  ?.map((v, i) => ({ index: i, v }))
-                  .filter((v) => v.v.attr2 === thisOption)
-                  .map((d) => d.index);
-
-                variantFields.remove(affectedVariantIndexes);
-              }
-
-              attributeValues.remove(optionIndex);
-            }}
+            onDeleteClick={() => deleteOption(optionIndex)}
           />
         </li>
       ))}
       <li>
-        <Button
-          type="button"
-          size="sm"
-          variant="secondary"
-          onClick={async () => {
-            const isValidSoFar = await form.trigger(
-              `meta.attributes.${attrIndex}.options.${
-                attributeValues.fields.length - 1
-              }`,
-              { shouldFocus: true }
-            );
-
-            if (!isValidSoFar) return;
-
-            if (attrIndex === 1) {
-              const attr1Options = form.getValues(`meta.attributes.0.options`);
-
-              attr1Options.forEach((attr, outerIndex) => {
-                const insertIndex =
-                  (attributeValues.fields.length + 1) * outerIndex +
-                  attributeValues.fields.length;
-
-                variantFields.insert(insertIndex, {
-                  attr1: attr.value,
-                  attr2: '',
-                  sku: '',
-                  price: 0,
-                  costPrice: 0,
-                  stock: 0,
-                  lowStockThreshold: 0,
-                  imageUrl: undefined,
-                });
-              });
-            }
-
-            attributeValues.append({ value: '' });
-          }}
-        >
+        <Button type="button" size="sm" variant="secondary" onClick={addOption}>
           <PlusIcon /> Add Option
         </Button>
       </li>
@@ -742,12 +743,12 @@ function VariantSkusFields() {
   return (
     <Table containerClass="border rounded-lg">
       <TableHeader>
-        <TableRow>
-          <TableHead className="w-[80px] text-center">
+        <TableRow className="bg-muted/30 hover:bg-muted/30">
+          <TableHead className="w-[80px] text-center border-r">
             {validAttributes[0].name}
           </TableHead>
           {validAttributes[1]?.name && (
-            <TableHead className="w-[80px] text-center">
+            <TableHead className="w-[80px] text-center border-r">
               {validAttributes[1].name}
             </TableHead>
           )}
