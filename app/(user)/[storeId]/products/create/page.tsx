@@ -8,7 +8,14 @@ import {
 } from '@/components/ui/breadcrumb';
 import { ProductForm } from '@/features/product/product-form';
 import { getProductToCopyById } from '@/features/product/queries';
+import { Metadata } from 'next';
 import Link from 'next/link';
+
+export const generateMetadata = ({ searchParams }: PageProps): Metadata => {
+  return {
+    title: searchParams?.copyId ? 'Copy Product' : 'Add Product',
+  };
+};
 
 interface PageProps {
   params: { storeId: string };

@@ -2,7 +2,12 @@ import { buttonVariants } from '@/components/ui/button';
 import { ProductList } from '@/features/product/product-list';
 import { cn } from '@/lib/utils';
 import { PlusCircle } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Products',
+};
 
 function ProductsPage({ params }: { params: { storeId: string } }) {
   return (
