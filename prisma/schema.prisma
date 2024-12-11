@@ -229,9 +229,18 @@ model Order {
 }
 
 model OrderLineItem {
-  id            String           @id @default(cuid())
-  qty           Int
-  item          ProductVariant[]
+  id  String @id @default(cuid())
+  qty Int
+
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+
+  // needed for snapshots, for products may change after this order
+  productName String
+  unitPrice   Float
+  sku         String
+  attributes  String[]
+
   relatedOrders Order[]
 }
 
