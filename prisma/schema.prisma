@@ -209,8 +209,8 @@ model Order {
   paymentMethod String
   paymentStatus PaymentStatus @default(PENDING)
 
-  regularPrice Float
-  totalPrice   Float
+  regularAmount Float
+  totalAmount   Float
 
   discountId String
   discount   Discount @relation(fields: [discountId], references: [id])
