@@ -32,6 +32,10 @@ model Store {
 
   variants ProductVariant[]
 
+  orders        Order[]
+  employees     Employee[]
+  discountCodes Discount[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -43,9 +47,10 @@ model Category {
   id   String @id @default(cuid())
   name String @unique
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Product   Product[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
 }
 
 model Product {
@@ -72,6 +77,7 @@ model Product {
   @@unique([storeId, name])
   @@index([ownerId])
   @@index([storeId])
+  @@index([categoryId])
 }
 
 model Attribute {
@@ -124,6 +130,7 @@ model ProductVariant {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   productAttributeValues ProductAttributeValue[]
+  relatedOrderLineItems  OrderLineItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -145,4 +152,105 @@ model ProductAttributeValue {
 
   @@index([productVariantId])
   @@index([attributeValueId])
+}
+
+// employee
+// every time a user is created, one employee should be created automatically
+model Employee {
+  id String @id @default(cuid())
+
+  employerId String // id of owner
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  name          String
+  pin           String // should be hashed
+  isActive      Boolean @default(true)
+  handledOrders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([storeId, name])
+  @@index([employerId])
+  @@index([storeId])
+  @@index([isActive])
+}
+
+// orders
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum OrderStatus {
+  PREPARING
+  READY_FOR_PICKUP
+  FULFILLED
+  UNFULFILLED
+  CANCELLED
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  orderId     String      @unique
+  orderDate   DateTime
+  orderStatus OrderStatus @default(PREPARING)
+
+  customerName  String
+  paymentMethod String
+  paymentStatus PaymentStatus @default(PENDING)
+
+  regularPrice Float
+  totalPrice   Float
+
+  discountId String
+  discount   Discount @relation(fields: [discountId], references: [id])
+
+  lineItems OrderLineItem[]
+
+  createdById String
+  createdBy   Employee @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
+  @@index([orderStatus])
+  @@index([paymentStatus])
+}
+
+model OrderLineItem {
+  id            String           @id @default(cuid())
+  qty           Int
+  item          ProductVariant[]
+  relatedOrders Order[]
+}
+
+model Discount {
+  id String @id @default(cuid())
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  discountCode   String
+  discountAmount Float
+
+  isValid Boolean @default(true)
+
+  relatedOrders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isValid])
+  @@index([storeId, discountCode])
 }
