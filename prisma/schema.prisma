@@ -212,6 +212,8 @@ model Order {
   regularAmount Float
   totalAmount   Float
 
+  shippingFee Float? @default(0)
+
   discountId String?
   discount   Discount? @relation(fields: [discountId], references: [id])
 
