@@ -35,8 +35,8 @@ export const navigation = {
           icon: LayoutDashboard,
         },
         {
-          title: 'Sales',
-          url: '/sales',
+          title: 'Orders',
+          url: '/orders',
           icon: ShoppingBag,
         },
         {

@@ -49,7 +49,12 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
                   src={activeStore.logoUrl!}
                   alt={activeStore.name}
                 />
-                <AvatarFallback className="rounded-md bg-violet-500">
+                <AvatarFallback
+                  className="rounded-md"
+                  style={{
+                    backgroundColor: activeStore.color ?? 'var(--primary)',
+                  }}
+                >
                   {getInitials(activeStore.name)}
                 </AvatarFallback>
               </Avatar>
@@ -78,7 +83,12 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
                 <a href={`/${store.id}/${pageRoute}`}>
                   <Avatar className="h-6 w-6 rounded-md">
                     <AvatarImage src={store.logoUrl!} alt={store.name} />
-                    <AvatarFallback className="rounded-md text-xs bg-violet-500">
+                    <AvatarFallback
+                      className="rounded-md text-xs"
+                      style={{
+                        backgroundColor: store.color ?? 'var(--primary)',
+                      }}
+                    >
                       {getInitials(store.name)}
                     </AvatarFallback>
                   </Avatar>

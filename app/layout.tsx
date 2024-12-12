@@ -6,6 +6,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { ReactQueryProvider } from '@/components/providers/react-query-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import './globals.css';
 
@@ -46,13 +47,15 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ReactQueryProvider>
-              <SignedOut>
-                <SignInButton />
-              </SignedOut>
-              {children}
-              <Toaster richColors />
-            </ReactQueryProvider>
+            <NuqsAdapter>
+              <ReactQueryProvider>
+                <SignedOut>
+                  <SignInButton />
+                </SignedOut>
+                {children}
+                <Toaster richColors />
+              </ReactQueryProvider>
+            </NuqsAdapter>
           </ThemeProvider>
         </body>
       </html>

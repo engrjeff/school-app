@@ -60,7 +60,7 @@ export const attributeSchema = z.object({
 
 export const variantSkusSchema = z.object({
   name: z.string(),
-  imageUrl: z.string().url({ message: 'Invalid image url.' }).optional(),
+  imageUrl: z.string().optional(),
   attribute: z.string(),
   skus: skuSchema
     .extend({ value: z.string() })
@@ -113,7 +113,7 @@ export const variantObjectSchema = z.object({
     .extend({
       attr1: z.string(),
       attr2: z.string().optional(),
-      imageUrl: z.string().url({ message: 'Invalid image url.' }).optional(),
+      imageUrl: z.string().optional(),
     })
     .superRefine(({ price, costPrice }, ctx) => {
       if (price && costPrice && costPrice >= price) {
@@ -136,7 +136,7 @@ export const productSchema = z.object({
     .string({ required_error: 'Description is required.' })
     .min(1, { message: 'Description is required.' })
     .optional(),
-  imageUrl: z.string().url({ message: 'Invalid image url.' }).optional(),
+  imageUrl: z.string().optional(),
   categoryId: z
     .string({ required_error: 'Category is required.' })
     .min(1, { message: 'Category is required.' }),

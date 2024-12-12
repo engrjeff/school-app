@@ -44,6 +44,10 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* custom */
+    --pastel-green: 171 17% 84%;
+    --pastel-green-foreground: 210 11% 7%;
   }
   .dark {
     --background: 240 10% 3.9%;

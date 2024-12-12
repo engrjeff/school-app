@@ -59,6 +59,7 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
@@ -68,6 +69,10 @@ const config: Config = {
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
+        },
+        'pastel-green': {
+          DEFAULT: 'hsl(var(--pastel-green))',
+          foreground: 'hsl(var(--pastel-green-foreground))',
         },
       },
       borderRadius: {
