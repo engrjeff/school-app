@@ -18,3 +18,26 @@ export const getStores = async () => {
 
   return stores;
 };
+
+export const getStoreById = async (storeId: string) => {
+  const store = await prisma.store.findUnique({
+    where: {
+      id: storeId,
+    },
+  });
+
+  return store;
+};
+
+export const getDiscounts = async (storeId: string) => {
+  const discounts = await prisma.discount.findMany({
+    where: {
+      storeId,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return discounts;
+};

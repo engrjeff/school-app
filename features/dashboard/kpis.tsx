@@ -24,26 +24,35 @@ export function KPIs() {
   if (kpiQuery.isLoading)
     return (
       <div className="grid grid-cols-4 gap-6">
-        <Skeleton className="h-[134px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
-        <Skeleton className="h-[134px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
-        <Skeleton className="h-[134px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
-        <Skeleton className="h-[134px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
+        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
+        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
+        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
+        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
       </div>
     );
 
   return (
     <div className="grid grid-cols-4 gap-6">
-      <Card className="bg-muted border-l-4 border-l-primary">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-3">
+      <Card className="flex flex-col bg-muted border-l-4 border-l-primary">
+        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
           <CardDescription className="font-medium text-white">
             Best Seller
           </CardDescription>
           <TrendingUpIcon size={20} className="size-5 text-white" />
         </CardHeader>
-        <CardContent>
-          <p className="text-lg font-bold mb-1">
-            {kpiQuery.data?.bestSeller.productName}
-          </p>
+        <CardContent className="mt-auto">
+          <div className="mb-2">
+            <p className="text-lg font-bold leading-none">
+              {kpiQuery.data?.bestSeller.productName}{' '}
+            </p>
+            {kpiQuery.data?.bestSeller.attributes?.length ? (
+              <span className="text-xs leading-none text-muted-foreground">
+                {kpiQuery.data?.bestSeller.attributes
+                  ?.map((a) => a.value)
+                  .join(', ')}
+              </span>
+            ) : null}
+          </div>
           <div className="text-sm flex items-center gap-1.5">
             <p className="font-medium text-muted-foreground">
               {kpiQuery.data?.bestSeller.orderCount}{' '}
@@ -54,12 +63,12 @@ export function KPIs() {
           </div>
         </CardContent>
       </Card>
-      <Card className="bg-muted/80 border-neutral-800">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-3">
+      <Card className="flex flex-col bg-muted/80 border-neutral-800">
+        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
           <CardDescription className="font-medium">Daily Sales</CardDescription>
           <StoreIcon size={20} className="size-5 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-auto">
           <p className="text-xl font-bold mb-1">
             {kpiQuery.data?.sales.todayFormatted}
           </p>
@@ -74,14 +83,14 @@ export function KPIs() {
           </div>
         </CardContent>
       </Card>
-      <Card className="bg-muted/80 border-neutral-800">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-3">
+      <Card className="flex flex-col bg-muted/80 border-neutral-800">
+        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
           <CardDescription className="font-medium">
             Items Ordered Today
           </CardDescription>
           <ShoppingBagIcon size={20} className="size-5 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-auto">
           <p className="text-xl font-bold mb-1">
             {kpiQuery.data?.orders.orderItemsCount}{' '}
             <span className="text-xs text-muted-foreground font-normal">
@@ -99,15 +108,15 @@ export function KPIs() {
           </div>
         </CardContent>
       </Card>
-      <Card className="bg-muted/80 border-neutral-800">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-3">
+      <Card className="flex flex-col bg-muted/80 border-neutral-800">
+        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
           <CardDescription className="font-medium">Discounts</CardDescription>
           <BadgePercentIcon
             size={20}
             className="size-5 text-muted-foreground"
           />
         </CardHeader>
-        <CardContent>
+        <CardContent className="mt-auto">
           <p className="text-xl font-bold mb-1">
             {kpiQuery.data?.discount.totalFormatted}
           </p>

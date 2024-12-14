@@ -32,7 +32,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
             <span className="text-sm text-muted-foreground">{currency}</span>
           </div>
           <Input
-            className={cn('pl-8', className)}
+            className={cn('pl-9', className)}
             ref={ref}
             type={type}
             inputMode="numeric"

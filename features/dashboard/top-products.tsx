@@ -49,38 +49,49 @@ export function TopProducts() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {kpiQuery.data?.topProducts?.map((orderItem, index) => (
-            <TableRow key={`top-product-${orderItem.id}`}>
-              <TableHead className="w-9 text-center">{index + 1}</TableHead>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <div className="size-11 relative rounded border bg-muted/30 text-muted-foreground flex items-center justify-center">
-                    <ImagePlusIcon size={16} />
-                  </div>
-                  <div>
-                    <Link
-                      href="#"
-                      className="hover:text-blue-500 hover:underline"
-                    >
-                      {orderItem.productName}
-                    </Link>
-                    <p className="text-xs text-muted-foreground">
-                      {orderItem.attributes.map((a) => a.value).join(', ')}
-                    </p>
-                  </div>
-                </div>{' '}
+          {kpiQuery.data?.topProducts.length ? (
+            kpiQuery.data.topProducts?.map((orderItem, index) => (
+              <TableRow key={`top-product-${orderItem.id}`}>
+                <TableHead className="w-9 text-center">{index + 1}</TableHead>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <div className="size-11 relative rounded border bg-muted/30 text-muted-foreground flex items-center justify-center">
+                      <ImagePlusIcon size={16} />
+                    </div>
+                    <div>
+                      <Link
+                        href="#"
+                        className="hover:text-blue-500 hover:underline"
+                      >
+                        {orderItem.productName}
+                      </Link>
+                      <p className="text-xs text-muted-foreground">
+                        {orderItem.attributes.map((a) => a.value).join(', ')}
+                      </p>
+                    </div>
+                  </div>{' '}
+                </TableCell>
+                <TableCell>{orderItem.sku}</TableCell>
+                <TableCell className="text-right">
+                  {formatCurrency(orderItem.unitPrice)}
+                </TableCell>
+                <TableCell className="text-right">{orderItem.qty}</TableCell>
+                <TableCell className="text-right">
+                  {formatCurrency(orderItem.qty * orderItem.unitPrice)}
+                </TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={7}
+                className="h-[500px] text-center text-muted-foreground text-base"
+              >
+                No data to show
               </TableCell>
-              <TableCell>{orderItem.sku}</TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(orderItem.unitPrice)}
-              </TableCell>
-              <TableCell className="text-right">{orderItem.qty}</TableCell>
-              <TableCell className="text-right">
-                {formatCurrency(orderItem.qty * orderItem.unitPrice)}
-              </TableCell>
-              <TableCell></TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </Card>

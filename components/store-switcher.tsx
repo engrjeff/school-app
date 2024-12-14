@@ -28,7 +28,7 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
 
   const storeId = useStoreId();
 
-  const activeStore = stores.find((s) => s.id === storeId)!;
+  const activeStore = stores.find((s) => s.id === storeId) ?? stores[0];
 
   const pathname = usePathname();
 

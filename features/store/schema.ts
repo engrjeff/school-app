@@ -10,7 +10,50 @@ export const createStoreSchema = z.object({
   address: z
     .string({ required_error: 'Address is required.' })
     .min(1, { message: 'Address is required.' }),
-  logoUrl: z.string().url({ message: 'Invalid url for logo.' }).optional(),
+  logoUrl: z
+    .union([z.literal(''), z.string().trim().url({ message: 'Invalid logo.' })])
+    .optional(),
+  color: z.string().optional(),
+  website: z
+    .union([
+      z.literal(''),
+      z.string().trim().url({ message: 'Invalid website URL.' }),
+    ])
+    .optional(),
+  email: z
+    .union([
+      z.literal(''),
+      z.string().trim().email({ message: 'Invalid email.' }),
+    ])
+    .optional(),
+
+  contactNumber: z.string().optional(),
 });
 
+export const updateStoreSchema = createStoreSchema.extend({
+  id: z.string({ required_error: 'Store ID is required.' }),
+});
+
+export const setGoalsSchema = z.object({
+  storeId: z.string({ required_error: 'Store ID is required.' }),
+  salesGoalValue: z.number().nonnegative(),
+  ordersGoalValue: z.number().nonnegative(),
+});
+
+export type SetGoalsInputs = z.infer<typeof setGoalsSchema>;
+
 export type CreateStoreInputs = z.infer<typeof createStoreSchema>;
+
+export const discountSchema = z.object({
+  storeId: z.string({ required_error: 'Store ID is required' }),
+  discountCode: z
+    .string({ required_error: 'Discount code is required.' })
+    .min(1, { message: 'Discount code is required.' })
+    .min(3, { message: 'Discount code too short.' }),
+  discountAmount: z
+    .number({ required_error: 'Discount amount is required.' })
+    .positive({ message: 'Should be greater than 0' }),
+  isValid: z.boolean(),
+});
+
+export type DiscountInputs = z.infer<typeof discountSchema>;

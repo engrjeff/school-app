@@ -1,9 +1,9 @@
 import { SearchField } from '@/components/ui/search-field';
-import { OrdersDateRangeFilter } from '@/features/order/orders-date-range-filter';
 import { OrderStatusFilter } from '@/features/order/orders-status-filter';
 import { OrdersTable } from '@/features/order/orders-table';
 import { PaymentStatusFilter } from '@/features/order/payment-status-filter';
-import { getOrders } from '@/features/order/queries';
+import { getOrders, GetOrdersArgs } from '@/features/order/queries';
+import { RangePresetFilter } from '@/features/order/range-preset-filters';
 import { POSAside } from '@/features/pos/pos-aside';
 import { Metadata } from 'next';
 
@@ -11,8 +11,14 @@ export const metadata: Metadata = {
   title: 'Orders',
 };
 
-async function OrdersPage({ params }: { params: { storeId: string } }) {
-  const orders = await getOrders(params.storeId);
+async function OrdersPage({
+  params,
+  searchParams,
+}: {
+  params: { storeId: string };
+  searchParams?: Omit<GetOrdersArgs, 'storeId'>;
+}) {
+  const orders = await getOrders({ storeId: params.storeId, ...searchParams });
 
   return (
     <div className="container max-w-5xl flex flex-col gap-6 flex-1">
@@ -34,7 +40,7 @@ async function OrdersPage({ params }: { params: { storeId: string } }) {
           placeholder="Search orders"
         />
         <div className="flex items-center justify-end gap-2">
-          <OrdersDateRangeFilter />
+          <RangePresetFilter />
           <OrderStatusFilter />
           <PaymentStatusFilter />
         </div>

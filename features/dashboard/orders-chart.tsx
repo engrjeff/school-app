@@ -16,14 +16,17 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { formatCurrency, toCompact } from '@/lib/utils';
+import { useCurrentStore } from '@/hooks/use-current-store';
+import { cn, formatCurrency, toCompact } from '@/lib/utils';
 import {
   ChartNoAxesColumnIncreasingIcon,
   ChevronRightIcon,
   SparklesIcon,
 } from 'lucide-react';
+import Link from 'next/link';
 import { OrdersRangeFilter } from './orders-range-filter';
 
 const chartData = [
@@ -98,26 +101,61 @@ export function OrdersChart() {
         </ChartContainer>
 
         {/* aside */}
-        <div className="max-w-xs w-[320px] shrink-0 border-l border-neutral-800 h-full">
-          <Tabs defaultValue="sales" className="h-full w-full flex flex-col">
-            <TabsList className="h-auto w-full gap-2 max-w-full py-2 justify-start overflow-x-auto overflow-y-hidden rounded-none border-b border-neutral-800 bg-transparent px-2">
-              <TabsTrigger
-                value="sales"
-                className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
+        <StoreGoalsMetrics />
+      </CardContent>
+    </Card>
+  );
+}
+
+function StoreGoalsMetrics() {
+  const storeQuery = useCurrentStore();
+
+  if (storeQuery.isLoading)
+    return (
+      <Skeleton className="max-w-xs w-[320px] bg-muted shrink-0 border-l h-full animate-pulse" />
+    );
+
+  const store = storeQuery.data?.store;
+
+  const salesGoalValue = store?.salesGoalValue ?? 0;
+  const ordersGoalValue = store?.ordersGoalValue ?? 0;
+
+  return (
+    <div className="max-w-xs w-[320px] shrink-0 border-l h-full">
+      <Tabs defaultValue="sales" className="h-full w-full flex flex-col">
+        <TabsList className="h-auto w-full gap-2 max-w-full py-2 justify-start overflow-x-auto overflow-y-hidden rounded-none border-b border-neutral-800 bg-transparent px-2">
+          <TabsTrigger
+            value="sales"
+            className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
+          >
+            Sales
+          </TabsTrigger>
+          <TabsTrigger
+            value="orders"
+            className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
+          >
+            Orders
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent
+          value="sales"
+          className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
+        >
+          {!salesGoalValue ? (
+            <div className="h-full flex flex-col items-center justify-center gap-2">
+              <p className="text-center text-sm text-muted-foreground">
+                No goal for Sales was set.
+              </p>
+
+              <Link
+                href={`/${store?.id}/settings?tab=goals`}
+                className={buttonVariants({ size: 'sm' })}
               >
-                Sales
-              </TabsTrigger>
-              <TabsTrigger
-                value="orders"
-                className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
-              >
-                Orders
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="sales"
-              className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
-            >
+                Set Goal Now
+              </Link>
+            </div>
+          ) : (
+            <>
               <p className="text-xl font-bold">{formatCurrency(10500)}</p>
 
               <div className="flex w-full items-center [&>*]:h-2">
@@ -125,12 +163,12 @@ export function OrdersChart() {
                   className="relative flex h-2 w-full items-center rounded-full bg-green-100 dark:bg-green-500/30"
                   aria-label="progress bar"
                   aria-valuenow={10500}
-                  aria-valuemax={15000}
+                  aria-valuemax={salesGoalValue}
                 >
                   <div
                     className="h-full flex-col rounded-full bg-green-600 dark:bg-green-500"
                     style={{
-                      width: `${(10500 / 15000) * 100}%`,
+                      width: `${(10500 / salesGoalValue) * 100}%`,
                     }}
                   ></div>
                 </div>
@@ -141,7 +179,7 @@ export function OrdersChart() {
                   0.00
                 </span>
                 <span className="text-xs font-mono text-muted-foreground">
-                  {formatCurrency(15000, true)}
+                  {formatCurrency(salesGoalValue, true)}
                 </span>
               </div>
 
@@ -158,7 +196,13 @@ export function OrdersChart() {
                   Show highlights{' '}
                   <ChevronRightIcon size={16} className="size-4 ml-auto" />
                 </Button>
-                <Button variant="ghost" className="justify-start">
+                <Link
+                  href={`/${store?.id}/sales`}
+                  className={cn(
+                    buttonVariants({ size: 'sm', variant: 'ghost' }),
+                    'justify-start'
+                  )}
+                >
                   <ChartNoAxesColumnIncreasingIcon
                     size={16}
                     className="text-green-500"
@@ -166,13 +210,30 @@ export function OrdersChart() {
                   />{' '}
                   Show all sales
                   <ChevronRightIcon size={16} className="size-4 ml-auto" />
-                </Button>
+                </Link>
               </div>
-            </TabsContent>
-            <TabsContent
-              value="orders"
-              className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
-            >
+            </>
+          )}
+        </TabsContent>
+        <TabsContent
+          value="orders"
+          className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
+        >
+          {!ordersGoalValue ? (
+            <div className="h-full flex flex-col items-center justify-center gap-2">
+              <p className="text-center text-sm text-muted-foreground">
+                No goal for Orders was set.
+              </p>
+
+              <Link
+                href={`/${store?.id}/settings?tab=goals`}
+                className={buttonVariants({ size: 'sm' })}
+              >
+                Set Goal Now
+              </Link>
+            </div>
+          ) : (
+            <>
               <p className="text-xl font-bold">{5200}</p>
 
               <div className="flex w-full items-center [&>*]:h-2">
@@ -180,12 +241,12 @@ export function OrdersChart() {
                   className="relative flex h-2 w-full items-center rounded-full bg-orange-100 dark:bg-orange-500/30"
                   aria-label="progress bar"
                   aria-valuenow={5200}
-                  aria-valuemax={8000}
+                  aria-valuemax={ordersGoalValue}
                 >
                   <div
                     className="h-full flex-col rounded-full bg-orange-600 dark:bg-orange-500"
                     style={{
-                      width: `${(5200 / 8000) * 100}%`,
+                      width: `${(5200 / ordersGoalValue) * 100}%`,
                     }}
                   ></div>
                 </div>
@@ -196,7 +257,7 @@ export function OrdersChart() {
                   0.00
                 </span>
                 <span className="text-xs font-mono text-muted-foreground">
-                  {toCompact(8200)}
+                  {toCompact(ordersGoalValue)}
                 </span>
               </div>
 
@@ -213,7 +274,13 @@ export function OrdersChart() {
                   Show highlights{' '}
                   <ChevronRightIcon size={16} className="size-4 ml-auto" />
                 </Button>
-                <Button variant="ghost" className="justify-start">
+                <Link
+                  href={`/${store?.id}/orders`}
+                  className={cn(
+                    buttonVariants({ size: 'sm', variant: 'ghost' }),
+                    'justify-start'
+                  )}
+                >
                   <ChartNoAxesColumnIncreasingIcon
                     size={16}
                     className="text-orange-500"
@@ -221,12 +288,12 @@ export function OrdersChart() {
                   />{' '}
                   Show all orders
                   <ChevronRightIcon size={16} className="size-4 ml-auto" />
-                </Button>
+                </Link>
               </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </CardContent>
-    </Card>
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

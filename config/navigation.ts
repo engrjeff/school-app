@@ -1,4 +1,12 @@
-import { Box, LayoutDashboard, Package2, ShoppingBag } from 'lucide-react';
+import {
+  Box,
+  LayoutDashboard,
+  Package2,
+  SettingsIcon,
+  ShoppingBag,
+  TrendingUp,
+  UserRoundCogIcon,
+} from 'lucide-react';
 
 export const stores = [
   {
@@ -27,12 +35,16 @@ export const navigation = {
   navMain: [
     {
       title: 'Menu',
-      isActive: true,
       items: [
         {
           title: 'Dashboard',
           url: '/dashboard',
           icon: LayoutDashboard,
+        },
+        {
+          title: 'Sales',
+          url: '/sales',
+          icon: TrendingUp,
         },
         {
           title: 'Orders',
@@ -43,6 +55,21 @@ export const navigation = {
           title: 'Products',
           url: '/products',
           icon: Box,
+        },
+      ],
+    },
+    {
+      title: 'Store Management',
+      items: [
+        {
+          title: 'Employees',
+          url: '/employees',
+          icon: UserRoundCogIcon,
+        },
+        {
+          title: 'Settings',
+          url: '/settings',
+          icon: SettingsIcon,
         },
       ],
     },

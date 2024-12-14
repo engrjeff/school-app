@@ -15,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { formatCurrency, generateOrderNumber } from '@/lib/utils';
+import NumberFlow from '@number-flow/react';
 import { OrderStatus } from '@prisma/client';
 import { format } from 'date-fns';
 import { ArrowLeft, Minus, Plus, TrashIcon } from 'lucide-react';
@@ -124,13 +125,13 @@ export function OrderSummary() {
 
   if (!orders.length)
     return (
-      <aside className="bg-background max-w-sm w-full shrink-0 border rounded-lg p-4 h-full items-center justify-center flex flex-col gap-4 max-h-full overflow-y-auto sticky top-0">
+      <aside className="bg-muted max-w-sm w-full shrink-0 border rounded-lg p-4 h-full items-center justify-center flex flex-col gap-4 max-h-full overflow-y-auto sticky top-0">
         <p className="text-center text-muted-foreground">No orders yet.</p>
       </aside>
     );
 
   return (
-    <aside className="bg-background max-w-sm w-full shrink-0 border rounded-lg p-4 h-full max-h-full overflow-y-auto sticky top-0">
+    <aside className="bg-muted max-w-sm w-full shrink-0 border rounded-lg p-4 h-full max-h-full overflow-y-auto sticky top-0">
       {view === 'orders' ? (
         <div className="h-full flex flex-col gap-4">
           <p>Order # {orderNumber}</p>
@@ -144,12 +145,14 @@ export function OrderSummary() {
             </ul>
           </ScrollArea>
 
-          <div className="p-4 bg-secondary justify-between flex-1 flex flex-col gap-2 rounded-md mt-auto">
+          <div className="p-4 bg-border/90 justify-between flex-1 flex flex-col gap-2 rounded-md mt-auto">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Subtotal</p>
-              <p className="font-semibold font-mono text-right">
-                {formatCurrency(subtotal)}
-              </p>
+              <NumberFlow
+                value={subtotal}
+                format={{ style: 'currency', currency: 'PHP' }}
+                className="font-semibold font-mono text-right block"
+              />
             </div>
 
             <div className="mt-6">
@@ -183,7 +186,7 @@ export function OrderSummary() {
 
           <fieldset
             disabled={createAction.isPending}
-            className="p-4 bg-secondary justify-between flex-1 flex flex-col gap-2 rounded-md"
+            className="p-4 justify-between flex-1 flex flex-col gap-2 rounded-md"
           >
             <div className="flex items-center justify-between text-sm">
               <p className="text-muted-foreground">Subtotal</p>
@@ -202,10 +205,11 @@ export function OrderSummary() {
                   </AccordionTrigger>
                   <AccordionContent className="py-1.5 px-1">
                     <NumberInput
-                      prefix="₱"
+                      currency="₱"
                       placeholder=""
                       value={shippingFee}
                       min={0}
+                      className="bg-muted border-border"
                       onChange={(e) => {
                         setShippingFee(e.currentTarget.valueAsNumber);
                       }}
@@ -246,6 +250,7 @@ export function OrderSummary() {
                       value={serviceCharge}
                       min={0}
                       max={100}
+                      className="bg-muted border-border"
                       onChange={(e) => {
                         const val = e.currentTarget.valueAsNumber;
                         if (val > 100 || val < 1) return;
@@ -293,7 +298,7 @@ export function OrderSummary() {
               variant="ghost"
               aria-label="back to orders"
               className="shrink-0"
-              onClick={() => setView('orders')}
+              onClick={() => setView('payment')}
             >
               <ArrowLeft size={16} aria-hidden="true" />
             </Button>
@@ -302,7 +307,7 @@ export function OrderSummary() {
 
           <fieldset
             disabled={createAction.isPending}
-            className="p-4 bg-secondary flex-1 flex flex-col gap-2 rounded-md"
+            className="p-4 flex-1 flex flex-col gap-2 rounded-md"
           >
             <div className="space-y-2">
               <Label htmlFor="customerName">
@@ -315,6 +320,7 @@ export function OrderSummary() {
                 id="customerName"
                 name="customerName"
                 placeholder="John Doe"
+                className="bg-muted border-border"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.currentTarget.value)}
               />
@@ -331,7 +337,7 @@ export function OrderSummary() {
                 id="orderDate"
                 name="orderDate"
                 type="datetime-local"
-                className="w-min"
+                className="w-min bg-muted border-border"
                 max={format(new Date(), 'yyyy-MM-dd') + 'T12:00'}
                 value={orderDate}
                 onChange={(e) => setOrderDate(e.currentTarget.value)}
@@ -343,7 +349,7 @@ export function OrderSummary() {
               <NativeSelect
                 id="order-status"
                 name="orderStatus"
-                className="bg-background w-min"
+                className="bg-muted border-border w-min"
                 value={orderStatus}
                 onChange={(e) => setOrderStatus(e.currentTarget.value)}
               >
@@ -377,11 +383,13 @@ function OrderLineItem({ line }: { line: LineItem }) {
   const store = usePOSOrdersStore();
 
   return (
-    <div className="text-sm flex items-center justify-between bg-secondary py-2 px-2.5 rounded-md">
+    <div className="text-sm flex items-center justify-between bg-border/90 py-2 px-2.5 rounded-md">
       <div>
         <p className="font-medium">
           {line.productName}{' '}
-          <span className="text-xs text-muted-foreground">x{line.qty}</span>
+          <span className="text-xs text-muted-foreground">
+            x<NumberFlow value={line.qty} />
+          </span>
         </p>
         <p className="text-xs text-muted-foreground">
           {line.attributes.map((attr) => attr.value).join(', ')}
@@ -389,9 +397,11 @@ function OrderLineItem({ line }: { line: LineItem }) {
       </div>
 
       <div>
-        <p className="font-mono text-right mb-1">
-          {formatCurrency(line.unitPrice * line.qty)}
-        </p>
+        <NumberFlow
+          value={line.unitPrice * line.qty}
+          format={{ style: 'currency', currency: 'PHP' }}
+          className="font-mono text-right mb-1 block"
+        />
         <div
           className="inline-flex items-center justify-end mt-auto select-none"
           role="group"
@@ -402,10 +412,10 @@ function OrderLineItem({ line }: { line: LineItem }) {
           </span>
           <Button
             type="button"
-            variant="secondary"
+            variant="outline"
             size="icon"
             aria-label="Decrease quantity"
-            className="size-7"
+            className="size-7 bg-transparent border-neutral-700"
             onClick={() => {
               if (line.qty === 1) {
                 store.removeLineItem(line.productVariantId);
@@ -431,15 +441,17 @@ function OrderLineItem({ line }: { line: LineItem }) {
             className="flex items-center px-2.5 text-sm text-center font-medium tabular-nums"
             aria-live="polite"
           >
-            <span aria-label={`Current quantity is ${line.qty}`}>
-              {line.qty}
-            </span>
+            <NumberFlow
+              value={line.qty}
+              className="text-center"
+              aria-label={`Current quantity is ${line.qty}`}
+            />
           </div>
           <Button
             type="button"
-            variant="secondary"
+            variant="outline"
             size="icon"
-            className="size-7"
+            className="size-7 bg-transparent border-neutral-700"
             aria-label="Increase quantity"
             onClick={() => store.increaseQty(line.productVariantId)}
           >

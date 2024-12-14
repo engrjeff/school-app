@@ -27,14 +27,14 @@ export type KPIData = {
     total: number;
     totalFormatted: string;
   };
-  bestSeller: {
-    id: string;
-    qty: number;
-    productVariantId: string;
-    productName: string;
-    unitPrice: number;
-    sku: string;
+  bestSeller: OrderLineItem & {
     orderCount: number;
+    attributes: {
+      id: string;
+      key: string;
+      value: string;
+      orderLineItemId: string;
+    }[];
   };
   topProducts: Array<
     OrderLineItem & {

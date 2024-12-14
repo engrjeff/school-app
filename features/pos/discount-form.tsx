@@ -64,6 +64,7 @@ export function DiscountForm({
           onChange={(e) => setDiscountCode(e.currentTarget.value)}
           aria-describedby={!isValid ? 'discount-code-error' : undefined}
           disabled={isValid === true}
+          className="bg-muted border-border"
         />
         {isValid === true ? (
           <Button type="button" size="sm" onClick={clearDiscount}>

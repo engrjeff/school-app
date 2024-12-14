@@ -1,11 +1,23 @@
 'use server';
 
 import prisma from '@/lib/db';
+import { DateRangePreset, getDateRange } from '@/lib/utils';
 
-export const getOrders = async (storeId: string) => {
+export type GetOrdersArgs = {
+  storeId: string;
+  range?: DateRangePreset;
+};
+
+export const getOrders = async (args: GetOrdersArgs) => {
+  const range = getDateRange(args.range ?? 'today');
+
   const orders = await prisma.order.findMany({
     where: {
-      storeId,
+      storeId: args.storeId,
+      orderDate: {
+        gte: range.start,
+        lte: range.end,
+      },
     },
     include: {
       lineItems: {
@@ -14,7 +26,7 @@ export const getOrders = async (storeId: string) => {
       discount: true,
     },
     orderBy: {
-      createdAt: 'desc',
+      orderDate: 'desc',
     },
   });
 

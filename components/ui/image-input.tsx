@@ -51,7 +51,7 @@ export function ImageInput({
   return (
     <div
       className={cn(
-        'size-[60px] relative rounded border border-dashed bg-muted/80 overflow-hidden hover:bg-muted/30 pointer-events-none cursor-not-allowed opacity-90',
+        'size-[60px] relative rounded border border-dashed bg-muted/80 overflow-hidden hover:bg-muted/30',
         {
           'border-solid': !!urlValue,
         },
@@ -69,7 +69,7 @@ export function ImageInput({
       )}
       <label
         htmlFor={`image-input-${id}`}
-        className="size-full flex items-center justify-center text-muted-foreground cursor-not-allowed"
+        className="size-full flex items-center justify-center text-muted-foreground cursor-pointer"
       >
         <input
           type="file"

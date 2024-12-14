@@ -1,96 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import prisma from '@/lib/db';
-import { formatCurrency } from '@/lib/utils';
-import {
-  endOfMonth,
-  endOfToday,
-  endOfWeek,
-  endOfYear,
-  endOfYesterday,
-  startOfMonth,
-  startOfToday,
-  startOfWeek,
-  startOfYear,
-  startOfYesterday,
-  subDays,
-  subMonths,
-  subYears,
-} from 'date-fns';
+import { calcPercentDiff, formatCurrency, getDateRange } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
-
-type Preset =
-  | 'today'
-  | 'yesterday'
-  | 'this_week'
-  | 'this_month'
-  | 'this_year'
-  | 'last_week'
-  | 'last_month'
-  | 'last_year';
-
-function getDateRange(preset: Preset): { start: Date; end: Date } {
-  const now = new Date();
-
-  if (preset === 'last_year') {
-    return {
-      start: startOfYear(subYears(now, 1)),
-      end: endOfYear(subYears(now, 1)),
-    };
-  }
-
-  if (preset === 'this_week') {
-    return {
-      start: startOfWeek(now, { weekStartsOn: 1 }),
-      end: endOfWeek(now, { weekStartsOn: 1 }),
-    };
-  }
-
-  if (preset === 'last_week') {
-    return {
-      start: subDays(startOfWeek(now, { weekStartsOn: 1 }), 7),
-      end: subDays(endOfWeek(now, { weekStartsOn: 1 }), 7),
-    };
-  }
-
-  if (preset === 'this_month') {
-    return {
-      start: startOfMonth(now),
-      end: endOfMonth(now),
-    };
-  }
-
-  if (preset === 'last_month') {
-    return {
-      start: startOfMonth(subMonths(now, 1)),
-      end: endOfMonth(subMonths(now, 1)),
-    };
-  }
-
-  if (preset === 'this_year') {
-    return {
-      start: startOfYear(now),
-      end: endOfYear(now),
-    };
-  }
-
-  if (preset === 'yesterday') {
-    return {
-      start: startOfYesterday(),
-      end: endOfYesterday(),
-    };
-  }
-
-  return {
-    start: startOfToday(),
-    end: endOfToday(),
-  };
-}
-
-function calcPercentDiff(v1: number, v2: number) {
-  return (Math.abs(v1 - v2) / ((v1 + v2) / 2)) * 100;
-}
 
 // get KPIs
 // 1. best-selling product
@@ -170,7 +83,7 @@ export async function GET(
       (o) => o.productVariantId === bestSeller?.productVariantId
     );
 
-    const orderItemsCount = orders.reduce((c, i) => c + i.lineItems.length, 0);
+    const orderItemsCount = orderItems.reduce((c, i) => c + i.qty, 0);
 
     const yesterdayOrderItemsCount = yesterdayOrders.reduce(
       (c, i) => c + i.lineItems.length,
@@ -191,6 +104,10 @@ export async function GET(
         topProductsMap.set(item.productVariantId, item);
       }
     });
+
+    const topProducts = Array.from(topProductsMap.values());
+
+    topProducts.sort((a, b) => b.qty * b.unitPrice - a.qty * a.unitPrice);
 
     const kpiData = {
       sales: {
@@ -228,7 +145,7 @@ export async function GET(
         ...bestSeller,
         orderCount: bestSellerItem.reduce((t, i) => t + i.qty, 0),
       },
-      topProducts: Array.from(topProductsMap.values()).slice(0, 8), // first 8 only
+      topProducts: topProducts.slice(0, 8), // first 8 only
     };
 
     return NextResponse.json(kpiData);

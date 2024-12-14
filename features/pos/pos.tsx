@@ -50,9 +50,10 @@ export function POS() {
       <ScrollArea className="max-w-full">
         <div className="flex w-max items-center gap-3 p-0.5">
           <Button
-            variant={selectedCategory === undefined ? 'default' : 'outline'}
+            variant={selectedCategory === undefined ? 'default' : 'secondary'}
             size="sm"
-            className="rounded-full"
+            data-primary={selectedCategory === undefined}
+            className="rounded-full data-[primary=false]:border"
             onClick={() => setSelectedCategory(undefined)}
           >
             All
@@ -60,9 +61,12 @@ export function POS() {
           {categories.map((category) => (
             <Button
               key={`pos-category-${category.id}`}
-              variant={selectedCategory === category.id ? 'default' : 'outline'}
+              variant={
+                selectedCategory === category.id ? 'default' : 'secondary'
+              }
+              data-primary={selectedCategory === category.id}
               size="sm"
-              className="rounded-full"
+              className="rounded-full data-[primary=false]:border"
               onClick={() => setSelectedCategory(category.id)}
             >
               {category.name}
@@ -70,7 +74,7 @@ export function POS() {
           ))}
 
           <ClientSearchField
-            className="rounded-full"
+            className="rounded-full bg-muted border-border"
             placeholder="Search products"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.currentTarget.value)}

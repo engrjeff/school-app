@@ -41,8 +41,8 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
           <TableHead className="w-[50px]"></TableHead>
           <TableHead>Order ID</TableHead>
           <TableHead>Order Date</TableHead>
-          <TableHead>Payment Status</TableHead>
-          <TableHead>Order Status</TableHead>
+          <TableHead className="text-center">Payment Status</TableHead>
+          <TableHead className="text-center">Order Status</TableHead>
           <TableHead className="text-right">Total Amount</TableHead>
           <TableHead className="text-center">Actions</TableHead>
         </TableRow>
@@ -63,7 +63,7 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
               </TableCell>
               <TableCell className="font-medium">{order.orderId}</TableCell>
               <TableCell>{formatDate(order.orderDate)}</TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 <Badge
                   variant="secondary"
                   className={getPaymentStatusColor(order.paymentStatus)}
@@ -71,7 +71,7 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                   {getPaymentStatusLabel(order.paymentStatus)}
                 </Badge>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 <Badge
                   variant="secondary"
                   className={getOrderStatusColor(order.orderStatus)}
@@ -101,9 +101,18 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={7}>
                   <div className="py-4 px-2">
-                    <p className="font-medium mb-2 text-muted-foreground">
-                      Order Items ({order.lineItems.length})
-                    </p>
+                    <div className="mb-2 text-muted-foreground">
+                      <p className="font-semibold">
+                        Order Items ({order.lineItems.length})
+                      </p>
+                      <p>Customer: {order.customerName ?? '--'}</p>
+                      <p>
+                        Paid with{' '}
+                        <span className="capitalize">
+                          {order.paymentMethod}
+                        </span>
+                      </p>
+                    </div>
                     <Table>
                       <TableHeader>
                         <TableRow>

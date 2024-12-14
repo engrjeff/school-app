@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
+import NumberFlow from '@number-flow/react';
+
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ProductItem } from '@/hooks/use-products';
 import { formatCurrency, getPriceRange } from '@/lib/utils';
@@ -65,7 +67,7 @@ export function POSProductCard({ product }: { product: ProductItem }) {
   }
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col bg-muted">
       <CardHeader className="flex flex-row items-start gap-4 p-4">
         <div className="size-11 relative rounded border bg-muted/30 text-muted-foreground flex items-center justify-center">
           <ImageIcon size={16} />
@@ -128,6 +130,7 @@ export function POSProductCard({ product }: { product: ProductItem }) {
               variant="outline"
               size="icon"
               aria-label="Decrease quantity"
+              className="border-border bg-background/60"
               onClick={() => setQty((q) => q - 1)}
               disabled={qty === 0}
             >
@@ -137,18 +140,18 @@ export function POSProductCard({ product }: { product: ProductItem }) {
               className="flex items-center px-3 text-center text-sm font-medium tabular-nums"
               aria-live="polite"
             >
-              <span
+              <NumberFlow
+                value={qty}
                 className="text-center"
                 aria-label={`Current quantity is ${qty}`}
-              >
-                {qty}
-              </span>
+              />
             </div>
             <Button
               type="button"
               variant="outline"
               size="icon"
               aria-label="Increase quantity"
+              className="border-border bg-background/60"
               onClick={() => setQty((q) => q + 1)}
               disabled={
                 product.attributes.length
