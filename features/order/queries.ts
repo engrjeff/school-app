@@ -11,6 +11,7 @@ export const getOrders = async (storeId: string) => {
       lineItems: {
         include: { attributes: true },
       },
+      discount: true,
     },
     orderBy: {
       createdAt: 'desc',

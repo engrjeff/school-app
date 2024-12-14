@@ -13,10 +13,17 @@ export function getInitials(inputStr: string) {
     .join('');
 }
 
-export const formatCurrency = (amount: number) => {
+export const formatCurrency = (amount: number, compact?: boolean) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'PHP',
+    notation: compact ? 'compact' : undefined,
+  }).format(amount);
+};
+
+export const toCompact = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    notation: 'compact',
   }).format(amount);
 };
 
@@ -42,4 +49,14 @@ export function generateOrderNumber() {
     new Date().toLocaleDateString().replaceAll('/', '') +
     Date.now().toString(36).toUpperCase()
   );
+}
+
+export function formatDate(dateString: number | string | Date) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }

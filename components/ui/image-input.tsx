@@ -51,7 +51,7 @@ export function ImageInput({
   return (
     <div
       className={cn(
-        'size-[60px] relative rounded border border-dashed overflow-hidden hover:bg-muted/30 pointer-events-none cursor-not-allowed opacity-90',
+        'size-[60px] relative rounded border border-dashed bg-muted/80 overflow-hidden hover:bg-muted/30 pointer-events-none cursor-not-allowed opacity-90',
         {
           'border-solid': !!urlValue,
         },

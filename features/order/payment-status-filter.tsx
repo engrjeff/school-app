@@ -17,7 +17,11 @@ export function PaymentStatusFilter() {
     <div className="flex flex-col gap-4">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" size="sm" aria-label="Filters">
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-muted border-neutral-800"
+          >
             <CircleDashedIcon size={16} strokeWidth={2} aria-hidden="true" />{' '}
             Payment
           </Button>
@@ -31,7 +35,7 @@ export function PaymentStatusFilter() {
               {paymentStatuses.map((status) => (
                 <div
                   key={`payment-status-${status.status}`}
-                  className="flex items-center gap-2 hover:bg-accent py-1.5 rounded-md px-1.5 -ml-1.5"
+                  className="flex items-center gap-2 hover:bg-muted py-1.5 rounded-md px-1.5 -ml-1.5"
                 >
                   <Checkbox id={`payment-status-${status.status}`} />
                   <Label

@@ -97,7 +97,7 @@ export function POSProductCard({ product }: { product: ProductItem }) {
                 {attr.values.map((option) => (
                   <label
                     key={option.id}
-                    className="relative flex cursor-pointer flex-col text-sm items-center gap-3 rounded-lg border border-input px-1.5 py-2 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors has-[[data-disabled]]:cursor-not-allowed has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary/70"
+                    className="relative flex cursor-pointer flex-col text-sm items-center gap-3 rounded-lg border px-1.5 py-2 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors has-[[data-disabled]]:cursor-not-allowed has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary/70"
                   >
                     <RadioGroupItem
                       id={option.id}

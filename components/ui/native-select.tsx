@@ -8,7 +8,7 @@ export type NativeSelectProps = React.SelectHTMLAttributes<HTMLSelectElement>;
 const NativeSelect = React.forwardRef<HTMLSelectElement, NativeSelectProps>(
   ({ className, ...props }, ref) => {
     return (
-      <div className="relative">
+      <div className={cn('relative', className)}>
         <select
           ref={ref}
           className={cn(

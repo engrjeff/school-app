@@ -48,7 +48,7 @@ export async function ProductList({ storeId }: { storeId: string }) {
       <TableHeader>
         <TableRow className="bg-muted/30">
           <TableHead className="w-9 text-center">
-            <Checkbox className="data-[state=checked]:bg-blue-500 border-secondary data-[state=checked]:text-white data-[state=checked]:border-blue-500" />
+            <Checkbox />
           </TableHead>
           <TableHead className="w-9 text-center">#</TableHead>
           <TableHead>Product Name</TableHead>
@@ -62,7 +62,7 @@ export async function ProductList({ storeId }: { storeId: string }) {
         {products.map((product, index) => (
           <TableRow key={`product-row-${product.id}`}>
             <TableHead className="w-9 text-center">
-              <Checkbox className="data-[state=checked]:bg-blue-500 border-secondary data-[state=checked]:text-white data-[state=checked]:border-blue-500" />
+              <Checkbox />
             </TableHead>
             <TableCell className="w-9 text-center">{index + 1}</TableCell>
             <TableCell>

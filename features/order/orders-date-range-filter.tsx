@@ -28,7 +28,7 @@ export function OrdersDateRangeFilter() {
           variant="outline"
           size="sm"
           className={cn(
-            'w-full md:w-[220px] justify-start text-left font-normal',
+            'w-full md:w-[220px] justify-start text-left font-normal bg-muted border-neutral-800',
             !dateRange.from && !dateRange.to && 'text-muted-foreground'
           )}
         >

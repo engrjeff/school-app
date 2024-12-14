@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { formatCurrency, generateOrderNumber } from '@/lib/utils';
 import { OrderStatus } from '@prisma/client';
+import { format } from 'date-fns';
 import { ArrowLeft, Minus, Plus, TrashIcon } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
@@ -41,7 +42,7 @@ export function OrderSummary() {
   const orders = usePOSOrdersStore((state) => state.lineItems);
   const resetOrders = usePOSOrdersStore((state) => state.resetLineItems);
 
-  const [view, setView] = useState<'orders' | 'payment'>('orders');
+  const [view, setView] = useState<'orders' | 'payment' | 'details'>('orders');
 
   const [orderNumber, setOrderNumber] = useState(() => generateOrderNumber());
 
@@ -59,6 +60,8 @@ export function OrderSummary() {
   const [paymentMethod, setPaymentMethod] = useState('unpaid');
 
   const [customerName, setCustomerName] = useState('');
+
+  const [orderDate, setOrderDate] = useState('');
 
   const subtotal = orders.reduce(
     (total, line) => total + line.unitPrice * line.qty,
@@ -83,6 +86,7 @@ export function OrderSummary() {
     setOrderStatus(OrderStatus.PREPARING);
     setPaymentMethod('unpaid');
     setCustomerName('');
+    setOrderDate('');
     setShippingFee(0);
     setServiceCharge(0);
     setDiscount({ discountAmount: 0, discountCode: '', id: '' });
@@ -99,7 +103,7 @@ export function OrderSummary() {
       storeId,
       orderId: orderNumber,
       paymentMethod,
-      orderDate: new Date().toDateString(), // will add a field,
+      orderDate,
       regularAmount: subtotal,
       totalAmount: total,
       shippingFee: isNaN(shippingFee) ? 0 : shippingFee,
@@ -140,7 +144,7 @@ export function OrderSummary() {
             </ul>
           </ScrollArea>
 
-          <div className="p-4 bg-secondary/60 justify-between flex-1 flex flex-col gap-2 rounded-md mt-auto">
+          <div className="p-4 bg-secondary justify-between flex-1 flex flex-col gap-2 rounded-md mt-auto">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Subtotal</p>
               <p className="font-semibold font-mono text-right">
@@ -179,7 +183,7 @@ export function OrderSummary() {
 
           <fieldset
             disabled={createAction.isPending}
-            className="p-4 bg-secondary/60 justify-between flex-1 flex flex-col gap-2 rounded-md"
+            className="p-4 bg-secondary justify-between flex-1 flex flex-col gap-2 rounded-md"
           >
             <div className="flex items-center justify-between text-sm">
               <p className="text-muted-foreground">Subtotal</p>
@@ -267,7 +271,40 @@ export function OrderSummary() {
               onValueChange={setPaymentMethod}
             />
 
-            <div>
+            <div className="mt-auto">
+              <Button
+                type="button"
+                className="rounded-full w-full"
+                onClick={() => setView('details')}
+              >
+                Add Details
+              </Button>
+            </div>
+          </fieldset>
+        </div>
+      ) : null}
+
+      {view === 'details' ? (
+        <div className="h-full flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label="back to orders"
+              className="shrink-0"
+              onClick={() => setView('orders')}
+            >
+              <ArrowLeft size={16} aria-hidden="true" />
+            </Button>
+            <p>Order # {orderNumber}</p>
+          </div>
+
+          <fieldset
+            disabled={createAction.isPending}
+            className="p-4 bg-secondary flex-1 flex flex-col gap-2 rounded-md"
+          >
+            <div className="space-y-2">
               <Label htmlFor="customerName">
                 Customer Name{' '}
                 <span className="text-xs text-muted-foreground italic">
@@ -283,12 +320,30 @@ export function OrderSummary() {
               />
             </div>
 
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="orderDate">
+                Order Date{' '}
+                <span aria-hidden="true" className="text-red-500">
+                  *
+                </span>
+              </Label>
+              <Input
+                id="orderDate"
+                name="orderDate"
+                type="datetime-local"
+                className="w-min"
+                max={format(new Date(), 'yyyy-MM-dd') + 'T12:00'}
+                value={orderDate}
+                onChange={(e) => setOrderDate(e.currentTarget.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="order-status">Order Status</Label>
               <NativeSelect
                 id="order-status"
                 name="orderStatus"
-                className="bg-background"
+                className="bg-background w-min"
                 value={orderStatus}
                 onChange={(e) => setOrderStatus(e.currentTarget.value)}
               >
@@ -299,18 +354,19 @@ export function OrderSummary() {
                 ))}
               </NativeSelect>
             </div>
-
-            <div className="mt-auto">
-              <SubmitButton
-                type="button"
-                className="rounded-full w-full"
-                loading={createAction.isPending}
-                onClick={saveOrder}
-              >
-                Confirm Order
-              </SubmitButton>
-            </div>
           </fieldset>
+
+          <div className="mt-auto">
+            <SubmitButton
+              type="button"
+              className="rounded-full w-full"
+              loading={createAction.isPending}
+              onClick={saveOrder}
+              disabled={!orderDate}
+            >
+              Confirm Order
+            </SubmitButton>
+          </div>
         </div>
       ) : null}
     </aside>
@@ -321,7 +377,7 @@ function OrderLineItem({ line }: { line: LineItem }) {
   const store = usePOSOrdersStore();
 
   return (
-    <div className="text-sm flex items-center justify-between bg-secondary/60 py-2 px-2.5 rounded-md">
+    <div className="text-sm flex items-center justify-between bg-secondary py-2 px-2.5 rounded-md">
       <div>
         <p className="font-medium">
           {line.productName}{' '}

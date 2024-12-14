@@ -72,7 +72,7 @@ interface UsePOSOrdersStoreState {
 }
 
 export const usePOSOrdersStore = create<UsePOSOrdersStoreState>((set) => ({
-  lineItems: [],
+  lineItems: testData,
   resetLineItems: () => set((state) => ({ ...state, lineItems: [] })),
   addLineItem: (line) =>
     set((state) => ({ ...state, lineItems: [...state.lineItems, line] })),

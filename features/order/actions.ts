@@ -44,6 +44,22 @@ export const createOrder = authActionClient
       },
     });
 
+    // also update the stock of variants
+    await prisma.$transaction(
+      parsedInput.lineItems.map((variant) => {
+        return prisma.productVariant.update({
+          where: {
+            id: variant.productVariantId,
+          },
+          data: {
+            stock: {
+              decrement: variant.qty,
+            },
+          },
+        });
+      })
+    );
+
     revalidatePath(`/${parsedInput.storeId}/orders`);
 
     return {

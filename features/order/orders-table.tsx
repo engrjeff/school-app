@@ -1,42 +1,5 @@
 'use client';
 
-const formatDate = (dateString: number | string | Date) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
-
-const getPaymentStatusColor = (status: PaymentStatus) => {
-  switch (status) {
-    case PaymentStatus.PAID:
-      return 'bg-green-400/20 text-green-400';
-    case PaymentStatus.PENDING:
-      return 'bg-yellow-400/20 text-yellow-400';
-    case PaymentStatus.REFUNDED:
-      return 'bg-red-400/20 text-red-400';
-    default:
-      return 'bg-gray-400/20 text-gray-400';
-  }
-};
-const getOrderStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case OrderStatus.FULFILLED:
-      return 'bg-green-400/20 text-green-400';
-    case OrderStatus.PREPARING:
-      return 'bg-yellow-400/20 text-yellow-400';
-    case OrderStatus.READY_FOR_PICKUP:
-      return 'bg-purple-400/20 text-purple-400';
-    case OrderStatus.UNFULFILLED:
-      return 'bg-red-400/20 text-red-400';
-    default:
-      return 'bg-gray-400/20 text-gray-400';
-  }
-};
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -47,10 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatCurrency } from '@/lib/utils';
-import { OrderStatus, PaymentStatus } from '@prisma/client';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { ChevronDown, ChevronRight, MoreHorizontalIcon } from 'lucide-react';
 import { Fragment, useState } from 'react';
+import {
+  getOrderStatusColor,
+  getOrderStatusLabel,
+  getPaymentStatusColor,
+  getPaymentStatusLabel,
+} from './helpers';
 import { OrdersWithLineItems } from './queries';
 
 export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
@@ -100,7 +68,7 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                   variant="secondary"
                   className={getPaymentStatusColor(order.paymentStatus)}
                 >
-                  {order.paymentStatus}
+                  {getPaymentStatusLabel(order.paymentStatus)}
                 </Badge>
               </TableCell>
               <TableCell>
@@ -108,7 +76,7 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                   variant="secondary"
                   className={getOrderStatusColor(order.orderStatus)}
                 >
-                  {order.orderStatus}
+                  {getOrderStatusLabel(order.orderStatus)}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
@@ -132,8 +100,10 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
             {expandedRows.has(order.id) && (
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={7}>
-                  <div className="px-8 py-4 border rounded-lg">
-                    <h4 className="font-medium mb-2">Order Items</h4>
+                  <div className="py-4 px-2">
+                    <p className="font-medium mb-2 text-muted-foreground">
+                      Order Items ({order.lineItems.length})
+                    </p>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -171,6 +141,74 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                             </TableCell>
                           </TableRow>
                         ))}
+
+                        <TableRow className="border-b-0 hover:bg-background">
+                          <TableCell
+                            colSpan={3}
+                            className="text-muted-foreground text-right"
+                          >
+                            Subtotal
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(order.regularAmount)}
+                          </TableCell>
+                        </TableRow>
+                        {order.shippingFee ? (
+                          <TableRow className="border-b-0 hover:bg-background">
+                            <TableCell
+                              colSpan={3}
+                              className="text-muted-foreground text-right"
+                            >
+                              Shipping Fee
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(order.shippingFee)}
+                            </TableCell>
+                          </TableRow>
+                        ) : null}
+                        {order.serviceCharge ? (
+                          <TableRow className="border-b-0 hover:bg-background">
+                            <TableCell
+                              colSpan={3}
+                              className="text-muted-foreground text-right"
+                            >
+                              Service Charge ({order.serviceCharge}%)
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatCurrency(
+                                (order.serviceCharge / 100) *
+                                  order.regularAmount
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ) : null}
+                        {order.discount ? (
+                          <TableRow className="border-b-0 hover:bg-background">
+                            <TableCell
+                              colSpan={3}
+                              className="text-muted-foreground text-right"
+                            >
+                              Discount{' '}
+                              <span className="text-green-500 font-semibold">
+                                ({order.discount.discountCode})
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-right text-red-500">
+                              -{formatCurrency(order.discount.discountAmount)}
+                            </TableCell>
+                          </TableRow>
+                        ) : null}
+                        <TableRow className="hover:bg-background">
+                          <TableCell
+                            colSpan={3}
+                            className="text-right font-semibold border-t border-dashed"
+                          >
+                            Total
+                          </TableCell>
+                          <TableCell className="text-right border-t border-dashed">
+                            {formatCurrency(order.totalAmount)}
+                          </TableCell>
+                        </TableRow>
                       </TableBody>
                     </Table>
                   </div>

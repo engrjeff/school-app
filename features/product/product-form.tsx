@@ -15,6 +15,7 @@ import {
 import { ImageInput } from '@/components/ui/image-input';
 import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
+import { Separator } from '@/components/ui/separator';
 import { SubmitButton } from '@/components/ui/submit-button';
 import {
   Table,
@@ -27,7 +28,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusIcon, RotateCwIcon, TrashIcon, XIcon } from 'lucide-react';
+import {
+  GripVerticalIcon,
+  PlusIcon,
+  RotateCwIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -155,243 +161,274 @@ export function ProductForm({
           </div>
         </div>
 
-        <fieldset className="space-y-3 bg-gray-50 dark:bg-neutral-900/30 p-6 rounded-lg border">
-          <p className="font-semibold">General Information</p>
-          <FormField
-            control={form.control}
-            name="imageUrl"
-            render={({ field }) => (
-              <FormItem className="max-w-sm">
-                <FormLabel>Image</FormLabel>
-                <FormControl>
-                  <ImageInput
-                    className="size-20"
-                    urlValue={field.value}
-                    onValueChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Product name"
-                    autoFocus={true}
-                    {...field}
-                    onChange={(e) => {
-                      if (metaType === 'sku-only') {
-                        const name = e.currentTarget.value;
+        <Separator />
 
-                        const skuValue = generateSku(name);
+        <div className="grid grid-cols-1 lg:grid-cols-[200px,1fr] gap-8 lg:gap-20">
+          <div>
+            <p className="font-semibold">Basic Information</p>
+            <p className="text-sm text-muted-foreground">
+              Common info for this product.
+            </p>
+          </div>
+          <fieldset className="space-y-3">
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem className="max-w-sm">
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <ImageInput
+                      className="size-20"
+                      urlValue={field.value}
+                      onValueChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Product name"
+                      autoFocus={true}
+                      className="bg-muted border-border"
+                      {...field}
+                      onChange={(e) => {
+                        if (metaType === 'sku-only') {
+                          const name = e.currentTarget.value;
 
-                        form.setValue('meta.skuObject.sku', skuValue);
-                      }
+                          const skuValue = generateSku(name);
 
-                      field.onChange(e);
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Product description"
-                    rows={3}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <FormControl>
-                  <CategorySelect
-                    selectedCategoryId={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </fieldset>
-        <div className="bg-gray-50 dark:bg-neutral-900/30 p-4 rounded-lg border">
-          <FormField
-            control={form.control}
-            name="meta.type"
-            render={({ field }) => (
-              <FormItem className="flex items-center space-y-0 space-x-2 p-2 select-none">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value === 'sku-only' ? false : true}
-                    onCheckedChange={(checked) => {
-                      field.onChange(
-                        checked === true ? 'with-variants' : 'sku-only'
-                      );
-
-                      if (checked === true) {
-                        form.resetField('meta.skuObject');
-
-                        form.setValue('meta.attributes', [
-                          { name: '', options: [{ value: '' }] },
-                        ]);
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormLabel>Enable variants for this product.</FormLabel>
-              </FormItem>
-            )}
-          />
-        </div>
-        {metaType === 'sku-only' ? (
-          <fieldset className="space-y-3 bg-gray-50 dark:bg-neutral-900/30 p-6 rounded-lg border">
-            <p className="font-semibold">Pricing & SKU</p>
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="meta.skuObject.sku"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>SKU</FormLabel>
-                    <div className="relative md:w-1/2">
-                      <FormControl>
-                        <Input placeholder="SKU" {...field} />
-                      </FormControl>
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="secondary"
-                        className="absolute inset-y-1 size-7 end-1 disabled:cursor-not-allowed"
-                        title="click to generate SKU"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const skuValue = generateSku(form.watch('name'));
                           form.setValue('meta.skuObject.sku', skuValue);
-                        }}
-                      >
-                        <span className="sr-only">generate sku</span>
-                        <RotateCwIcon className="size-4" />
-                      </Button>
-                    </div>
-                    <FormDescription>Stock Keeping Unit</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:w-1/2">
-                <FormField
-                  control={form.control}
-                  name="meta.skuObject.price"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Price</FormLabel>
-                      <FormControl>
-                        <NumberInput
-                          currency="₱"
-                          placeholder="0.00"
-                          min={0}
-                          {...form.register('meta.skuObject.price', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="meta.skuObject.costPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Cost Price</FormLabel>
-                      <FormControl>
-                        <NumberInput
-                          currency="₱"
-                          placeholder="0.00"
-                          min={0}
-                          {...form.register('meta.skuObject.costPrice', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="meta.skuObject.stock"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Stock</FormLabel>
-                      <FormControl>
-                        <NumberInput
-                          placeholder="0"
-                          min={0}
-                          {...form.register('meta.skuObject.stock', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="meta.skuObject.lowStockThreshold"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Low Stock Threshold</FormLabel>
-                      <FormControl>
-                        <NumberInput
-                          placeholder="0"
-                          min={0}
-                          {...form.register(
-                            'meta.skuObject.lowStockThreshold',
-                            {
-                              valueAsNumber: true,
-                            }
-                          )}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+                        }
+
+                        field.onChange(e);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Product description"
+                      className="bg-muted border-border"
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <CategorySelect
+                      selectedCategoryId={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </fieldset>
-        ) : (
-          <AttributeFields />
-        )}
+
+          <div>
+            <p className="font-semibold">Pricing & Variants</p>
+            <p className="text-sm text-muted-foreground">
+              This is where product pricing & variants are defined.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <FormField
+              control={form.control}
+              name="meta.type"
+              render={({ field }) => (
+                <FormItem className="flex items-center space-y-0 space-x-2 p-2 select-none">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value === 'sku-only' ? false : true}
+                      onCheckedChange={(checked) => {
+                        field.onChange(
+                          checked === true ? 'with-variants' : 'sku-only'
+                        );
+
+                        if (checked === true) {
+                          form.resetField('meta.skuObject');
+
+                          form.setValue('meta.attributes', [
+                            { name: '', options: [{ value: '' }] },
+                          ]);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormLabel>Enable variants for this product.</FormLabel>
+                </FormItem>
+              )}
+            />
+            {metaType === 'sku-only' ? (
+              <fieldset className="space-y-3">
+                <p className="font-semibold">Pricing & SKU</p>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="meta.skuObject.sku"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>SKU</FormLabel>
+                        <div className="relative md:w-1/2">
+                          <FormControl>
+                            <Input
+                              placeholder="SKU"
+                              className="bg-muted border-border"
+                              {...field}
+                            />
+                          </FormControl>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="secondary"
+                            className="absolute inset-y-1 size-7 end-1 disabled:cursor-not-allowed"
+                            title="click to generate SKU"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const skuValue = generateSku(form.watch('name'));
+                              form.setValue('meta.skuObject.sku', skuValue);
+                            }}
+                          >
+                            <span className="sr-only">generate sku</span>
+                            <RotateCwIcon className="size-4" />
+                          </Button>
+                        </div>
+                        <FormDescription>Stock Keeping Unit</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:w-1/2">
+                    <FormField
+                      control={form.control}
+                      name="meta.skuObject.price"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Price</FormLabel>
+                          <FormControl>
+                            <NumberInput
+                              currency="₱"
+                              placeholder="0.00"
+                              className="bg-muted border-border"
+                              min={0}
+                              {...form.register('meta.skuObject.price', {
+                                valueAsNumber: true,
+                              })}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="meta.skuObject.costPrice"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Cost Price</FormLabel>
+                          <FormControl>
+                            <NumberInput
+                              currency="₱"
+                              placeholder="0.00"
+                              className="bg-muted border-border"
+                              min={0}
+                              {...form.register('meta.skuObject.costPrice', {
+                                valueAsNumber: true,
+                              })}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="meta.skuObject.stock"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Stock</FormLabel>
+                          <FormControl>
+                            <NumberInput
+                              placeholder="0"
+                              min={0}
+                              className="bg-muted border-border"
+                              {...form.register('meta.skuObject.stock', {
+                                valueAsNumber: true,
+                              })}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="meta.skuObject.lowStockThreshold"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Low Stock Threshold</FormLabel>
+                          <FormControl>
+                            <NumberInput
+                              placeholder="0"
+                              min={0}
+                              className="bg-muted border-border"
+                              {...form.register(
+                                'meta.skuObject.lowStockThreshold',
+                                {
+                                  valueAsNumber: true,
+                                }
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              </fieldset>
+            ) : (
+              <AttributeFields />
+            )}
+          </div>
+        </div>
 
         <VariantSkusFields
-          key={JSON.stringify(form.watch('meta.attributes'))}
+          key={
+            JSON.stringify(form.watch('meta.attributes')) +
+            '-' +
+            form.watch('name')
+          }
         />
 
         <div className="flex items-center gap-4 justify-end pt-6">
@@ -463,7 +500,7 @@ function AttributeFields() {
     attributes.remove(attrIndex);
   }
   return (
-    <fieldset className="space-y-3 bg-gray-50 dark:bg-neutral-900/30 p-6 rounded-lg border">
+    <fieldset className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="font-semibold">Attributes</p>
         {attributes.fields.length < 2 ? (
@@ -480,28 +517,31 @@ function AttributeFields() {
       </div>
       {attributes.fields.map((attribute, attrIndex) => (
         <ul key={`attribute-${attribute.id}`}>
-          <li className="border p-4 pt-3 rounded-md relative">
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              className="size-7 absolute top-1 right-1"
-              aria-label="remove variant"
-              disabled={attributes.fields.length === 1}
-              onClick={() => deleteAttribute(attrIndex)}
-            >
-              <XIcon strokeWidth={2} aria-hidden="true" />
-            </Button>
+          <li className="pr-1">
             <FormField
               control={form.control}
               name={`meta.attributes.${attrIndex}.name`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Attribute Name</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Attribute Name</FormLabel>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="link"
+                      aria-label="remove variant"
+                      className="text-red-500"
+                      disabled={attributes.fields.length === 1}
+                      onClick={() => deleteAttribute(attrIndex)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                   <FormControl>
                     <Input
                       list="common-attribute-names"
                       placeholder="Attribute name"
+                      className="bg-muted border-border"
                       {...field}
                       autoFocus={true}
                     />
@@ -601,7 +641,7 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
   }
 
   return (
-    <ul className="space-y-2 pt-4 pl-4">
+    <ul className="space-y-2 py-4 ml-3 pl-3 border-l border-dashed">
       <li>
         <p className="text-sm">
           Options{' '}
@@ -620,7 +660,7 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
           />
         </li>
       ))}
-      <li>
+      <li className="pt-4">
         <Button type="button" size="sm" variant="secondary" onClick={addOption}>
           <PlusIcon /> Add Option
         </Button>
@@ -643,33 +683,47 @@ function AttributeOptionItem({
   const form = useFormContext<CreateProductInputs>();
 
   return (
-    <FormField
-      control={form.control}
-      name={`meta.attributes.${attributeIndex}.options.${optionIndex}.value`}
-      render={({ field }) => (
-        <FormItem className="space-y-0">
-          <FormLabel className="sr-only">Option Name</FormLabel>
-          <FormControl>
-            <div className="relative">
-              <Input placeholder="Small" {...field} />
-              <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                className="absolute inset-y-1 size-7 end-1 disabled:cursor-not-allowed"
-                aria-label="delete"
-                disabled={disabledDelete}
-                onClick={onDeleteClick}
-                tabIndex={-1}
-              >
-                <TrashIcon size={16} strokeWidth={2} aria-hidden="true" />
-              </Button>
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        aria-label="drag to reorder"
+        className="cursor-grab"
+        disabled
+      >
+        <GripVerticalIcon size={16} className="size-4" />
+      </button>
+      <FormField
+        control={form.control}
+        name={`meta.attributes.${attributeIndex}.options.${optionIndex}.value`}
+        render={({ field }) => (
+          <FormItem className="space-y-0 flex-1">
+            <FormLabel className="sr-only">Option Name</FormLabel>
+            <FormControl>
+              <div className="relative">
+                <Input
+                  placeholder="Small"
+                  className="bg-muted border-border"
+                  {...field}
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="absolute inset-y-1 size-7 end-1 disabled:cursor-not-allowed"
+                  aria-label="delete"
+                  disabled={disabledDelete}
+                  onClick={onDeleteClick}
+                  tabIndex={-1}
+                >
+                  <TrashIcon size={16} strokeWidth={2} aria-hidden="true" />
+                </Button>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
   );
 }
 
@@ -741,97 +795,111 @@ function VariantSkusFields() {
   if (!variants?.fields?.length) return null;
 
   return (
-    <Table containerClass="border rounded-lg">
-      <TableHeader>
-        <TableRow className="bg-muted/30 hover:bg-muted/30">
-          <TableHead className="w-[80px] text-center border-r">
-            {validAttributes[0].name}
-          </TableHead>
-          {validAttributes[1]?.name && (
+    <>
+      <p className="font-semibold mb-3">Variants</p>
+      <Table
+        containerClass="border bg-muted/30 rounded-lg w-full flex-1 overflow-auto"
+        className="w-full overflow-auto"
+      >
+        <TableHeader>
+          <TableRow className="bg-muted/30 hover:bg-muted/30">
             <TableHead className="w-[80px] text-center border-r">
-              {validAttributes[1].name}
+              {validAttributes[0].name}
             </TableHead>
-          )}
-          <TableHead className="w-[110px] border-r">Price</TableHead>
-          <TableHead className="w-[110px] border-r">Cost</TableHead>
-          <TableHead className="w-[90px] border-r">Stock</TableHead>
-          <TableHead className="w-[90px] border-r">Low Stock At</TableHead>
-          <TableHead className="w-[140px]">SKU</TableHead>
-        </TableRow>
-      </TableHeader>
+            {validAttributes[1]?.name && (
+              <TableHead className="w-[80px] text-center border-r">
+                {validAttributes[1].name}
+              </TableHead>
+            )}
+            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+              Price
+            </TableHead>
+            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+              Cost
+            </TableHead>
+            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+              Stock
+            </TableHead>
+            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+              Low Stock At
+            </TableHead>
+            <TableHead className="w-[140px] max-w-[220px]">SKU</TableHead>
+          </TableRow>
+        </TableHeader>
 
-      <TableBody>
-        {validAttributes.at(1)?.options.length
-          ? variants.fields?.map((variant, varIndex) => {
-              const attr2OptionsLen =
-                validAttributes.at(1)?.options?.length ?? 0;
+        <TableBody>
+          {validAttributes.at(1)?.options.length
+            ? variants.fields?.map((variant, varIndex) => {
+                const attr2OptionsLen =
+                  validAttributes.at(1)?.options?.length ?? 0;
 
-              return (
-                <Fragment key={`variant-item-${variant.sku}-${varIndex}`}>
-                  <TableRow className="hover:bg-transparent">
-                    {varIndex % attr2OptionsLen === 0 ? (
-                      <TableCell
-                        className="border-r text-center"
-                        rowSpan={attr2OptionsLen}
-                      >
-                        <div className="flex flex-col gap-2 items-center justify-center">
-                          <span>{variant.attr1}</span>
-                          <FormField
-                            control={form.control}
-                            name={`meta.variants.${varIndex}.imageUrl`}
-                            render={({ field }) => (
-                              <FormItem className="max-w-sm flex flex-col items-center justify-center">
-                                <FormControl>
-                                  <ImageInput
-                                    urlValue={field.value}
-                                    onValueChange={field.onChange}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
+                return (
+                  <Fragment key={`variant-item-${variant.sku}-${varIndex}`}>
+                    <TableRow className="hover:bg-transparent">
+                      {varIndex % attr2OptionsLen === 0 ? (
+                        <TableCell
+                          className="border-r text-center"
+                          rowSpan={attr2OptionsLen}
+                        >
+                          <div className="flex flex-col gap-2 items-center justify-center">
+                            <span>{variant.attr1}</span>
+                            <FormField
+                              control={form.control}
+                              name={`meta.variants.${varIndex}.imageUrl`}
+                              render={({ field }) => (
+                                <FormItem className="max-w-sm flex flex-col items-center justify-center">
+                                  <FormControl>
+                                    <ImageInput
+                                      urlValue={field.value}
+                                      onValueChange={field.onChange}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        </TableCell>
+                      ) : null}
+
+                      <TableCell className="border-r text-center">
+                        {variant.attr2}
                       </TableCell>
-                    ) : null}
-
+                      <VariantFields variantItemIndex={varIndex} />
+                    </TableRow>
+                  </Fragment>
+                );
+              })
+            : variants.fields?.map((variant, varIndex) => (
+                <Fragment key={`variant-item-${variant.attr1}-${varIndex}`}>
+                  <TableRow className="hover:bg-transparent">
                     <TableCell className="border-r text-center">
-                      {variant.attr2}
+                      <div className="flex flex-col gap-2 items-center justify-center">
+                        <span>{variant.attr1}</span>
+                        <FormField
+                          control={form.control}
+                          name={`meta.variants.${varIndex}.imageUrl`}
+                          render={({ field }) => (
+                            <FormItem className="max-w-sm flex flex-col items-center justify-center">
+                              <FormControl>
+                                <ImageInput
+                                  urlValue={field.value}
+                                  onValueChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </TableCell>
                     <VariantFields variantItemIndex={varIndex} />
                   </TableRow>
                 </Fragment>
-              );
-            })
-          : variants.fields?.map((variant, varIndex) => (
-              <Fragment key={`variant-item-${variant.attr1}-${varIndex}`}>
-                <TableRow className="hover:bg-transparent">
-                  <TableCell className="border-r text-center">
-                    <div className="flex flex-col gap-2 items-center justify-center">
-                      <span>{variant.attr1}</span>
-                      <FormField
-                        control={form.control}
-                        name={`meta.variants.${varIndex}.imageUrl`}
-                        render={({ field }) => (
-                          <FormItem className="max-w-sm flex flex-col items-center justify-center">
-                            <FormControl>
-                              <ImageInput
-                                urlValue={field.value}
-                                onValueChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </TableCell>
-                  <VariantFields variantItemIndex={varIndex} />
-                </TableRow>
-              </Fragment>
-            ))}
-      </TableBody>
-    </Table>
+              ))}
+        </TableBody>
+      </Table>
+    </>
   );
 }
 
@@ -851,6 +919,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   aria-label="price"
                   currency="₱"
                   placeholder="0.00"
+                  className="bg-muted border-border"
                   min={0}
                   {...form.register(`meta.variants.${variantItemIndex}.price`, {
                     valueAsNumber: true,
@@ -873,6 +942,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   aria-label="cost price"
                   currency="₱"
                   placeholder="0.00"
+                  className="bg-muted border-border"
                   min={0}
                   {...form.register(
                     `meta.variants.${variantItemIndex}.costPrice`,
@@ -898,6 +968,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   aria-label="stock"
                   placeholder="0"
                   min={0}
+                  className="bg-muted border-border"
                   noDecimal
                   {...form.register(`meta.variants.${variantItemIndex}.stock`, {
                     valueAsNumber: true,
@@ -921,6 +992,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   aria-label="low stock threshold"
                   placeholder="0"
                   min={0}
+                  className="bg-muted border-border"
                   noDecimal
                   {...form.register(
                     `meta.variants.${variantItemIndex}.lowStockThreshold`,
@@ -943,7 +1015,12 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input aria-label="sku" placeholder="SKU" {...field} />
+                <Input
+                  aria-label="sku"
+                  placeholder="SKU"
+                  className="bg-muted border-border"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

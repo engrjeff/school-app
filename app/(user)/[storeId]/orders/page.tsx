@@ -18,7 +18,7 @@ async function OrdersPage({ params }: { params: { storeId: string } }) {
     <div className="container max-w-5xl flex flex-col gap-6 flex-1">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-semibold">Orders</h1>
+          <h1 className="font-semibold">Orders ({orders.length})</h1>
           <p className="text-sm text-muted-foreground">
             {"View, create, and manage your store's orders."}
           </p>
@@ -30,7 +30,7 @@ async function OrdersPage({ params }: { params: { storeId: string } }) {
 
       <div className="flex items-center justify-end gap-2">
         <SearchField
-          className="w-[300px] bg-muted/30"
+          className="w-[300px] bg-muted"
           placeholder="Search orders"
         />
         <div className="flex items-center justify-end gap-2">

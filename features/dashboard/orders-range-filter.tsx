@@ -9,10 +9,28 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { CircleDashedIcon } from 'lucide-react';
-import { orderStatuses } from './helpers';
+import { CalendarIcon } from 'lucide-react';
 
-export function OrderStatusFilter() {
+const ranges = [
+  {
+    value: 'this-week',
+    label: 'This week',
+  },
+  {
+    value: 'this-month',
+    label: 'This month',
+  },
+  {
+    value: 'this-year',
+    label: 'This year',
+  },
+  {
+    value: 'last-year',
+    label: 'Last year',
+  },
+];
+
+export function OrdersRangeFilter() {
   return (
     <div className="flex flex-col gap-4">
       <Popover>
@@ -22,27 +40,27 @@ export function OrderStatusFilter() {
             size="sm"
             className="bg-muted border-neutral-800"
           >
-            <CircleDashedIcon size={16} strokeWidth={2} aria-hidden="true" />{' '}
-            Status
+            <CalendarIcon size={16} strokeWidth={2} aria-hidden="true" /> Select
+            Range
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-3 w-52" align="end">
-          <div className="space-y-3">
+        <PopoverContent className="p-0 w-52 border-neutral-800" align="end">
+          <div className="space-y-3 p-3 bg-muted/90">
             <div className="text-xs font-medium text-muted-foreground">
-              Order Status
+              Select Range
             </div>
             <form className="space-y-1">
-              {orderStatuses.map((status) => (
+              {ranges.map((range) => (
                 <div
-                  key={`order-status-${status.status}`}
-                  className="flex items-center gap-2 hover:bg-muted py-1.5 rounded-md px-1.5 -ml-1.5"
+                  key={`range-${range.value}`}
+                  className="flex items-center gap-2 hover:bg-primary/20 py-1.5 rounded-md px-1.5 -ml-1.5"
                 >
-                  <Checkbox id={`order-status-${status.status}`} />
+                  <Checkbox id={`range-${range.value}`} />
                   <Label
-                    htmlFor={`order-status-${status.status}`}
-                    className="font-normal"
+                    htmlFor={`range-${range.value}`}
+                    className="font-normal w-full"
                   >
-                    {status.label}
+                    {range.label}
                   </Label>
                 </div>
               ))}

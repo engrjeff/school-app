@@ -41,7 +41,7 @@ export function CategorySelect({
           role="combobox"
           disabled={categoriesData.isLoading}
           aria-expanded={open}
-          className="justify-between w-full"
+          className="justify-between w-full border-border bg-muted"
         >
           {selectedCategoryId
             ? categoriesData?.data?.find(
