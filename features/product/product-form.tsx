@@ -798,8 +798,8 @@ function VariantSkusFields() {
     <>
       <p className="font-semibold mb-3">Variants</p>
       <Table
-        containerClass="border bg-muted/30 rounded-lg w-full flex-1 overflow-auto"
-        className="w-full overflow-auto"
+        containerClass="border bg-muted/30 rounded-lg w-full h-auto"
+        className="mb-0"
       >
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">

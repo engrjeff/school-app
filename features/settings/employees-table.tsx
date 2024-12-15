@@ -13,7 +13,7 @@ import {
 export function EmployeesTable() {
   return (
     <>
-      <Table containerClass="border rounded-lg flex-none">
+      <Table containerClass="border rounded-lg">
         <TableHeader>
           <TableRow>
             <TableHead className="w-9 text-center">#</TableHead>

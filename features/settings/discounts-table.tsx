@@ -1,3 +1,4 @@
+import { EmptyView } from '@/components/empty-view';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -20,10 +21,15 @@ export async function DiscountsTable({ storeId }: { storeId: string }) {
   return (
     <>
       <div className="flex items-center justify-between mb-2">
-        <p className="font-semibold text-sm">Discounts</p>
+        <div>
+          <p className="font-semibold text-sm">Discounts</p>
+          <p className="text-muted-foreground text-sm">
+            Set store discount codes.
+          </p>
+        </div>
         <DiscountForm />
       </div>
-      <Table containerClass="border rounded-lg flex-none">
+      <Table containerClass="border rounded-lg flex-nonel">
         <TableHeader>
           <TableRow>
             <TableHead className="w-9 text-center">#</TableHead>
@@ -34,32 +40,40 @@ export async function DiscountsTable({ storeId }: { storeId: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {discounts.map((code, n) => (
-            <TableRow key={`discount-${code.id}`}>
-              <TableCell className="text-center">{n + 1}</TableCell>
-              <TableCell>
-                <Badge className="font-mono">{code.discountCode}</Badge>
-              </TableCell>
-              <TableCell>{formatCurrency(code.discountAmount)}</TableCell>
-              <TableCell>
-                <div className="flex items-center justify-center space-x-2">
-                  <Switch
-                    id="discount-active"
-                    className="data-[state=unchecked]:bg-border"
-                    defaultChecked={code.isValid}
-                  />
-                  <Label htmlFor="discount-active" className="sr-only">
-                    Is valid?
-                  </Label>
-                </div>
-              </TableCell>
-              <TableCell className="text-center">
-                <Button size="sm" variant="link" className="text-blue-500">
-                  Edit
-                </Button>
+          {!discounts.length ? (
+            <TableRow>
+              <TableCell colSpan={5} className="p-0">
+                <EmptyView />
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            discounts.map((code, n) => (
+              <TableRow key={`discount-${code.id}`}>
+                <TableCell className="text-center">{n + 1}</TableCell>
+                <TableCell>
+                  <Badge className="font-mono">{code.discountCode}</Badge>
+                </TableCell>
+                <TableCell>{formatCurrency(code.discountAmount)}</TableCell>
+                <TableCell>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Switch
+                      id="discount-active"
+                      className="data-[state=unchecked]:bg-border"
+                      defaultChecked={code.isValid}
+                    />
+                    <Label htmlFor="discount-active" className="sr-only">
+                      Is valid?
+                    </Label>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <Button size="sm" variant="link" className="text-blue-500">
+                    Edit
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </>

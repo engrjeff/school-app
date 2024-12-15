@@ -1,3 +1,4 @@
+import { Pagination } from '@/components/pagination';
 import { SearchField } from '@/components/ui/search-field';
 import { OrderStatusFilter } from '@/features/order/orders-status-filter';
 import { OrdersTable } from '@/features/order/orders-table';
@@ -18,7 +19,10 @@ async function OrdersPage({
   params: { storeId: string };
   searchParams?: Omit<GetOrdersArgs, 'storeId'>;
 }) {
-  const orders = await getOrders({ storeId: params.storeId, ...searchParams });
+  const { orders, pageInfo } = await getOrders({
+    storeId: params.storeId,
+    ...searchParams,
+  });
 
   return (
     <div className="container max-w-5xl flex flex-col gap-6 flex-1">
@@ -34,12 +38,12 @@ async function OrdersPage({
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center gap-2">
         <SearchField
-          className="w-[300px] bg-muted"
-          placeholder="Search orders"
+          className="w-[300px] bg-muted border-border"
+          placeholder="Search order number"
         />
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center ml-auto gap-2">
           <RangePresetFilter />
           <OrderStatusFilter />
           <PaymentStatusFilter />
@@ -47,6 +51,8 @@ async function OrdersPage({
       </div>
 
       <OrdersTable orders={orders} />
+
+      <Pagination pageInfo={pageInfo} />
     </div>
   );
 }

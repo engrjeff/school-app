@@ -48,7 +48,7 @@ export function SearchField({
 
   return (
     <form
-      className="relative w-full"
+      className={cn('relative w-full', className)}
       autoComplete="off"
       onSubmit={(e) => {
         e.preventDefault();
@@ -85,7 +85,7 @@ export function SearchField({
 
       {query ? (
         <button
-          className="text-muted-foreground/80 ring-offset-background hover:text-foreground focus-visible:border-ring focus-visible:text-foreground focus-visible:ring-ring/30 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg transition-shadow focus-visible:border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-muted-foreground ring-offset-background hover:text-foreground focus-visible:border-ring focus-visible:text-foreground focus-visible:ring-ring/30 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg transition-shadow focus-visible:border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="clear search"
           type="button"
           onClick={() => {
@@ -106,7 +106,7 @@ export function SearchField({
         </button>
       ) : (
         <button
-          className="text-muted-foreground/80 ring-offset-background hover:text-foreground focus-visible:border-ring focus-visible:text-foreground focus-visible:ring-ring/30 absolute inset-y-0 end-0 hidden h-full w-9 items-center justify-center rounded-e-lg transition-shadow focus-visible:border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-muted-foreground ring-offset-background hover:text-foreground focus-visible:border-ring focus-visible:text-foreground focus-visible:ring-ring/30 absolute inset-y-0 end-0 hidden h-full w-9 items-center justify-center rounded-e-lg transition-shadow focus-visible:border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Submit search"
           type="submit"
         >

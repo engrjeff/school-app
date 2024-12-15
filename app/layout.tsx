@@ -1,4 +1,4 @@
-import { ClerkProvider, SignInButton, SignedOut } from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import NextTopLoader from 'nextjs-toploader';
@@ -38,7 +38,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased h-full`}
         >
           <NextTopLoader color="#2563eb" />
           <ThemeProvider
@@ -49,9 +49,6 @@ export default function RootLayout({
           >
             <NuqsAdapter>
               <ReactQueryProvider>
-                <SignedOut>
-                  <SignInButton />
-                </SignedOut>
                 {children}
                 <Toaster richColors />
               </ReactQueryProvider>

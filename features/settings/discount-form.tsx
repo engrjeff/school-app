@@ -59,7 +59,7 @@ function FormComponent({ onAfterSave }: { onAfterSave: () => void }) {
   const storeId = useStoreId();
 
   const form = useForm<DiscountInputs>({
-    mode: 'onBlur',
+    mode: 'onSubmit',
     resolver: zodResolver(discountSchema),
     defaultValues: {
       storeId,
@@ -124,7 +124,7 @@ function FormComponent({ onAfterSave }: { onAfterSave: () => void }) {
           <FormField
             control={form.control}
             name="discountAmount"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>Amount</FormLabel>
                 <FormControl>

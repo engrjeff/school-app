@@ -1,5 +1,7 @@
 'use client';
 
+import { usePageState } from '@/components/pagination';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -9,7 +11,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { DateRangePreset } from '@/lib/utils';
+import { cn, DateRangePreset } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useState } from 'react';
@@ -59,6 +61,10 @@ export function RangePresetFilter() {
 
   const [selected, setSelected] = useState<string>(presetQuery);
 
+  const [page, setPage] = usePageState();
+
+  const activeFilter = presets.find((p) => p.value === presetQuery)?.label;
+
   return (
     <div className="flex flex-col gap-4">
       <Popover open={open} onOpenChange={setOpen}>
@@ -66,10 +72,15 @@ export function RangePresetFilter() {
           <Button
             variant="outline"
             size="sm"
-            className="bg-muted border-neutral-800"
+            className={cn(
+              'bg-muted border-neutral-800',
+              activeFilter ? 'pr-1' : ''
+            )}
           >
-            <CalendarIcon size={16} strokeWidth={2} aria-hidden="true" /> Date
-            Range
+            <CalendarIcon size={16} strokeWidth={2} aria-hidden="true" /> Range{' '}
+            {activeFilter ? (
+              <Badge variant="filter">{activeFilter}</Badge>
+            ) : null}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-3 w-52" align="end">
@@ -94,7 +105,7 @@ export function RangePresetFilter() {
                   />
                   <Label
                     htmlFor={`date-range-preset-${preset.value}`}
-                    className="font-normal w-full cursor-pointer"
+                    className="font-normal h-full w-full cursor-pointer"
                   >
                     {preset.label}
                   </Label>
@@ -124,6 +135,10 @@ export function RangePresetFilter() {
                   onClick={() => {
                     setPresetQuery(selected);
                     setOpen(false);
+
+                    if (page) {
+                      setPage(null);
+                    }
                   }}
                 >
                   Apply

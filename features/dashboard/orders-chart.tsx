@@ -27,7 +27,7 @@ import {
   SparklesIcon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { OrdersRangeFilter } from './orders-range-filter';
+import { RangePresetFilter } from '../order/range-preset-filters';
 
 const chartData = [
   { month: 'January', orders: 186 },
@@ -63,7 +63,7 @@ export function OrdersChart() {
           <CardDescription>January - December 2024</CardDescription>
         </div>
         <div>
-          <OrdersRangeFilter />
+          <RangePresetFilter />
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-[1fr,320px] gap-4 pr-0 pb-0">

@@ -151,3 +151,10 @@ export function getDateRange(preset: DateRangePreset): {
 export function calcPercentDiff(v1: number, v2: number) {
   return (Math.abs(v1 - v2) / ((v1 + v2) / 2)) * 100;
 }
+
+export function getSkip({ limit, page }: { limit?: number; page?: number }) {
+  const _limit = limit ?? 12;
+  const _page = page ?? 1;
+
+  return _limit * (_page - 1);
+}

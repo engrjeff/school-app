@@ -74,7 +74,7 @@ export function GoalsForm({ store }: { store: Store }) {
             <FormField
               control={form.control}
               name="salesGoalValue"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Sales</FormLabel>
                   <FormControl>
@@ -98,7 +98,7 @@ export function GoalsForm({ store }: { store: Store }) {
             <FormField
               control={form.control}
               name="ordersGoalValue"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Orders</FormLabel>
                   <FormControl>

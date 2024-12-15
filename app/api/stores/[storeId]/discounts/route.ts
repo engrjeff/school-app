@@ -12,6 +12,7 @@ export async function GET(
     const discounts = await prisma.discount.findMany({
       where: {
         storeId: params.storeId,
+        isValid: true,
       },
     });
 
