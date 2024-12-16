@@ -84,7 +84,7 @@ export function StoreForm() {
     if (result?.data?.store.id) {
       toast.success("Store saved")
 
-      router.replace(`/${result.data.store.id}/dashboard`)
+      window.location.href = `/${result.data.store.id}/dashboard`
     }
   }
 

@@ -1,55 +1,55 @@
-'use client';
+"use client"
 
-import { Form } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Store } from "@prisma/client"
+import { useAction } from "next-safe-action/hooks"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import {
+  Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { NumberInput } from '@/components/ui/number-input';
-import { SubmitButton } from '@/components/ui/submit-button';
+} from "@/components/ui/form"
+import { NumberInput } from "@/components/ui/number-input"
+import { SubmitButton } from "@/components/ui/submit-button"
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Store } from '@prisma/client';
-import { useAction } from 'next-safe-action/hooks';
-import { toast } from 'sonner';
-import { setStoreGoals } from '../store/actions';
-import { SetGoalsInputs, setGoalsSchema } from '../store/schema';
+import { setStoreGoals } from "../store/actions"
+import { SetGoalsInputs, setGoalsSchema } from "../store/schema"
 
 export function GoalsForm({ store }: { store: Store }) {
   const form = useForm<SetGoalsInputs>({
-    mode: 'onBlur',
+    mode: "onBlur",
     resolver: zodResolver(setGoalsSchema),
     defaultValues: {
       storeId: store.id,
       salesGoalValue: store.salesGoalValue ?? 0,
       ordersGoalValue: store.ordersGoalValue ?? 0,
     },
-  });
+  })
 
   const action = useAction(setStoreGoals, {
     onError: ({ error }) => {
       toast.error(
         error.serverError ??
-          'An error occured in saving the goals. Please try again.'
-      );
+          "An error occured in saving the goals. Please try again."
+      )
     },
-  });
+  })
 
   function onError(errors: typeof form.formState.errors) {
-    console.log(errors);
+    console.log(errors)
   }
 
   async function onSubmit(values: SetGoalsInputs) {
-    const result = await action.executeAsync(values);
+    const result = await action.executeAsync(values)
 
     if (result?.data?.store?.id) {
-      toast.success('Store goals saved!');
+      toast.success("Store goals saved!")
     }
   }
 
@@ -82,7 +82,8 @@ export function GoalsForm({ store }: { store: Store }) {
                       placeholder="0.00"
                       currency="Php"
                       className="bg-muted border-border"
-                      {...form.register('salesGoalValue', {
+                      autoFocus
+                      {...form.register("salesGoalValue", {
                         valueAsNumber: true,
                       })}
                     />
@@ -106,7 +107,7 @@ export function GoalsForm({ store }: { store: Store }) {
                       noDecimal
                       placeholder="0"
                       className="bg-muted border-border"
-                      {...form.register('ordersGoalValue', {
+                      {...form.register("ordersGoalValue", {
                         valueAsNumber: true,
                       })}
                     />
@@ -128,5 +129,5 @@ export function GoalsForm({ store }: { store: Store }) {
         </form>
       </Form>
     </>
-  );
+  )
 }
