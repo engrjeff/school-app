@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeft, ArrowRight, CheckIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
@@ -27,8 +26,6 @@ import { SuggestedCategoriesPicker } from "./suggested-categories-picker"
 
 export function StoreForm() {
   const [step, setStep] = useState(1)
-
-  const router = useRouter()
 
   const createAction = useAction(createStore, {
     onError: ({ error }) => {
