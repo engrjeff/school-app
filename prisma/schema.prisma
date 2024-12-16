@@ -35,9 +35,9 @@ model Store {
   salesGoalValue  Float? @default(0)
   ordersGoalValue Int?   @default(0)
 
-  products Product[]
-
-  variants ProductVariant[]
+  categories Category[]
+  products   Product[]
+  variants   ProductVariant[]
 
   orders        Order[]
   employees     Employee[]
@@ -53,6 +53,9 @@ model Store {
 model Category {
   id   String @id @default(cuid())
   name String @unique
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,8 +164,13 @@ model ProductAttributeValue {
   @@index([attributeValueId])
 }
 
+enum EmployeeStatus {
+  INVITED
+  ACTIVE
+  INACIVE
+}
+
 // employee
-// every time a user is created, one employee should be created automatically
 model Employee {
   id String @id @default(cuid())
 
@@ -171,18 +179,23 @@ model Employee {
   storeId String
   store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 
+  avatarUrl     String?
+  email         String
+  username      String
   name          String
+  contactNumber String
   pin           String // should be hashed
-  isActive      Boolean @default(true)
+  status        EmployeeStatus @default(INVITED)
   handledOrders Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([storeId, name])
+  @@unique([storeId, email])
+  @@unique([storeId, username])
   @@index([employerId])
   @@index([storeId])
-  @@index([isActive])
+  @@index([status])
 }
 
 // orders
