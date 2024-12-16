@@ -1,4 +1,7 @@
-import { Checkbox } from '@/components/ui/checkbox';
+import Link from "next/link"
+import { ImagePlusIcon } from "lucide-react"
+
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -6,42 +9,39 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { ImagePlusIcon, InboxIcon } from 'lucide-react';
-import Link from 'next/link';
-import { ProductRowActions } from './product-row-actions';
-import { getProducts } from './queries';
+} from "@/components/ui/table"
+import { EmptyView } from "@/components/empty-view"
+
+import { ProductRowActions } from "./product-row-actions"
+import { getProducts } from "./queries"
 
 function getTotalStock(stockArray: number[]) {
-  const stockTotal = stockArray.reduce((sum, item) => sum + item, 0);
+  const stockTotal = stockArray.reduce((sum, item) => sum + item, 0)
 
   if (stockTotal === 0)
-    return <span className="text-red-500">Out of Stock</span>;
+    return <span className="text-red-500">Out of Stock</span>
 
-  return <span>{stockTotal} in stock</span>;
+  return <span>{stockTotal} in stock</span>
 }
 
 function getPriceRange(prices: number[]) {
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
+  const min = Math.min(...prices)
+  const max = Math.max(...prices)
 
-  if (min === max) return `₱ ${min.toFixed(2)}`;
+  if (min === max) return `₱ ${min.toFixed(2)}`
 
-  return `₱ ${min.toFixed(2)} - ₱ ${max.toFixed(2)}`;
+  return `₱ ${min.toFixed(2)} - ₱ ${max.toFixed(2)}`
 }
 
 export async function ProductList({ storeId }: { storeId: string }) {
-  const products = await getProducts(storeId);
+  const products = await getProducts(storeId)
 
   if (!products.length)
     return (
       <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed">
-        <InboxIcon size={64} strokeWidth={1} />
-        <p className="text-muted-foreground text-center text-sm">
-          You have no products listed yet.
-        </p>
+        <EmptyView />
       </div>
-    );
+    )
 
   return (
     <Table containerClass="border rounded-lg flex-1">
@@ -73,7 +73,7 @@ export async function ProductList({ storeId }: { storeId: string }) {
                 <Link href="#" className="hover:text-blue-500 hover:underline">
                   {product.name}
                 </Link>
-              </div>{' '}
+              </div>{" "}
             </TableCell>
             <TableCell>{product.category.name}</TableCell>
             <TableCell>
@@ -92,5 +92,5 @@ export async function ProductList({ storeId }: { storeId: string }) {
         ))}
       </TableBody>
     </Table>
-  );
+  )
 }

@@ -1,7 +1,12 @@
-'use client';
+"use client"
 
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import Link from "next/link"
+import { ArrowRightIcon, ImagePlusIcon } from "lucide-react"
+
+import { formatCurrency } from "@/lib/utils"
+import { useKPIs } from "@/hooks/use-kpis"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -9,21 +14,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useKPIs } from '@/hooks/use-kpis';
-import { formatCurrency } from '@/lib/utils';
-import { ArrowRightIcon, ImagePlusIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@/components/ui/table"
+import { EmptyView } from "@/components/empty-view"
 
 export function TopProducts() {
-  const kpiQuery = useKPIs();
+  const kpiQuery = useKPIs()
 
   if (kpiQuery.isLoading)
     return (
       <Card>
         <Skeleton className="bg-muted h-[600px] animate-pulse" />
       </Card>
-    );
+    )
 
   return (
     <Card className="bg-muted rounded-lg border">
@@ -66,10 +68,10 @@ export function TopProducts() {
                         {orderItem.productName}
                       </Link>
                       <p className="text-muted-foreground text-xs">
-                        {orderItem.attributes.map((a) => a.value).join(', ')}
+                        {orderItem.attributes.map((a) => a.value).join(", ")}
                       </p>
                     </div>
-                  </div>{' '}
+                  </div>{" "}
                 </TableCell>
                 <TableCell>{orderItem.sku}</TableCell>
                 <TableCell className="text-right">
@@ -88,12 +90,12 @@ export function TopProducts() {
                 colSpan={7}
                 className="text-muted-foreground h-[500px] text-center text-base"
               >
-                No data to show
+                <EmptyView />
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
     </Card>
-  );
+  )
 }
