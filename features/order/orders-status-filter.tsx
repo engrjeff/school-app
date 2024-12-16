@@ -51,16 +51,16 @@ export function OrderStatusFilter() {
             ) : null}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-3 w-52" align="end">
+        <PopoverContent className="w-52 p-3" align="end">
           <div className="space-y-3">
-            <div className="text-xs font-medium text-muted-foreground">
+            <div className="text-muted-foreground text-xs font-medium">
               Order Status
             </div>
             <div className="space-y-1">
               {orderStatuses.map((status) => (
                 <div
                   key={`order-status-${status.status}`}
-                  className="flex items-center gap-2 hover:bg-muted py-1.5 rounded-md px-1.5 -ml-1.5"
+                  className="hover:bg-muted -ml-1.5 flex items-center gap-2 rounded-md p-1.5"
                 >
                   <Checkbox
                     id={`order-status-${status.status}`}
@@ -75,7 +75,7 @@ export function OrderStatusFilter() {
                   />
                   <Label
                     htmlFor={`order-status-${status.status}`}
-                    className="font-normal h-full w-full cursor-pointer"
+                    className="size-full cursor-pointer font-normal"
                   >
                     {status.label}
                   </Label>
@@ -84,7 +84,7 @@ export function OrderStatusFilter() {
               <div
                 role="separator"
                 aria-orientation="horizontal"
-                className="-mx-3 my-1 h-px bg-border"
+                className="bg-border -mx-3 my-1 h-px"
               ></div>
               <div className="flex justify-between gap-2">
                 <Button

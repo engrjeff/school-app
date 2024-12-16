@@ -27,10 +27,10 @@ export function POSAside() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="inset-y-2 right-2 flex h-auto w-[98%] flex-col gap-0 rounded-lg border overflow-y-auto p-0 focus-visible:outline-none sm:max-w-full"
+        className="inset-y-2 right-2 flex h-auto w-[98%] flex-col gap-0 overflow-y-auto rounded-lg border p-0 focus-visible:outline-none sm:max-w-full"
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <SheetHeader className="space-y-1 border-b p-4 text-left sr-only">
+        <SheetHeader className="sr-only space-y-1 border-b p-4 text-left">
           <SheetTitle>Enter Order</SheetTitle>
           <SheetDescription>Place an order here.</SheetDescription>
         </SheetHeader>

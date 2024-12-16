@@ -28,8 +28,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
     if (currency)
       return (
         <div className="relative rounded-md">
-          <div className="absolute left-0 top-0 flex h-full items-center justify-center rounded-l px-1 text-center min-w-9 py-1">
-            <span className="text-sm text-muted-foreground">{currency}</span>
+          <div className="absolute left-0 top-0 flex h-full min-w-9 items-center justify-center rounded-l p-1 text-center">
+            <span className="text-muted-foreground text-sm">{currency}</span>
           </div>
           <Input
             className={cn('pl-9', className)}

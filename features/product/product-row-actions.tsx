@@ -37,7 +37,7 @@ export function ProductRowActions({
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 hover:border hover:bg-muted/30"
+              className="hover:bg-muted/30 size-8 hover:border"
             >
               <span className="sr-only">Actions</span>
               <MoreHorizontalIcon className="size-4" />

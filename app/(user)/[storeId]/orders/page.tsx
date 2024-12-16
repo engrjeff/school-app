@@ -25,11 +25,11 @@ async function OrdersPage({
   });
 
   return (
-    <div className="container max-w-5xl flex flex-col gap-6 flex-1">
+    <div className="container flex max-w-5xl flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-semibold">Orders ({orders.length})</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {"View, create, and manage your store's orders."}
           </p>
         </div>
@@ -40,10 +40,10 @@ async function OrdersPage({
 
       <div className="flex items-center gap-2">
         <SearchField
-          className="w-[300px] bg-muted border-border"
+          className="bg-muted border-border w-[300px]"
           placeholder="Search order number"
         />
-        <div className="flex items-center ml-auto gap-2">
+        <div className="ml-auto flex items-center gap-2">
           <RangePresetFilter />
           <OrderStatusFilter />
           <PaymentStatusFilter />

@@ -56,7 +56,7 @@ export function GoalsForm({ store }: { store: Store }) {
   return (
     <>
       <div>
-        <p className="font-semibold text-sm">Goals</p>
+        <p className="text-sm font-semibold">Goals</p>
         <p className="text-muted-foreground text-sm">
           Set sales and orders goals.
         </p>
@@ -119,7 +119,7 @@ export function GoalsForm({ store }: { store: Store }) {
               )}
             />
 
-            <div className="pt-6 flex justify-end">
+            <div className="flex justify-end pt-6">
               <SubmitButton type="submit" size="sm" disabled={action.isPending}>
                 Save Goals
               </SubmitButton>

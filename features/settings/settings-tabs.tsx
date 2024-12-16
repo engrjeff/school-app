@@ -14,24 +14,24 @@ export function SettingsTabs({ children }: { children: ReactNode }) {
     <Tabs
       defaultValue={tabQuery}
       onValueChange={setTabQuery}
-      className="h-full w-full flex flex-col"
+      className="flex size-full flex-col"
     >
-      <TabsList className="h-auto w-full gap-2 max-w-full py-2 justify-start overflow-x-auto overflow-y-hidden rounded-none border-b border-neutral-800 bg-transparent px-2">
+      <TabsList className="h-auto w-full max-w-full justify-start gap-2 overflow-x-auto overflow-y-hidden rounded-none border-b border-neutral-800 bg-transparent p-2">
         <TabsTrigger
           value="settings"
-          className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
+          className="data-[state=active]:border-foreground rounded-md border-transparent px-2 py-1.5 hover:bg-neutral-800 data-[state=active]:bg-neutral-800"
         >
           Settings
         </TabsTrigger>
         <TabsTrigger
           value="discounts"
-          className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
+          className="data-[state=active]:border-foreground rounded-md border-transparent px-2 py-1.5 hover:bg-neutral-800 data-[state=active]:bg-neutral-800"
         >
           Discounts
         </TabsTrigger>
         <TabsTrigger
           value="goals"
-          className="border-transparent py-1.5 px-2 hover:bg-neutral-800 data-[state=active]:bg-neutral-800 rounded-md data-[state=active]:border-foreground"
+          className="data-[state=active]:border-foreground rounded-md border-transparent px-2 py-1.5 hover:bg-neutral-800 data-[state=active]:bg-neutral-800"
         >
           Goals
         </TabsTrigger>

@@ -137,18 +137,18 @@ export function ProductForm({
         onSubmit={form.handleSubmit(onSubmit, onError)}
         onChange={() => form.clearErrors()}
         className={cn(
-          'space-y-4 overflow-hidden max-w-full',
+          'max-w-full space-y-4 overflow-hidden',
           action.isPending ? 'pointer-events-none' : ''
         )}
       >
         <div className="flex justify-between">
           <div>
             <h1 className="font-semibold">Create Product</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Create product and variants.
             </p>
           </div>
-          <div className="flex items-center gap-4 justify-end">
+          <div className="flex items-center justify-end gap-4">
             <Link
               href={`/${storeId}/products`}
               className={buttonVariants({ size: 'sm', variant: 'secondary' })}
@@ -163,10 +163,10 @@ export function ProductForm({
 
         <Separator />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[200px,1fr] gap-8 lg:gap-20">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[200px,1fr] lg:gap-20">
           <div>
             <p className="font-semibold">Basic Information</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Common info for this product.
             </p>
           </div>
@@ -256,7 +256,7 @@ export function ProductForm({
 
           <div>
             <p className="font-semibold">Pricing & Variants</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               This is where product pricing & variants are defined.
             </p>
           </div>
@@ -266,7 +266,7 @@ export function ProductForm({
               control={form.control}
               name="meta.type"
               render={({ field }) => (
-                <FormItem className="flex items-center space-y-0 space-x-2 p-2 select-none">
+                <FormItem className="flex select-none items-center space-x-2 space-y-0 p-2">
                   <FormControl>
                     <Checkbox
                       checked={field.value === 'sku-only' ? false : true}
@@ -311,7 +311,7 @@ export function ProductForm({
                             type="button"
                             size="icon"
                             variant="secondary"
-                            className="absolute inset-y-1 size-7 end-1 disabled:cursor-not-allowed"
+                            className="absolute inset-y-1 end-1 size-7 disabled:cursor-not-allowed"
                             title="click to generate SKU"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -328,7 +328,7 @@ export function ProductForm({
                       </FormItem>
                     )}
                   />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:w-1/2">
+                  <div className="grid grid-cols-1 gap-4 md:w-1/2 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="meta.skuObject.price"
@@ -431,7 +431,7 @@ export function ProductForm({
           }
         />
 
-        <div className="flex items-center gap-4 justify-end pt-6">
+        <div className="flex items-center justify-end gap-4 pt-6">
           <Link
             href={`/${storeId}/products`}
             className={buttonVariants({ size: 'sm', variant: 'secondary' })}
@@ -641,12 +641,12 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
   }
 
   return (
-    <ul className="space-y-2 py-4 ml-3 pl-3 border-l border-dashed">
+    <ul className="ml-3 space-y-2 border-l border-dashed py-4 pl-3">
       <li>
         <p className="text-sm">
           Options{' '}
           {rootErr ? (
-            <span className="text-xs text-destructive">{rootErr}</span>
+            <span className="text-destructive text-xs">{rootErr}</span>
           ) : null}
         </p>
       </li>
@@ -696,7 +696,7 @@ function AttributeOptionItem({
         control={form.control}
         name={`meta.attributes.${attributeIndex}.options.${optionIndex}.value`}
         render={({ field }) => (
-          <FormItem className="space-y-0 flex-1">
+          <FormItem className="flex-1 space-y-0">
             <FormLabel className="sr-only">Option Name</FormLabel>
             <FormControl>
               <div className="relative">
@@ -709,7 +709,7 @@ function AttributeOptionItem({
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="absolute inset-y-1 size-7 end-1 disabled:cursor-not-allowed"
+                  className="absolute inset-y-1 end-1 size-7 disabled:cursor-not-allowed"
                   aria-label="delete"
                   disabled={disabledDelete}
                   onClick={onDeleteClick}
@@ -796,31 +796,31 @@ function VariantSkusFields() {
 
   return (
     <>
-      <p className="font-semibold mb-3">Variants</p>
+      <p className="mb-3 font-semibold">Variants</p>
       <Table
         containerClass="border bg-muted/30 rounded-lg w-full h-auto"
         className="mb-0"
       >
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">
-            <TableHead className="w-[80px] text-center border-r">
+            <TableHead className="w-[80px] border-r text-center">
               {validAttributes[0].name}
             </TableHead>
             {validAttributes[1]?.name && (
-              <TableHead className="w-[80px] text-center border-r">
+              <TableHead className="w-[80px] border-r text-center">
                 {validAttributes[1].name}
               </TableHead>
             )}
-            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+            <TableHead className="w-[110px] min-w-[110px] border-r lg:min-w-0">
               Price
             </TableHead>
-            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+            <TableHead className="w-[110px] min-w-[110px] border-r lg:min-w-0">
               Cost
             </TableHead>
-            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+            <TableHead className="w-[110px] min-w-[110px] border-r lg:min-w-0">
               Stock
             </TableHead>
-            <TableHead className="min-w-[110px] lg:min-w-0 w-[110px] border-r">
+            <TableHead className="w-[110px] min-w-[110px] border-r lg:min-w-0">
               Low Stock At
             </TableHead>
             <TableHead className="w-[140px] max-w-[220px]">SKU</TableHead>
@@ -841,13 +841,13 @@ function VariantSkusFields() {
                           className="border-r text-center"
                           rowSpan={attr2OptionsLen}
                         >
-                          <div className="flex flex-col gap-2 items-center justify-center">
+                          <div className="flex flex-col items-center justify-center gap-2">
                             <span>{variant.attr1}</span>
                             <FormField
                               control={form.control}
                               name={`meta.variants.${varIndex}.imageUrl`}
                               render={({ field }) => (
-                                <FormItem className="max-w-sm flex flex-col items-center justify-center">
+                                <FormItem className="flex max-w-sm flex-col items-center justify-center">
                                   <FormControl>
                                     <ImageInput
                                       urlValue={field.value}
@@ -874,13 +874,13 @@ function VariantSkusFields() {
                 <Fragment key={`variant-item-${variant.attr1}-${varIndex}`}>
                   <TableRow className="hover:bg-transparent">
                     <TableCell className="border-r text-center">
-                      <div className="flex flex-col gap-2 items-center justify-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
                         <span>{variant.attr1}</span>
                         <FormField
                           control={form.control}
                           name={`meta.variants.${varIndex}.imageUrl`}
                           render={({ field }) => (
-                            <FormItem className="max-w-sm flex flex-col items-center justify-center">
+                            <FormItem className="flex max-w-sm flex-col items-center justify-center">
                               <FormControl>
                                 <ImageInput
                                   urlValue={field.value}

@@ -85,7 +85,7 @@ export function DiscountForm({
       {!isValid && (
         <em
           id="discount-code-error"
-          className="text-sm text-red-500 mt-2 inline-block not-italic"
+          className="mt-2 inline-block text-sm not-italic text-red-500"
         >
           Invalid discount code.
         </em>
@@ -93,7 +93,7 @@ export function DiscountForm({
       {isValid === true && (
         <em
           id="discount-code-error"
-          className="text-sm text-green-500 mt-2 inline-block not-italic"
+          className="mt-2 inline-block text-sm not-italic text-green-500"
         >
           Discount applied.
         </em>

@@ -11,7 +11,7 @@ export default async function DashboardPage() {
       {/* greetings */}
       <div>
         <h1 className="font-semibold">Good day, {user?.firstName}.</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {"Here's what's happening with your store today."}
         </p>
       </div>

@@ -97,8 +97,8 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
               {expandedRows.has(order.id) && (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={7}>
-                    <div className="py-4 px-2">
-                      <div className="mb-2 text-muted-foreground">
+                    <div className="px-2 py-4">
+                      <div className="text-muted-foreground mb-2">
                         <p className="font-semibold">
                           Order Items ({order.lineItems.length})
                         </p>
@@ -126,10 +126,10 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                             <TableRow key={line.id}>
                               <TableCell>
                                 <div>
-                                  <p className="font-medium text-sm">
+                                  <p className="text-sm font-medium">
                                     {line.productName}
                                   </p>
-                                  <span className="text-xs text-muted-foreground">
+                                  <span className="text-muted-foreground text-xs">
                                     {line.attributes
                                       .map((a) => a.value)
                                       .join(', ')}
@@ -195,7 +195,7 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                                 className="text-muted-foreground text-right"
                               >
                                 Discount{' '}
-                                <span className="text-green-500 font-semibold">
+                                <span className="font-semibold text-green-500">
                                   ({order.discount.discountCode})
                                 </span>
                               </TableCell>
@@ -207,11 +207,11 @@ export function OrdersTable({ orders }: { orders: OrdersWithLineItems }) {
                           <TableRow className="hover:bg-transparent">
                             <TableCell
                               colSpan={3}
-                              className="text-right font-semibold border-t border-dashed"
+                              className="border-t border-dashed text-right font-semibold"
                             >
                               Total
                             </TableCell>
-                            <TableCell className="text-right border-t border-dashed">
+                            <TableCell className="border-t border-dashed text-right">
                               {formatCurrency(order.totalAmount)}
                             </TableCell>
                           </TableRow>

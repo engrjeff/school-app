@@ -36,13 +36,13 @@ export function POS() {
     : productsToDisplay;
 
   return (
-    <div className="p-4 flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-4">
       <SheetClose asChild>
         <Button
           type="button"
           size="sm"
           variant="secondary"
-          className="absolute top-1 right-1 hover:bg-secondary z-10"
+          className="hover:bg-secondary absolute right-1 top-1 z-10"
         >
           Close
         </Button>
@@ -74,7 +74,7 @@ export function POS() {
           ))}
 
           <ClientSearchField
-            className="rounded-full bg-muted border-border"
+            className="bg-muted border-border rounded-full"
             placeholder="Search products"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.currentTarget.value)}

@@ -167,7 +167,7 @@ function FormComponent({ onAfterSave }: { onAfterSave: () => void }) {
             )}
           />
 
-          <div className="pt-6 flex justify-end">
+          <div className="flex justify-end pt-6">
             <SubmitButton type="submit" size="sm" loading={action.isPending}>
               Save Code
             </SubmitButton>

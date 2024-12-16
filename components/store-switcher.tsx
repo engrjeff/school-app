@@ -44,7 +44,7 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-md">
+              <Avatar className="size-8 rounded-md">
                 <AvatarImage
                   src={activeStore.logoUrl!}
                   alt={activeStore.name}
@@ -75,13 +75,13 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
               Stores
             </DropdownMenuLabel>
             {stores.map((store) => (
               <DropdownMenuItem key={store.name} className="gap-2 p-2" asChild>
                 <a href={`/${store.id}/${pageRoute}`}>
-                  <Avatar className="h-6 w-6 rounded-md">
+                  <Avatar className="size-6 rounded-md">
                     <AvatarImage src={store.logoUrl!} alt={store.name} />
                     <AvatarFallback
                       className="rounded-md text-xs"

@@ -26,7 +26,7 @@ async function CreateProductPage({ params, searchParams }: PageProps) {
   const productToCopy = await getProductToCopyById(searchParams?.copyId);
 
   return (
-    <div className="container max-w-4xl relative flex flex-col space-y-6 overflow-hidden">
+    <div className="container relative flex max-w-4xl flex-col space-y-6 overflow-hidden">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -92,7 +92,7 @@ export function StoreForm() {
         <form onSubmit={form.handleSubmit(onSubmit, onError)}>
           <fieldset
             disabled={createAction.isPending}
-            className="p-8 w-[360px] shrink-0 disabled:opacity-80 disabled:pointer-events-none disabled:cursor-not-allowed"
+            className="w-[360px] shrink-0 p-8 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-80"
           >
             {step === 1 ? (
               <>
@@ -175,7 +175,7 @@ export function StoreForm() {
               </>
             ) : null}
 
-            <div className="py-6 flex items-center gap-3">
+            <div className="flex items-center gap-3 py-6">
               {step > 1 ? (
                 <Button
                   aria-label="Go back"
@@ -204,7 +204,7 @@ export function StoreForm() {
         </form>
       </Form>
 
-      <div className="bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg flex flex-col justify-center p-8">
+      <div className="flex flex-col justify-center rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 p-8">
         <p className="text-4xl font-bold">DailySales</p>
         <p>Simple sales monitoring for your store.</p>
       </div>

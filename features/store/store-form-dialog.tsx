@@ -19,11 +19,11 @@ export function StoreFormDialog({ defaultOpen }: { defaultOpen?: boolean }) {
     <Dialog defaultOpen={defaultOpen}>
       {defaultOpen ? null : (
         <DialogTrigger asChild>
-          <Button className="gap-2 p-2 w-full justify-start" variant="ghost">
-            <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+          <Button className="w-full justify-start gap-2 p-2" variant="ghost">
+            <div className="bg-background flex size-6 items-center justify-center rounded-md border">
               <Plus className="size-4" />
             </div>
-            <div className="font-medium text-muted-foreground">Add Store</div>
+            <div className="text-muted-foreground font-medium">Add Store</div>
           </Button>
         </DialogTrigger>
       )}

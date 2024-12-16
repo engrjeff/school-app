@@ -125,18 +125,18 @@ export function OrderSummary() {
 
   if (!orders.length)
     return (
-      <aside className="bg-muted max-w-sm w-full shrink-0 border rounded-lg p-4 h-full items-center justify-center flex flex-col gap-4 max-h-full overflow-y-auto sticky top-0">
-        <p className="text-center text-muted-foreground">No orders yet.</p>
+      <aside className="bg-muted sticky top-0 flex size-full max-h-full max-w-sm shrink-0 flex-col items-center justify-center gap-4 overflow-y-auto rounded-lg border p-4">
+        <p className="text-muted-foreground text-center">No orders yet.</p>
       </aside>
     );
 
   return (
-    <aside className="bg-muted max-w-sm w-full shrink-0 border rounded-lg p-4 h-full max-h-full overflow-y-auto sticky top-0">
+    <aside className="bg-muted sticky top-0 size-full max-h-full max-w-sm shrink-0 overflow-y-auto rounded-lg border p-4">
       {view === 'orders' ? (
-        <div className="h-full flex flex-col gap-4">
+        <div className="flex h-full flex-col gap-4">
           <p>Order # {orderNumber}</p>
           <ScrollArea>
-            <ul className="space-y-3 max-h-[400px]">
+            <ul className="max-h-[400px] space-y-3">
               {orders.map((line, lineIndex) => (
                 <li key={`${line.productVariantId}-${lineIndex + 1}`}>
                   <OrderLineItem line={line} />
@@ -145,20 +145,20 @@ export function OrderSummary() {
             </ul>
           </ScrollArea>
 
-          <div className="p-4 bg-border/90 justify-between flex-1 flex flex-col gap-2 rounded-md mt-auto">
+          <div className="bg-border/90 mt-auto flex flex-1 flex-col justify-between gap-2 rounded-md p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Subtotal</p>
               <NumberFlow
                 value={subtotal}
                 format={{ style: 'currency', currency: 'PHP' }}
-                className="font-semibold font-mono text-right block"
+                className="block text-right font-mono font-semibold"
               />
             </div>
 
             <div className="mt-6">
               <Button
                 type="button"
-                className="rounded-full w-full"
+                className="w-full rounded-full"
                 onClick={() => setView('payment')}
               >
                 Continue
@@ -169,7 +169,7 @@ export function OrderSummary() {
       ) : null}
 
       {view === 'payment' ? (
-        <div className="h-full flex flex-col gap-4">
+        <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -186,24 +186,24 @@ export function OrderSummary() {
 
           <fieldset
             disabled={createAction.isPending}
-            className="p-4 justify-between flex-1 flex flex-col gap-2 rounded-md"
+            className="flex flex-1 flex-col justify-between gap-2 rounded-md p-4"
           >
             <div className="flex items-center justify-between text-sm">
               <p className="text-muted-foreground">Subtotal</p>
-              <p className="font-mono text-right">{formatCurrency(subtotal)}</p>
+              <p className="text-right font-mono">{formatCurrency(subtotal)}</p>
             </div>
             <div className="flex items-center justify-between text-sm">
               <Accordion type="multiple" className="w-full">
                 <AccordionItem value="shipping" className="border-b-0">
                   <AccordionTrigger className="py-2">
-                    <div className="flex-1 mr-2 flex items-center justify-between text-sm">
+                    <div className="mr-2 flex flex-1 items-center justify-between text-sm">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span className="font-mono text-right">
+                      <span className="text-right font-mono">
                         {formatCurrency(shipping)}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="py-1.5 px-1">
+                  <AccordionContent className="px-1 py-1.5">
                     <NumberInput
                       currency="₱"
                       placeholder=""
@@ -219,14 +219,14 @@ export function OrderSummary() {
 
                 <AccordionItem value="discount" className="border-b-0">
                   <AccordionTrigger className="py-2">
-                    <div className="flex-1 mr-2 flex items-center justify-between text-sm">
+                    <div className="mr-2 flex flex-1 items-center justify-between text-sm">
                       <span className="text-muted-foreground">Discount</span>
-                      <span className="font-mono text-right">
+                      <span className="text-right font-mono">
                         {formatCurrency(discount.discountAmount)}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="py-2 px-1">
+                  <AccordionContent className="px-1 py-2">
                     <DiscountForm
                       value={discount}
                       onValueChange={setDiscount}
@@ -236,16 +236,16 @@ export function OrderSummary() {
 
                 <AccordionItem value="service-charge" className="border-b-0">
                   <AccordionTrigger className="py-2">
-                    <div className="flex-1 mr-2 flex items-center justify-between text-sm">
+                    <div className="mr-2 flex flex-1 items-center justify-between text-sm">
                       <span className="text-muted-foreground">
                         Service Charge {serviceChargeDisplay}
                       </span>
-                      <span className="font-mono text-right">
+                      <span className="text-right font-mono">
                         {formatCurrency(serviceChargeValue)}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="py-1.5 px-1">
+                  <AccordionContent className="px-1 py-1.5">
                     <NumberInput
                       value={serviceCharge}
                       min={0}
@@ -266,7 +266,7 @@ export function OrderSummary() {
             <Separator />
             <div className="flex items-center justify-between">
               <p className="font-semibold">Total</p>
-              <p className="font-semibold font-mono text-right">
+              <p className="text-right font-mono font-semibold">
                 {formatCurrency(total)}
               </p>
             </div>
@@ -279,7 +279,7 @@ export function OrderSummary() {
             <div className="mt-auto">
               <Button
                 type="button"
-                className="rounded-full w-full"
+                className="w-full rounded-full"
                 onClick={() => setView('details')}
               >
                 Add Details
@@ -290,7 +290,7 @@ export function OrderSummary() {
       ) : null}
 
       {view === 'details' ? (
-        <div className="h-full flex flex-col gap-4">
+        <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -307,12 +307,12 @@ export function OrderSummary() {
 
           <fieldset
             disabled={createAction.isPending}
-            className="p-4 flex-1 flex flex-col gap-2 rounded-md"
+            className="flex flex-1 flex-col gap-2 rounded-md p-4"
           >
             <div className="space-y-2">
               <Label htmlFor="customerName">
                 Customer Name{' '}
-                <span className="text-xs text-muted-foreground italic">
+                <span className="text-muted-foreground text-xs italic">
                   (Optional)
                 </span>
               </Label>
@@ -337,7 +337,7 @@ export function OrderSummary() {
                 id="orderDate"
                 name="orderDate"
                 type="datetime-local"
-                className="w-min bg-muted border-border"
+                className="bg-muted border-border w-min"
                 max={format(new Date(), 'yyyy-MM-dd') + 'T12:00'}
                 value={orderDate}
                 onChange={(e) => setOrderDate(e.currentTarget.value)}
@@ -365,7 +365,7 @@ export function OrderSummary() {
           <div className="mt-auto">
             <SubmitButton
               type="button"
-              className="rounded-full w-full"
+              className="w-full rounded-full"
               loading={createAction.isPending}
               onClick={saveOrder}
               disabled={!orderDate}
@@ -383,15 +383,15 @@ function OrderLineItem({ line }: { line: LineItem }) {
   const store = usePOSOrdersStore();
 
   return (
-    <div className="text-sm flex items-center justify-between bg-border/90 py-2 px-2.5 rounded-md">
+    <div className="bg-border/90 flex items-center justify-between rounded-md px-2.5 py-2 text-sm">
       <div>
         <p className="font-medium">
           {line.productName}{' '}
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             x<NumberFlow value={line.qty} />
           </span>
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {line.attributes.map((attr) => attr.value).join(', ')}
         </p>
       </div>
@@ -400,10 +400,10 @@ function OrderLineItem({ line }: { line: LineItem }) {
         <NumberFlow
           value={line.unitPrice * line.qty}
           format={{ style: 'currency', currency: 'PHP' }}
-          className="font-mono text-right mb-1 block"
+          className="mb-1 block text-right font-mono"
         />
         <div
-          className="inline-flex items-center justify-end mt-auto select-none"
+          className="mt-auto inline-flex select-none items-center justify-end"
           role="group"
           aria-labelledby="quality-control"
         >
@@ -415,7 +415,7 @@ function OrderLineItem({ line }: { line: LineItem }) {
             variant="outline"
             size="icon"
             aria-label="Decrease quantity"
-            className="size-7 bg-transparent border-neutral-700"
+            className="size-7 border-neutral-700 bg-transparent"
             onClick={() => {
               if (line.qty === 1) {
                 store.removeLineItem(line.productVariantId);
@@ -438,7 +438,7 @@ function OrderLineItem({ line }: { line: LineItem }) {
             )}
           </Button>
           <div
-            className="flex items-center px-2.5 text-sm text-center font-medium tabular-nums"
+            className="flex items-center px-2.5 text-center text-sm font-medium tabular-nums"
             aria-live="polite"
           >
             <NumberFlow
@@ -451,7 +451,7 @@ function OrderLineItem({ line }: { line: LineItem }) {
             type="button"
             variant="outline"
             size="icon"
-            className="size-7 bg-transparent border-neutral-700"
+            className="size-7 border-neutral-700 bg-transparent"
             aria-label="Increase quantity"
             onClick={() => store.increaseQty(line.productVariantId)}
           >

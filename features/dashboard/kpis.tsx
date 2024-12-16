@@ -24,17 +24,17 @@ export function KPIs() {
   if (kpiQuery.isLoading)
     return (
       <div className="grid grid-cols-4 gap-6">
-        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
-        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
-        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
-        <Skeleton className="h-[140px] border rounded-xl bg-muted text-card-foreground shadow animate-pulse" />
+        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
       </div>
     );
 
   return (
     <div className="grid grid-cols-4 gap-6">
-      <Card className="flex flex-col bg-muted border-l-4 border-l-primary">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
+      <Card className="bg-muted border-l-primary flex flex-col border-l-4">
+        <CardHeader className="flex-row items-start justify-between space-y-0 pb-0">
           <CardDescription className="font-medium text-white">
             Best Seller
           </CardDescription>
@@ -46,15 +46,15 @@ export function KPIs() {
               {kpiQuery.data?.bestSeller.productName}{' '}
             </p>
             {kpiQuery.data?.bestSeller.attributes?.length ? (
-              <span className="text-xs leading-none text-muted-foreground">
+              <span className="text-muted-foreground text-xs leading-none">
                 {kpiQuery.data?.bestSeller.attributes
                   ?.map((a) => a.value)
                   .join(', ')}
               </span>
             ) : null}
           </div>
-          <div className="text-sm flex items-center gap-1.5">
-            <p className="font-medium text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-sm">
+            <p className="text-muted-foreground font-medium">
               {kpiQuery.data?.bestSeller.orderCount}{' '}
               {Number(kpiQuery.data?.bestSeller.orderCount) > 1
                 ? 'items sold'
@@ -63,16 +63,16 @@ export function KPIs() {
           </div>
         </CardContent>
       </Card>
-      <Card className="flex flex-col bg-muted/80 border-neutral-800">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
+      <Card className="bg-muted/80 flex flex-col border-neutral-800">
+        <CardHeader className="flex-row items-start justify-between space-y-0 pb-0">
           <CardDescription className="font-medium">Daily Sales</CardDescription>
-          <StoreIcon size={20} className="size-5 text-muted-foreground" />
+          <StoreIcon size={20} className="text-muted-foreground size-5" />
         </CardHeader>
         <CardContent className="mt-auto">
-          <p className="text-xl font-bold mb-1">
+          <p className="mb-1 text-xl font-bold">
             {kpiQuery.data?.sales.todayFormatted}
           </p>
-          <div className="text-sm flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-sm">
             <p className="text-muted-foreground font-medium">
               {kpiQuery.data?.orders.today} orders
             </p>
@@ -83,21 +83,21 @@ export function KPIs() {
           </div>
         </CardContent>
       </Card>
-      <Card className="flex flex-col bg-muted/80 border-neutral-800">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
+      <Card className="bg-muted/80 flex flex-col border-neutral-800">
+        <CardHeader className="flex-row items-start justify-between space-y-0 pb-0">
           <CardDescription className="font-medium">
             Items Ordered Today
           </CardDescription>
-          <ShoppingBagIcon size={20} className="size-5 text-muted-foreground" />
+          <ShoppingBagIcon size={20} className="text-muted-foreground size-5" />
         </CardHeader>
         <CardContent className="mt-auto">
-          <p className="text-xl font-bold mb-1">
+          <p className="mb-1 text-xl font-bold">
             {kpiQuery.data?.orders.orderItemsCount}{' '}
-            <span className="text-xs text-muted-foreground font-normal">
+            <span className="text-muted-foreground text-xs font-normal">
               / {kpiQuery.data?.orders.today} orders
             </span>
           </p>
-          <div className="text-sm flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-sm">
             <p className="text-muted-foreground font-medium">
               {kpiQuery.data?.orders.yesterdayOrderItemsCount} yesterday
             </p>
@@ -108,19 +108,19 @@ export function KPIs() {
           </div>
         </CardContent>
       </Card>
-      <Card className="flex flex-col bg-muted/80 border-neutral-800">
-        <CardHeader className="flex-row justify-between items-start space-y-0 pb-0">
+      <Card className="bg-muted/80 flex flex-col border-neutral-800">
+        <CardHeader className="flex-row items-start justify-between space-y-0 pb-0">
           <CardDescription className="font-medium">Discounts</CardDescription>
           <BadgePercentIcon
             size={20}
-            className="size-5 text-muted-foreground"
+            className="text-muted-foreground size-5"
           />
         </CardHeader>
         <CardContent className="mt-auto">
-          <p className="text-xl font-bold mb-1">
+          <p className="mb-1 text-xl font-bold">
             {kpiQuery.data?.discount.totalFormatted}
           </p>
-          <div className="text-sm flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-sm">
             <p className="text-muted-foreground font-medium">
               {kpiQuery.data?.discount.ordersCount}{' '}
               {Number(kpiQuery.data?.discount.ordersCount) > 1
@@ -137,7 +137,7 @@ export function KPIs() {
 function Trend({ trend, value }: { value: number; trend?: string }) {
   if (trend === 'equal')
     return (
-      <div className="text-amber-500 inline-flex items-center gap-1">
+      <div className="inline-flex items-center gap-1 text-amber-500">
         <EqualIcon size={16} className="size-4" />{' '}
         <span>{value.toFixed(1)}%</span>
       </div>
@@ -145,7 +145,7 @@ function Trend({ trend, value }: { value: number; trend?: string }) {
 
   if (trend === 'up')
     return (
-      <div className="text-green-500 inline-flex items-center gap-1">
+      <div className="inline-flex items-center gap-1 text-green-500">
         <TrendingUpIcon size={16} className="size-4" />{' '}
         <span>{value.toFixed(1)}%</span>
       </div>
@@ -153,7 +153,7 @@ function Trend({ trend, value }: { value: number; trend?: string }) {
 
   if (trend === 'down')
     return (
-      <div className="text-red-500 inline-flex items-center gap-1">
+      <div className="inline-flex items-center gap-1 text-red-500">
         <TrendingDownIcon size={16} className="size-4" />{' '}
         <span>{value.toFixed(1)}%</span>
       </div>

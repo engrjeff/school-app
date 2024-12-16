@@ -20,9 +20,9 @@ export async function DiscountsTable({ storeId }: { storeId: string }) {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <div>
-          <p className="font-semibold text-sm">Discounts</p>
+          <p className="text-sm font-semibold">Discounts</p>
           <p className="text-muted-foreground text-sm">
             Set store discount codes.
           </p>

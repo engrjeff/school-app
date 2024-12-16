@@ -17,7 +17,7 @@ export function NavUser() {
               <span className="truncate text-sm font-semibold">
                 {user?.fullName}
               </span>
-              <span className="truncate text-xs text-muted-foreground">
+              <span className="text-muted-foreground truncate text-xs">
                 {user?.emailAddresses[0].emailAddress}
               </span>
             </div>

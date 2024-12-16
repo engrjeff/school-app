@@ -18,11 +18,11 @@ async function SettingsPage({ params }: { params: { storeId: string } }) {
   if (!store) return notFound();
 
   return (
-    <div className="container max-w-5xl flex flex-col gap-6 flex-1">
+    <div className="container flex max-w-5xl flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-semibold">Store Settings for {store.name}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             View and manage store settings, goals, and discounts.
           </p>
         </div>
@@ -31,20 +31,20 @@ async function SettingsPage({ params }: { params: { storeId: string } }) {
         <SettingsTabs>
           <TabsContent
             value="settings"
-            className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
+            className="mt-0 flex flex-1 flex-col gap-2 p-4 empty:hidden"
           >
             <StoreSettingsForm store={store} />
           </TabsContent>
 
           <TabsContent
             value="discounts"
-            className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
+            className="mt-0 flex flex-1 flex-col gap-2 p-4 empty:hidden"
           >
             <DiscountsTable storeId={params.storeId} />
           </TabsContent>
           <TabsContent
             value="goals"
-            className="p-4 mt-0 flex flex-col gap-2 flex-1 empty:hidden"
+            className="mt-0 flex flex-1 flex-col gap-2 p-4 empty:hidden"
           >
             <GoalsForm store={store} />
           </TabsContent>

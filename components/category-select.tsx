@@ -41,14 +41,14 @@ export function CategorySelect({
           role="combobox"
           disabled={categoriesData.isLoading}
           aria-expanded={open}
-          className="justify-between w-full border-border bg-muted"
+          className="border-border bg-muted w-full justify-between"
         >
           {selectedCategoryId
             ? categoriesData?.data?.find(
                 (category) => category.id === selectedCategoryId
               )?.name
             : 'Select category'}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-popover-trigger-width p-0">
@@ -81,7 +81,7 @@ export function CategorySelect({
                 >
                   <Check
                     className={cn(
-                      'mr-2 h-4 w-4',
+                      'mr-2 size-4',
                       selectedCategoryId === category.id
                         ? 'opacity-100'
                         : 'opacity-0'

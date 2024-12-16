@@ -67,25 +67,25 @@ export function POSProductCard({ product }: { product: ProductItem }) {
   }
 
   return (
-    <Card className="h-full flex flex-col bg-muted">
+    <Card className="bg-muted flex h-full flex-col">
       <CardHeader className="flex flex-row items-start gap-4 p-4">
-        <div className="size-11 relative rounded border bg-muted/30 text-muted-foreground flex items-center justify-center">
+        <div className="bg-muted/30 text-muted-foreground relative flex size-11 items-center justify-center rounded border">
           <ImageIcon size={16} />
         </div>
         <div>
           <CardTitle>{product.name}</CardTitle>
-          <CardDescription className="text-green-500 font-medium text-[13px]">
+          <CardDescription className="text-[13px] font-medium text-green-500">
             {selectedVariant
               ? formatCurrency(selectedVariant.price)
               : getPriceRange(product.variants.map((v) => v.price))}
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4 flex-1 select-none p-4 pt-0">
-        <div className="space-y-3 flex-1">
+      <CardContent className="flex flex-1 select-none flex-col gap-4 p-4 pt-0">
+        <div className="flex-1 space-y-3">
           {product.attributes.map((attr) => (
             <fieldset key={`attr-${attr.id}`} className="space-y-4">
-              <legend className="text-sm font-medium leading-none text-foreground">
+              <legend className="text-foreground text-sm font-medium leading-none">
                 {attr.name}
               </legend>
               <RadioGroup
@@ -99,14 +99,14 @@ export function POSProductCard({ product }: { product: ProductItem }) {
                 {attr.values.map((option) => (
                   <label
                     key={option.id}
-                    className="relative flex cursor-pointer flex-col text-sm items-center gap-3 rounded-lg border px-1.5 py-2 text-center shadow-sm shadow-black/5 outline-offset-2 transition-colors has-[[data-disabled]]:cursor-not-allowed has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary/70"
+                    className="has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-accent has-[:focus-visible]:outline-primary/70 relative flex cursor-pointer flex-col items-center gap-3 rounded-lg border px-1.5 py-2 text-center text-sm shadow-sm shadow-black/5 outline-offset-2 transition-colors has-[[data-disabled]]:cursor-not-allowed has-[[data-disabled]]:opacity-50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2"
                   >
                     <RadioGroupItem
                       id={option.id}
                       value={option.id}
                       className="sr-only after:absolute after:inset-0"
                     />
-                    <p className="text-sm font-medium leading-none text-foreground">
+                    <p className="text-foreground text-sm font-medium leading-none">
                       {option.value}
                     </p>
                   </label>
@@ -116,9 +116,9 @@ export function POSProductCard({ product }: { product: ProductItem }) {
           ))}
         </div>
 
-        <div className="select-none flex items-center justify-between mt-auto pt-4 gap-4">
+        <div className="mt-auto flex select-none items-center justify-between gap-4 pt-4">
           <div
-            className="inline-flex items-center shrink-0"
+            className="inline-flex shrink-0 items-center"
             role="group"
             aria-labelledby="quality-control"
           >

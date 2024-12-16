@@ -64,7 +64,7 @@ export function StoreSettingsForm({ store }: { store: Store }) {
   return (
     <Form {...form}>
       <div className="mb-4">
-        <p className="font-semibold text-sm">Store Settings</p>
+        <p className="text-sm font-semibold">Store Settings</p>
         <p className="text-muted-foreground text-sm">
           Important details for {store.name}
         </p>
@@ -199,7 +199,7 @@ export function StoreSettingsForm({ store }: { store: Store }) {
             )}
           />
 
-          <div className="pt-6 flex justify-end">
+          <div className="flex justify-end pt-6">
             <SubmitButton type="submit" size="sm" loading={action.isPending}>
               Save Changes
             </SubmitButton>

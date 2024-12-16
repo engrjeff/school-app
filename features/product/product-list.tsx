@@ -35,9 +35,9 @@ export async function ProductList({ storeId }: { storeId: string }) {
 
   if (!products.length)
     return (
-      <div className="rounded-lg border border-dashed flex-1 flex flex-col items-center justify-center">
+      <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed">
         <InboxIcon size={64} strokeWidth={1} />
-        <p className="text-sm text-center text-muted-foreground">
+        <p className="text-muted-foreground text-center text-sm">
           You have no products listed yet.
         </p>
       </div>
@@ -67,7 +67,7 @@ export async function ProductList({ storeId }: { storeId: string }) {
             <TableCell className="w-9 text-center">{index + 1}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <div className="size-11 relative rounded border bg-muted/30 text-muted-foreground flex items-center justify-center">
+                <div className="bg-muted/30 text-muted-foreground relative flex size-11 items-center justify-center rounded border">
                   <ImagePlusIcon size={16} />
                 </div>
                 <Link href="#" className="hover:text-blue-500 hover:underline">

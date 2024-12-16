@@ -21,17 +21,17 @@ export function TopProducts() {
   if (kpiQuery.isLoading)
     return (
       <Card>
-        <Skeleton className="h-[600px] animate-pulse bg-muted" />
+        <Skeleton className="bg-muted h-[600px] animate-pulse" />
       </Card>
     );
 
   return (
-    <Card className="border rounded-lg bg-muted">
+    <Card className="bg-muted rounded-lg border">
       <CardHeader className="flex-row justify-between">
         <CardTitle>Top Products</CardTitle>
         <Link
           href="#"
-          className="text-primary text-sm hover:underline inline-flex gap-2 items-center"
+          className="text-primary inline-flex items-center gap-2 text-sm hover:underline"
         >
           All Products <ArrowRightIcon size={16} className="size-4" />
         </Link>
@@ -39,7 +39,7 @@ export function TopProducts() {
       <Table containerClass="flex-none">
         <TableHeader>
           <TableRow>
-            <TableHead className="min-w-9 w-9 text-center">#</TableHead>
+            <TableHead className="w-9 min-w-9 text-center">#</TableHead>
             <TableHead>Product Name</TableHead>
             <TableHead>SKU</TableHead>
             <TableHead className="text-right">Unit Price</TableHead>
@@ -55,7 +55,7 @@ export function TopProducts() {
                 <TableHead className="w-9 text-center">{index + 1}</TableHead>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <div className="size-11 relative rounded border bg-muted/30 text-muted-foreground flex items-center justify-center">
+                    <div className="bg-muted/30 text-muted-foreground relative flex size-11 items-center justify-center rounded border">
                       <ImagePlusIcon size={16} />
                     </div>
                     <div>
@@ -65,7 +65,7 @@ export function TopProducts() {
                       >
                         {orderItem.productName}
                       </Link>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         {orderItem.attributes.map((a) => a.value).join(', ')}
                       </p>
                     </div>
@@ -86,7 +86,7 @@ export function TopProducts() {
             <TableRow>
               <TableCell
                 colSpan={7}
-                className="h-[500px] text-center text-muted-foreground text-base"
+                className="text-muted-foreground h-[500px] text-center text-base"
               >
                 No data to show
               </TableCell>

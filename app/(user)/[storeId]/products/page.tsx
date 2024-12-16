@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 function ProductsPage({ params }: { params: { storeId: string } }) {
   return (
-    <div className="container max-w-5xl flex flex-col gap-6 flex-1">
+    <div className="container flex max-w-5xl flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-semibold">Products</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             View, create, and manage your products.
           </p>
         </div>

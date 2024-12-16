@@ -38,7 +38,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased h-full`}
+          className={`${geistSans.variable} ${geistMono.variable} h-full font-sans antialiased`}
         >
           <NextTopLoader color="#2563eb" />
           <ThemeProvider

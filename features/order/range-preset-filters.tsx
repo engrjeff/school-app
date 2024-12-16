@@ -83,16 +83,16 @@ export function RangePresetFilter() {
             ) : null}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-3 w-52" align="end">
+        <PopoverContent className="w-52 p-3" align="end">
           <div className="space-y-3">
-            <div className="text-xs font-medium text-muted-foreground">
+            <div className="text-muted-foreground text-xs font-medium">
               Date Range Presets
             </div>
             <div className="space-y-1">
               {presets.map((preset) => (
                 <div
                   key={`date-range-preset-${preset.value}`}
-                  className="flex items-center gap-2 hover:bg-muted py-1.5 rounded-md px-1.5 -ml-1.5"
+                  className="hover:bg-muted -ml-1.5 flex items-center gap-2 rounded-md p-1.5"
                 >
                   <Checkbox
                     id={`date-range-preset-${preset.value}`}
@@ -105,7 +105,7 @@ export function RangePresetFilter() {
                   />
                   <Label
                     htmlFor={`date-range-preset-${preset.value}`}
-                    className="font-normal h-full w-full cursor-pointer"
+                    className="size-full cursor-pointer font-normal"
                   >
                     {preset.label}
                   </Label>
@@ -114,7 +114,7 @@ export function RangePresetFilter() {
               <div
                 role="separator"
                 aria-orientation="horizontal"
-                className="-mx-3 h-px bg-border"
+                className="bg-border -mx-3 h-px"
               ></div>
               <div className="flex justify-between gap-2 pt-2">
                 <Button

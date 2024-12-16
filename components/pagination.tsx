@@ -23,7 +23,7 @@ export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
 
   return (
     <div className="flex items-center justify-between">
-      <div className="flex-1 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex-1 text-sm">
         Showing{' '}
         <span className="text-foreground">
           {start}-{end}
@@ -42,7 +42,7 @@ export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
             onClick={() => setPage(1)}
           >
             <span className="sr-only">Go to first page</span>
-            <ChevronsLeft className="h-4 w-4" />
+            <ChevronsLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
@@ -52,7 +52,7 @@ export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
             onClick={() => setPage(page - 1)}
           >
             <span className="sr-only">Go to previous page</span>
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
@@ -62,7 +62,7 @@ export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
             onClick={() => setPage(page + 1)}
           >
             <span className="sr-only">Go to next page</span>
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="size-4" />
           </Button>
           <Button
             variant="outline"
@@ -72,7 +72,7 @@ export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
             onClick={() => setPage(pageInfo.totalPages)}
           >
             <span className="sr-only">Go to last page</span>
-            <ChevronsRight className="h-4 w-4" />
+            <ChevronsRight className="size-4" />
           </Button>
         </div>
       ) : null}

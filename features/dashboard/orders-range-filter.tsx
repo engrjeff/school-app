@@ -44,21 +44,21 @@ export function OrdersRangeFilter() {
             Range
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0 w-52 border-neutral-800" align="end">
-          <div className="space-y-3 p-3 bg-muted/90">
-            <div className="text-xs font-medium text-muted-foreground">
+        <PopoverContent className="w-52 border-neutral-800 p-0" align="end">
+          <div className="bg-muted/90 space-y-3 p-3">
+            <div className="text-muted-foreground text-xs font-medium">
               Select Range
             </div>
             <form className="space-y-1">
               {ranges.map((range) => (
                 <div
                   key={`range-${range.value}`}
-                  className="flex items-center gap-2 hover:bg-primary/20 py-1.5 rounded-md px-1.5 -ml-1.5"
+                  className="hover:bg-primary/20 -ml-1.5 flex items-center gap-2 rounded-md p-1.5"
                 >
                   <Checkbox id={`range-${range.value}`} />
                   <Label
                     htmlFor={`range-${range.value}`}
-                    className="font-normal w-full"
+                    className="w-full font-normal"
                   >
                     {range.label}
                   </Label>
@@ -67,7 +67,7 @@ export function OrdersRangeFilter() {
               <div
                 role="separator"
                 aria-orientation="horizontal"
-                className="-mx-3 my-1 h-px bg-border"
+                className="bg-border -mx-3 my-1 h-px"
               ></div>
               <div className="flex justify-between gap-2">
                 <Button size="sm" variant="outline" className="h-7 px-2">

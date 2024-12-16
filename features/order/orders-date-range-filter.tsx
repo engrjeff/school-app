@@ -28,11 +28,11 @@ export function OrdersDateRangeFilter() {
           variant="outline"
           size="sm"
           className={cn(
-            'w-full md:w-[220px] justify-start text-left font-normal bg-muted border-neutral-800',
+            'bg-muted w-full justify-start border-neutral-800 text-left font-normal md:w-[220px]',
             !dateRange.from && !dateRange.to && 'text-muted-foreground'
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
+          <CalendarIcon className="mr-2 size-4" />
           {dateRange.from ? (
             dateRange.to ? (
               <>
@@ -49,7 +49,7 @@ export function OrdersDateRangeFilter() {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <div className="flex items-center justify-between gap-2 p-4">
-          <p className="text-sm text-muted-foreground">Filter by date range</p>
+          <p className="text-muted-foreground text-sm">Filter by date range</p>
           <Button type="button" size="sm">
             Apply
           </Button>
