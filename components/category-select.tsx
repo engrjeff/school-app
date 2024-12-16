@@ -49,7 +49,7 @@ export function CategorySelect({
               )?.name
             : "Select category"}
           {categoriesData.isLoading ? (
-            <Loader2Icon className="ml-2 size-4 shrink-0 animate-spin" />
+            <Loader2Icon className="ml-auto size-4 shrink-0 animate-spin" />
           ) : (
             <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           )}

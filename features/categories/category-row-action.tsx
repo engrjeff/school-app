@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Category } from "@prisma/client"
 import { MoreHorizontalIcon } from "lucide-react"
 
@@ -36,6 +37,13 @@ export function CategoryRowActions({ category }: { category: Category }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/${category.storeId}/products?categoryId=${category.id}`}
+              >
+                View Products
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setAction("delete")}
               className="text-red-500 focus:text-red-500"

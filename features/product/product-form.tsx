@@ -1,8 +1,29 @@
-'use client';
+"use client"
 
-import { CategorySelect } from '@/components/category-select';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Fragment, useEffect } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import {
+  GripVerticalIcon,
+  PlusIcon,
+  RotateCwIcon,
+  TrashIcon,
+} from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
+import {
+  SubmitErrorHandler,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useWatch,
+} from "react-hook-form"
+import { toast } from "sonner"
+
+import { cn } from "@/lib/utils"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -11,12 +32,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { ImageInput } from '@/components/ui/image-input';
-import { Input } from '@/components/ui/input';
-import { NumberInput } from '@/components/ui/number-input';
-import { Separator } from '@/components/ui/separator';
-import { SubmitButton } from '@/components/ui/submit-button';
+} from "@/components/ui/form"
+import { ImageInput } from "@/components/ui/image-input"
+import { Input } from "@/components/ui/input"
+import { NumberInput } from "@/components/ui/number-input"
+import { Separator } from "@/components/ui/separator"
+import { SubmitButton } from "@/components/ui/submit-button"
 import {
   Table,
   TableBody,
@@ -24,112 +45,93 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  GripVerticalIcon,
-  PlusIcon,
-  RotateCwIcon,
-  TrashIcon,
-} from 'lucide-react';
-import { useAction } from 'next-safe-action/hooks';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Fragment, useEffect } from 'react';
-import {
-  SubmitErrorHandler,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
-import { toast } from 'sonner';
-import { createProduct } from './actions';
-import { generateSku } from './helpers';
-import { CreateProductInputs, productSchema } from './schema';
+} from "@/components/ui/table"
+import { Textarea } from "@/components/ui/textarea"
+import { CategorySelect } from "@/components/category-select"
+
+import { createProduct } from "./actions"
+import { generateSku } from "./helpers"
+import { CreateProductInputs, productSchema } from "./schema"
 
 const defaultValues: CreateProductInputs = {
-  mode: 'default',
-  name: '',
-  description: '',
-  categoryId: '',
+  mode: "default",
+  name: "",
+  description: "",
+  categoryId: "",
   meta: {
-    type: 'sku-only',
+    type: "sku-only",
     skuObject: {
-      sku: '',
+      sku: "",
       price: 0,
       costPrice: 0,
       stock: 0,
       lowStockThreshold: 0,
     },
   },
-};
+}
 
 export function ProductForm({
   storeId,
   initialValues,
 }: {
-  storeId: string;
-  initialValues?: CreateProductInputs;
+  storeId: string
+  initialValues?: CreateProductInputs
 }) {
   const form = useForm<CreateProductInputs>({
     resolver: zodResolver(productSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: initialValues ? initialValues : defaultValues,
-  });
+  })
 
-  const metaType = form.watch('meta.type');
+  const metaType = form.watch("meta.type")
 
   const action = useAction(createProduct, {
     onError: ({ error }) => {
-      if (error.serverError === 'Cannot have products with the same name.') {
-        form.setError('name', { message: error.serverError });
+      if (error.serverError === "Cannot have products with the same name.") {
+        form.setError("name", { message: error.serverError })
 
-        toast.error('The store was not created. Please try again.');
+        toast.error("The store was not created. Please try again.")
 
-        form.setFocus('name');
+        form.setFocus("name")
 
-        return;
+        return
       }
       if (
-        error.serverError === 'Cannot have duplicate SKUs for the same store.'
+        error.serverError === "Cannot have duplicate SKUs for the same store."
       ) {
-        toast.error(error.serverError);
+        toast.error(error.serverError)
 
-        if (metaType === 'sku-only') {
-          form.setError('meta.skuObject.sku', { message: error.serverError });
+        if (metaType === "sku-only") {
+          form.setError("meta.skuObject.sku", { message: error.serverError })
 
-          form.setFocus('meta.skuObject.sku');
+          form.setFocus("meta.skuObject.sku")
         }
 
-        return;
+        return
       }
 
-      toast.error('The store was not created. Please try again.');
+      toast.error("The store was not created. Please try again.")
     },
-  });
+  })
 
-  const router = useRouter();
+  const router = useRouter()
 
   const onError: SubmitErrorHandler<CreateProductInputs> = (errors) => {
-    console.log(errors);
-  };
+    console.log(errors)
+  }
 
   const onSubmit: SubmitHandler<CreateProductInputs> = async (values) => {
     const result = await action.executeAsync({
       ...values,
       storeId,
-    });
+    })
 
     if (result?.data?.product?.id) {
-      toast.success('Product saved!');
+      toast.success("Product saved!")
 
-      router.replace(`/${storeId}/products`);
+      router.replace(`/${storeId}/products`)
     }
-  };
+  }
 
   return (
     <Form {...form}>
@@ -137,8 +139,8 @@ export function ProductForm({
         onSubmit={form.handleSubmit(onSubmit, onError)}
         onChange={() => form.clearErrors()}
         className={cn(
-          'max-w-full space-y-4 overflow-hidden',
-          action.isPending ? 'pointer-events-none' : ''
+          "max-w-full space-y-4 overflow-hidden pr-1",
+          action.isPending ? "pointer-events-none" : ""
         )}
       >
         <div className="flex justify-between">
@@ -151,7 +153,7 @@ export function ProductForm({
           <div className="flex items-center justify-end gap-4">
             <Link
               href={`/${storeId}/products`}
-              className={buttonVariants({ size: 'sm', variant: 'secondary' })}
+              className={buttonVariants({ size: "sm", variant: "secondary" })}
             >
               Discard
             </Link>
@@ -201,15 +203,15 @@ export function ProductForm({
                       className="bg-muted border-border"
                       {...field}
                       onChange={(e) => {
-                        if (metaType === 'sku-only') {
-                          const name = e.currentTarget.value;
+                        if (metaType === "sku-only") {
+                          const name = e.currentTarget.value
 
-                          const skuValue = generateSku(name);
+                          const skuValue = generateSku(name)
 
-                          form.setValue('meta.skuObject.sku', skuValue);
+                          form.setValue("meta.skuObject.sku", skuValue)
                         }
 
-                        field.onChange(e);
+                        field.onChange(e)
                       }}
                     />
                   </FormControl>
@@ -266,21 +268,21 @@ export function ProductForm({
               control={form.control}
               name="meta.type"
               render={({ field }) => (
-                <FormItem className="flex select-none items-center space-x-2 space-y-0 p-2">
+                <FormItem className="flex select-none items-center space-x-2 space-y-0 pb-4">
                   <FormControl>
                     <Checkbox
-                      checked={field.value === 'sku-only' ? false : true}
+                      checked={field.value === "sku-only" ? false : true}
                       onCheckedChange={(checked) => {
                         field.onChange(
-                          checked === true ? 'with-variants' : 'sku-only'
-                        );
+                          checked === true ? "with-variants" : "sku-only"
+                        )
 
                         if (checked === true) {
-                          form.resetField('meta.skuObject');
+                          form.resetField("meta.skuObject")
 
-                          form.setValue('meta.attributes', [
-                            { name: '', options: [{ value: '' }] },
-                          ]);
+                          form.setValue("meta.attributes", [
+                            { name: "", options: [{ value: "" }] },
+                          ])
                         }
                       }}
                     />
@@ -289,7 +291,7 @@ export function ProductForm({
                 </FormItem>
               )}
             />
-            {metaType === 'sku-only' ? (
+            {metaType === "sku-only" ? (
               <fieldset className="space-y-3">
                 <p className="font-semibold">Pricing & SKU</p>
                 <div className="space-y-4">
@@ -314,9 +316,9 @@ export function ProductForm({
                             className="absolute inset-y-1 end-1 size-7 disabled:cursor-not-allowed"
                             title="click to generate SKU"
                             onClick={(e) => {
-                              e.stopPropagation();
-                              const skuValue = generateSku(form.watch('name'));
-                              form.setValue('meta.skuObject.sku', skuValue);
+                              e.stopPropagation()
+                              const skuValue = generateSku(form.watch("name"))
+                              form.setValue("meta.skuObject.sku", skuValue)
                             }}
                           >
                             <span className="sr-only">generate sku</span>
@@ -341,7 +343,7 @@ export function ProductForm({
                               placeholder="0.00"
                               className="bg-muted border-border"
                               min={0}
-                              {...form.register('meta.skuObject.price', {
+                              {...form.register("meta.skuObject.price", {
                                 valueAsNumber: true,
                               })}
                             />
@@ -362,7 +364,7 @@ export function ProductForm({
                               placeholder="0.00"
                               className="bg-muted border-border"
                               min={0}
-                              {...form.register('meta.skuObject.costPrice', {
+                              {...form.register("meta.skuObject.costPrice", {
                                 valueAsNumber: true,
                               })}
                             />
@@ -382,7 +384,7 @@ export function ProductForm({
                               placeholder="0"
                               min={0}
                               className="bg-muted border-border"
-                              {...form.register('meta.skuObject.stock', {
+                              {...form.register("meta.skuObject.stock", {
                                 valueAsNumber: true,
                               })}
                             />
@@ -403,7 +405,7 @@ export function ProductForm({
                               min={0}
                               className="bg-muted border-border"
                               {...form.register(
-                                'meta.skuObject.lowStockThreshold',
+                                "meta.skuObject.lowStockThreshold",
                                 {
                                   valueAsNumber: true,
                                 }
@@ -425,16 +427,16 @@ export function ProductForm({
 
         <VariantSkusFields
           key={
-            JSON.stringify(form.watch('meta.attributes')) +
-            '-' +
-            form.watch('name')
+            JSON.stringify(form.watch("meta.attributes")) +
+            "-" +
+            form.watch("name")
           }
         />
 
         <div className="flex items-center justify-end gap-4 pt-6">
           <Link
             href={`/${storeId}/products`}
-            className={buttonVariants({ size: 'sm', variant: 'secondary' })}
+            className={buttonVariants({ size: "sm", variant: "secondary" })}
           >
             Discard
           </Link>
@@ -444,38 +446,38 @@ export function ProductForm({
         </div>
       </form>
     </Form>
-  );
+  )
 }
 
 function AttributeFields() {
-  const form = useFormContext<CreateProductInputs>();
+  const form = useFormContext<CreateProductInputs>()
 
   const attributes = useFieldArray({
     control: form.control,
-    name: 'meta.attributes',
-  });
+    name: "meta.attributes",
+  })
 
-  const variants = useWatch({ control: form.control, name: 'meta.variants' });
+  const variants = useWatch({ control: form.control, name: "meta.variants" })
 
   const variantFields = useFieldArray({
     control: form.control,
-    name: 'meta.variants',
-  });
+    name: "meta.variants",
+  })
 
   async function addAttribute() {
     const isValidSoFar = await form.trigger(
       `meta.attributes.${attributes.fields.length - 1}`,
       { shouldFocus: true }
-    );
+    )
 
-    if (!isValidSoFar) return;
+    if (!isValidSoFar) return
 
-    attributes.append({ name: '', options: [{ value: '' }] });
+    attributes.append({ name: "", options: [{ value: "" }] })
   }
 
   function deleteAttribute(attrIndex: number) {
     // find variants with this attr
-    const thisAttribute = form.getValues(`meta.attributes.${attrIndex}`);
+    const thisAttribute = form.getValues(`meta.attributes.${attrIndex}`)
 
     if (attrIndex === 0) {
       const affectedVariantIndexes = variants
@@ -483,21 +485,21 @@ function AttributeFields() {
         .filter((v) =>
           thisAttribute.options.map((o) => o.value).includes(v.v.attr1)
         )
-        .map((d) => d.index);
+        .map((d) => d.index)
 
-      variantFields.remove(affectedVariantIndexes);
+      variantFields.remove(affectedVariantIndexes)
     } else if (attrIndex === 1) {
       const affectedVariantIndexes = variants
         ?.map((v, i) => ({ index: i, v }))
         .filter((v) =>
           thisAttribute.options.map((o) => o.value).includes(v.v.attr2!)
         )
-        .map((d) => d.index);
+        .map((d) => d.index)
 
-      variantFields.remove(affectedVariantIndexes);
+      variantFields.remove(affectedVariantIndexes)
     }
 
-    attributes.remove(attrIndex);
+    attributes.remove(attrIndex)
   }
   return (
     <fieldset className="space-y-3">
@@ -560,50 +562,50 @@ function AttributeFields() {
         </ul>
       ))}
     </fieldset>
-  );
+  )
 }
 
 function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
-  const form = useFormContext<CreateProductInputs>();
+  const form = useFormContext<CreateProductInputs>()
 
-  const variants = useWatch({ control: form.control, name: 'meta.variants' });
+  const variants = useWatch({ control: form.control, name: "meta.variants" })
 
   const attributeValues = useFieldArray({
     control: form.control,
     name: `meta.attributes.${attrIndex}.options`,
-  });
+  })
 
   const variantFields = useFieldArray({
     control: form.control,
-    name: 'meta.variants',
-  });
+    name: "meta.variants",
+  })
 
-  const errors = form.getFieldState(`meta.attributes.${attrIndex}.options`);
+  const errors = form.getFieldState(`meta.attributes.${attrIndex}.options`)
 
-  const rootErr = errors.error?.root?.message;
+  const rootErr = errors.error?.root?.message
 
   function deleteOption(optionIndex: number) {
     const thisOption = form.getValues(
       `meta.attributes.${attrIndex}.options.${optionIndex}.value`
-    );
+    )
 
     if (attrIndex === 0) {
       const affectedVariantIndexes = variants
         ?.map((v, i) => ({ index: i, v }))
         .filter((v) => v.v.attr1 === thisOption)
-        .map((d) => d.index);
+        .map((d) => d.index)
 
-      variantFields.remove(affectedVariantIndexes);
+      variantFields.remove(affectedVariantIndexes)
     } else if (attrIndex === 1) {
       const affectedVariantIndexes = variants
         ?.map((v, i) => ({ index: i, v }))
         .filter((v) => v.v.attr2 === thisOption)
-        .map((d) => d.index);
+        .map((d) => d.index)
 
-      variantFields.remove(affectedVariantIndexes);
+      variantFields.remove(affectedVariantIndexes)
     }
 
-    attributeValues.remove(optionIndex);
+    attributeValues.remove(optionIndex)
   }
 
   async function addOption() {
@@ -612,39 +614,39 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
         attributeValues.fields.length - 1
       }`,
       { shouldFocus: true }
-    );
+    )
 
-    if (!isValidSoFar) return;
+    if (!isValidSoFar) return
 
     if (attrIndex === 1) {
-      const attr1Options = form.getValues(`meta.attributes.0.options`);
+      const attr1Options = form.getValues(`meta.attributes.0.options`)
 
       attr1Options.forEach((attr, outerIndex) => {
         const insertIndex =
           (attributeValues.fields.length + 1) * outerIndex +
-          attributeValues.fields.length;
+          attributeValues.fields.length
 
         variantFields.insert(insertIndex, {
           attr1: attr.value,
-          attr2: '',
-          sku: '',
+          attr2: "",
+          sku: "",
           price: 0,
           costPrice: 0,
           stock: 0,
           lowStockThreshold: 0,
           imageUrl: undefined,
-        });
-      });
+        })
+      })
     }
 
-    attributeValues.append({ value: '' });
+    attributeValues.append({ value: "" })
   }
 
   return (
     <ul className="ml-3 space-y-2 border-l border-dashed py-4 pl-3">
       <li>
         <p className="text-sm">
-          Options{' '}
+          Options{" "}
           {rootErr ? (
             <span className="text-destructive text-xs">{rootErr}</span>
           ) : null}
@@ -666,7 +668,7 @@ function AttributeOptionsFields({ attrIndex }: { attrIndex: number }) {
         </Button>
       </li>
     </ul>
-  );
+  )
 }
 
 function AttributeOptionItem({
@@ -675,12 +677,12 @@ function AttributeOptionItem({
   disabledDelete,
   onDeleteClick,
 }: {
-  attributeIndex: number;
-  optionIndex: number;
-  disabledDelete?: boolean;
-  onDeleteClick?: () => void;
+  attributeIndex: number
+  optionIndex: number
+  disabledDelete?: boolean
+  onDeleteClick?: () => void
 }) {
-  const form = useFormContext<CreateProductInputs>();
+  const form = useFormContext<CreateProductInputs>()
 
   return (
     <div className="flex items-center gap-2">
@@ -724,55 +726,55 @@ function AttributeOptionItem({
         )}
       />
     </div>
-  );
+  )
 }
 
 function VariantSkusFields() {
-  const form = useFormContext<CreateProductInputs>();
+  const form = useFormContext<CreateProductInputs>()
 
   const attributes = useWatch({
     control: form.control,
-    name: 'meta.attributes',
-  });
+    name: "meta.attributes",
+  })
 
   const productName = useWatch({
     control: form.control,
-    name: 'name',
-  });
+    name: "name",
+  })
 
   const variants = useFieldArray({
     control: form.control,
-    name: 'meta.variants',
-  });
+    name: "meta.variants",
+  })
 
   const validAttributes = attributes
     ?.filter(
       (attr) => Boolean(attr.name) && attr.options.filter((o) => o.value).length
     )
-    .map((a) => ({ name: a.name, options: a.options.filter((v) => v.value) }));
+    .map((a) => ({ name: a.name, options: a.options.filter((v) => v.value) }))
 
   useEffect(() => {
     if (validAttributes?.length === 1) {
       validAttributes[0].options.forEach((attr1, index) => {
-        const currentVal = form.getValues(`meta.variants.${index}`);
+        const currentVal = form.getValues(`meta.variants.${index}`)
 
         variants.update(index, {
           attr1: attr1.value,
-          attr2: '',
+          attr2: "",
           sku: generateSku(productName, attr1.value),
           price: currentVal?.price ?? 0,
           costPrice: currentVal?.costPrice ?? 0,
           stock: currentVal?.stock ?? 0,
           lowStockThreshold: currentVal?.lowStockThreshold ?? 0,
           imageUrl: currentVal?.imageUrl ?? undefined,
-        });
-      });
+        })
+      })
     } else if (validAttributes?.length === 2) {
       validAttributes[0].options.forEach((attr1, outerIndex) => {
         validAttributes[1].options.forEach((attr2, innerIndex, arr2) => {
-          const targetIndex = arr2.length * outerIndex + innerIndex;
+          const targetIndex = arr2.length * outerIndex + innerIndex
 
-          const currentVal = form.getValues(`meta.variants.${targetIndex}`);
+          const currentVal = form.getValues(`meta.variants.${targetIndex}`)
 
           variants.update(targetIndex, {
             attr1: attr1.value,
@@ -783,16 +785,16 @@ function VariantSkusFields() {
             stock: currentVal?.stock ?? 0,
             lowStockThreshold: currentVal?.lowStockThreshold ?? 0,
             imageUrl: currentVal?.imageUrl ?? undefined,
-          });
-        });
-      });
+          })
+        })
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [attributes, productName]);
+  }, [attributes, productName])
 
-  if (!validAttributes?.length) return null;
+  if (!validAttributes?.length) return null
 
-  if (!variants?.fields?.length) return null;
+  if (!variants?.fields?.length) return null
 
   return (
     <>
@@ -831,7 +833,7 @@ function VariantSkusFields() {
           {validAttributes.at(1)?.options.length
             ? variants.fields?.map((variant, varIndex) => {
                 const attr2OptionsLen =
-                  validAttributes.at(1)?.options?.length ?? 0;
+                  validAttributes.at(1)?.options?.length ?? 0
 
                 return (
                   <Fragment key={`variant-item-${variant.sku}-${varIndex}`}>
@@ -868,7 +870,7 @@ function VariantSkusFields() {
                       <VariantFields variantItemIndex={varIndex} />
                     </TableRow>
                   </Fragment>
-                );
+                )
               })
             : variants.fields?.map((variant, varIndex) => (
                 <Fragment key={`variant-item-${variant.attr1}-${varIndex}`}>
@@ -900,11 +902,11 @@ function VariantSkusFields() {
         </TableBody>
       </Table>
     </>
-  );
+  )
 }
 
 function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
-  const form = useFormContext<CreateProductInputs>();
+  const form = useFormContext<CreateProductInputs>()
 
   return (
     <>
@@ -1028,5 +1030,5 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
         />
       </TableCell>
     </>
-  );
+  )
 }
