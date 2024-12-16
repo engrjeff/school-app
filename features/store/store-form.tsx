@@ -1,14 +1,14 @@
-'use client';
+"use client"
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, ArrowRight, CheckIcon } from 'lucide-react';
-import { useAction } from 'next-safe-action/hooks';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { ArrowLeft, ArrowRight, CheckIcon } from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -16,78 +16,80 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { SubmitButton } from '@/components/ui/submit-button';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { SubmitButton } from "@/components/ui/submit-button"
+import { Textarea } from "@/components/ui/textarea"
 
-import { createStore } from './actions';
-import { type CreateStoreInputs, createStoreSchema } from './schema';
+import { createStore } from "./actions"
+import { createStoreSchema, type CreateStoreInputs } from "./schema"
+import { SuggestedCategoriesPicker } from "./suggested-categories-picker"
 
 export function StoreForm() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(1)
 
-  const router = useRouter();
+  const router = useRouter()
 
   const createAction = useAction(createStore, {
     onError: ({ error }) => {
-      if (error.serverError === 'The store name you provided already exists.') {
-        form.setError('name', { message: error.serverError });
-        form.setFocus('name');
+      if (error.serverError === "The store name you provided already exists.") {
+        form.setError("name", { message: error.serverError })
+        form.setFocus("name")
 
-        setStep(1);
-        return;
+        setStep(1)
+        return
       }
 
-      toast.error('The store was not created. Please try again.');
+      toast.error("The store was not created. Please try again.")
     },
-  });
+  })
 
   const form = useForm<CreateStoreInputs>({
     resolver: zodResolver(createStoreSchema),
-    mode: 'all',
+    mode: "all",
     defaultValues: {
-      name: '',
-      description: '',
-      address: '',
+      name: "",
+      description: "",
+      address: "",
+      categories: [],
     },
-  });
+  })
 
   async function goToNext() {
     if (step === 1) {
-      const isNameValid = await form.trigger('name');
-      if (!isNameValid) return;
+      const isNameValid = await form.trigger("name")
+      if (!isNameValid) return
     }
 
     if (step === 2) {
-      const isDescValid = await form.trigger('description');
-      if (!isDescValid) return;
+      const isDescValid = await form.trigger("description")
+      if (!isDescValid) return
     }
 
-    setStep((currentStep) => currentStep + 1);
+    setStep((currentStep) => currentStep + 1)
   }
 
   function goBack() {
     setStep((currentStep) =>
       currentStep === 1 ? currentStep : currentStep - 1
-    );
+    )
   }
 
   function onError(errors: typeof form.formState.errors) {
-    console.log(errors);
+    console.log(errors)
   }
 
   async function onSubmit(values: CreateStoreInputs) {
-    const result = await createAction.executeAsync(values);
+    const result = await createAction.executeAsync(values)
     if (result?.data?.store.id) {
-      toast.success('Store saved');
+      toast.success("Store saved")
 
-      router.replace(`/${result.data.store.id}/dashboard`);
+      router.replace(`/${result.data.store.id}/dashboard`)
     }
   }
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-row-reverse gap-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit, onError)}>
           <fieldset
@@ -111,7 +113,7 @@ export function StoreForm() {
                     <FormItem className="space-y-0">
                       <FormLabel className="sr-only">Store name</FormLabel>
                       <FormControl>
-                        <Input placeholder="My Store" {...field} />
+                        <Input placeholder="My Store" {...field} autoFocus />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -139,6 +141,7 @@ export function StoreForm() {
                       <FormControl>
                         <Textarea
                           placeholder="A coffee and pastries store..."
+                          autoFocus
                           {...field}
                         />
                       </FormControl>
@@ -166,7 +169,40 @@ export function StoreForm() {
                     <FormItem className="space-y-0">
                       <FormLabel className="sr-only">Address</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="My store address" {...field} />
+                        <Textarea
+                          placeholder="My store address"
+                          autoFocus
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            ) : null}
+
+            {step === 4 ? (
+              <>
+                <div className="space-y-2 py-6">
+                  <h1 className="text-2xl font-bold">One last step 🚀</h1>
+                  <p className="text-muted-foreground">
+                    Select the categories the best describe your products.
+                  </p>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="categories"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <FormLabel className="sr-only">
+                        Suggested Categories
+                      </FormLabel>
+                      <FormControl>
+                        <SuggestedCategoriesPicker
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -187,7 +223,7 @@ export function StoreForm() {
                   <ArrowLeft size={16} />
                 </Button>
               ) : null}
-              {step === 3 ? (
+              {step === 4 ? (
                 <SubmitButton
                   disabled={!form.formState.isValid}
                   loading={createAction.isPending}
@@ -204,10 +240,10 @@ export function StoreForm() {
         </form>
       </Form>
 
-      <div className="flex flex-col justify-center rounded-lg bg-gradient-to-r from-emerald-500 to-green-500 p-8">
+      <div className="from-primary to-background flex flex-col justify-center rounded-lg bg-gradient-to-b p-8">
         <p className="text-4xl font-bold">DailySales</p>
         <p>Simple sales monitoring for your store.</p>
       </div>
     </div>
-  );
+  )
 }

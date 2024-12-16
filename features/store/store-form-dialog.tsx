@@ -1,8 +1,8 @@
-'use client';
+"use client"
 
-import { Plus } from 'lucide-react';
+import { Plus } from "lucide-react"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -10,11 +10,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog"
 
-import { StoreForm } from './store-form';
+import { StoreForm } from "./store-form"
 
-export function StoreFormDialog({ defaultOpen }: { defaultOpen?: boolean }) {
+export function StoreFormDialog({
+  defaultOpen,
+  isModal,
+}: {
+  defaultOpen?: boolean
+  isModal?: boolean
+}) {
   return (
     <Dialog defaultOpen={defaultOpen}>
       {defaultOpen ? null : (
@@ -28,7 +34,7 @@ export function StoreFormDialog({ defaultOpen }: { defaultOpen?: boolean }) {
         </DialogTrigger>
       )}
       <DialogContent
-        hideCloseBtn
+        hideCloseBtn={!isModal}
         className="max-w-3xl"
         onInteractOutside={defaultOpen ? (e) => e.preventDefault() : undefined}
       >
@@ -39,5 +45,5 @@ export function StoreFormDialog({ defaultOpen }: { defaultOpen?: boolean }) {
         <StoreForm />
       </DialogContent>
     </Dialog>
-  );
+  )
 }

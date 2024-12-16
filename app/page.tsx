@@ -1,15 +1,79 @@
-import { redirect } from "next/navigation"
-import { getStores } from "@/features/store/queries"
-import { StoreForm } from "@/features/store/store-form"
+import Link from "next/link"
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
-export default async function Home() {
-  const stores = await getStores()
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
-  if (stores.length > 0) return redirect(`/${stores[0].id}/dashboard`)
-
+export default function Home() {
   return (
-    <div className="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-1/2 top-1/2 z-50 grid w-full max-w-3xl -translate-x-1/2 -translate-y-1/2 gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg">
-      <StoreForm />
+    <div className="container mx-auto flex min-h-full max-w-screen-lg flex-col px-6">
+      <header className="flex justify-between py-6">
+        <Link href="/" className="font-semibold">
+          DailySales
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <SignedOut>
+            <Link
+              href="/sign-in"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "bg-muted border-border rounded-full"
+              )}
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/sign-up"
+              className={cn(buttonVariants(), "rounded-full")}
+            >
+              Register
+            </Link>
+          </SignedOut>
+          <SignedIn>
+            <Link href="/u" className={cn(buttonVariants(), "rounded-full")}>
+              Dashboard
+            </Link>
+            <UserButton />
+          </SignedIn>
+        </div>
+      </header>
+      <main className="flex flex-1 flex-col items-center py-20">
+        <h1 className="my-6 text-center text-6xl font-bold">
+          Welcome to Daily Sales!
+        </h1>
+        <p className="text-muted-foreground mb-6 text-center text-lg">
+          {"Keep track of your store's sales."}
+        </p>
+
+        <SignedOut>
+          <Link
+            href="/sign-up"
+            className={cn(buttonVariants(), "rounded-full")}
+          >
+            Get Started
+          </Link>
+        </SignedOut>
+        <SignedIn>
+          <Link href="/u" className={cn(buttonVariants(), "rounded-full")}>
+            Go to Dashboard
+          </Link>
+        </SignedIn>
+      </main>
+
+      <footer className="py-4">
+        <p className="text-center text-sm">
+          Created by{" "}
+          <a
+            href="https://jeffsegovia.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary font-semibold"
+          >
+            Jeff Segovia
+          </a>
+        </p>
+      </footer>
     </div>
   )
 }

@@ -1,7 +1,12 @@
-'use client';
+"use client"
 
-import { CheckIcon, ChevronsUpDown } from 'lucide-react';
+import { usePathname } from "next/navigation"
+import { useStoreId } from "@/features/store/hooks"
+import { StoreFormDialog } from "@/features/store/store-form-dialog"
+import { Store } from "@prisma/client"
+import { CheckIcon, ChevronsUpDown } from "lucide-react"
 
+import { getInitials } from "@/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,31 +14,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
-import { useStoreId } from '@/features/store/hooks';
-import { StoreFormDialog } from '@/features/store/store-form-dialog';
-import { getInitials } from '@/lib/utils';
-import { Store } from '@prisma/client';
-import { usePathname } from 'next/navigation';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+} from "@/components/ui/sidebar"
+
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 
 export function StoreSwitcher({ stores }: { stores: Store[] }) {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebar()
 
-  const storeId = useStoreId();
+  const storeId = useStoreId()
 
-  const activeStore = stores.find((s) => s.id === storeId) ?? stores[0];
+  const activeStore = stores.find((s) => s.id === storeId) ?? stores[0]
 
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   const pageRoute =
-    pathname.split('/').filter(Boolean).slice(1).join('/') ?? 'dashboard';
+    pathname.split("/").filter(Boolean).slice(1).join("/") ?? "dashboard"
+
+  if (!activeStore) return null
 
   return (
     <SidebarMenu>
@@ -50,9 +53,9 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
                   alt={activeStore.name}
                 />
                 <AvatarFallback
-                  className="rounded-md"
+                  className="bg-primary text-foreground rounded-md"
                   style={{
-                    backgroundColor: activeStore.color ?? 'var(--primary)',
+                    backgroundColor: activeStore.color ?? "",
                   }}
                 >
                   {getInitials(activeStore.name)}
@@ -72,7 +75,7 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             align="start"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
@@ -84,9 +87,9 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
                   <Avatar className="size-6 rounded-md">
                     <AvatarImage src={store.logoUrl!} alt={store.name} />
                     <AvatarFallback
-                      className="rounded-md text-xs"
+                      className="bg-primary text-foreground rounded-md"
                       style={{
-                        backgroundColor: store.color ?? 'var(--primary)',
+                        backgroundColor: activeStore.color ?? "",
                       }}
                     >
                       {getInitials(store.name)}
@@ -101,10 +104,10 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <StoreFormDialog />
+            <StoreFormDialog isModal={true} />
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

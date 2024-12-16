@@ -1,33 +1,35 @@
-'use server';
+"use server"
 
-import { auth } from '@clerk/nextjs/server';
+import { auth } from "@clerk/nextjs/server"
 
-import prisma from '@/lib/db';
+import prisma from "@/lib/db"
 
 export const getStores = async () => {
-  const user = await auth();
+  const user = await auth()
+
+  if (!user?.userId) return []
 
   const stores = await prisma.store.findMany({
     where: {
       ownerId: user.userId!,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
-  });
+  })
 
-  return stores;
-};
+  return stores
+}
 
 export const getStoreById = async (storeId: string) => {
   const store = await prisma.store.findUnique({
     where: {
       id: storeId,
     },
-  });
+  })
 
-  return store;
-};
+  return store
+}
 
 export const getDiscounts = async (storeId: string) => {
   const discounts = await prisma.discount.findMany({
@@ -35,9 +37,9 @@ export const getDiscounts = async (storeId: string) => {
       storeId,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
-  });
+  })
 
-  return discounts;
-};
+  return discounts
+}

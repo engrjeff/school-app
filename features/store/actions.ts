@@ -15,21 +15,31 @@ import {
 export const createStore = authActionClient
   .metadata({ actionName: "createStore" })
   .schema(createStoreSchema)
-  .action(async ({ parsedInput, ctx: { user } }) => {
-    const store = await prisma.store.create({
-      data: {
-        ...parsedInput,
-        ownerId: user.userId,
-      },
-      select: {
-        id: true,
-      },
-    })
+  .action(
+    async ({ parsedInput: { categories, ...storeData }, ctx: { user } }) => {
+      const store = await prisma.store.create({
+        data: {
+          ...storeData,
+          ownerId: user.userId,
+        },
+        select: {
+          id: true,
+        },
+      })
 
-    return {
-      store,
+      // create categories
+      await prisma.category.createMany({
+        data: categories.map((cat) => ({
+          storeId: store.id,
+          name: cat,
+        })),
+      })
+
+      return {
+        store,
+      }
     }
-  })
+  )
 
 export const updateStore = authActionClient
   .metadata({ actionName: "updateStore" })
