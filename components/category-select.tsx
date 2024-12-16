@@ -1,9 +1,11 @@
-'use client';
+"use client"
 
-import { Check, ChevronsUpDown } from 'lucide-react';
-import * as React from 'react';
+import * as React from "react"
+import { Check, ChevronsUpDown, Loader2Icon } from "lucide-react"
 
-import { Button } from '@/components/ui/button';
+import { cn } from "@/lib/utils"
+import { useCategories } from "@/hooks/use-categories"
+import { Button } from "@/components/ui/button"
 import {
   Command,
   CommandEmpty,
@@ -11,27 +13,25 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from "@/components/ui/command"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { useCategories } from '@/hooks/use-categories';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/popover"
 
 interface CategoriesSelectProps {
-  selectedCategoryId: string;
-  onChange: (categoryId: string) => void;
+  selectedCategoryId: string
+  onChange: (categoryId: string) => void
 }
 
 export function CategorySelect({
   selectedCategoryId,
   onChange,
 }: CategoriesSelectProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
-  const categoriesData = useCategories();
+  const categoriesData = useCategories()
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -47,8 +47,12 @@ export function CategorySelect({
             ? categoriesData?.data?.find(
                 (category) => category.id === selectedCategoryId
               )?.name
-            : 'Select category'}
-          <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+            : "Select category"}
+          {categoriesData.isLoading ? (
+            <Loader2Icon className="ml-2 size-4 shrink-0 animate-spin" />
+          ) : (
+            <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-popover-trigger-width p-0">
@@ -60,8 +64,8 @@ export function CategorySelect({
                 ?.name.toLowerCase()
                 .includes(search.toLowerCase())
             )
-              return 1;
-            return 0;
+              return 1
+            return 0
           }}
         >
           <CommandInput placeholder="Search category" />
@@ -74,17 +78,17 @@ export function CategorySelect({
                   value={category.id}
                   onSelect={(currentValue) => {
                     onChange(
-                      currentValue === selectedCategoryId ? '' : currentValue
-                    );
-                    setOpen(false);
+                      currentValue === selectedCategoryId ? "" : currentValue
+                    )
+                    setOpen(false)
                   }}
                 >
                   <Check
                     className={cn(
-                      'mr-2 size-4',
+                      "mr-2 size-4",
                       selectedCategoryId === category.id
-                        ? 'opacity-100'
-                        : 'opacity-0'
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
                   {category.name}
@@ -95,5 +99,5 @@ export function CategorySelect({
         </Command>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

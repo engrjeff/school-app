@@ -1,77 +1,83 @@
 import {
   Box,
   LayoutDashboard,
+  LibraryIcon,
   Package2,
   SettingsIcon,
   ShoppingBag,
   TrendingUp,
   UserRoundCogIcon,
-} from 'lucide-react';
+} from "lucide-react"
 
 export const stores = [
   {
-    name: 'CoFaith',
+    name: "CoFaith",
     logo: Package2,
-    plan: 'Store',
+    plan: "Store",
   },
   {
-    name: 'Epistle Co.',
+    name: "Epistle Co.",
     logo: Package2,
-    plan: 'Store',
+    plan: "Store",
   },
   {
-    name: 'Guava Electronics',
+    name: "Guava Electronics",
     logo: Package2,
-    plan: 'Store',
+    plan: "Store",
   },
-];
+]
 
 export const navigation = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
     {
-      title: 'Menu',
+      title: "Store",
       items: [
         {
-          title: 'Dashboard',
-          url: '/dashboard',
+          title: "Dashboard",
+          url: "/dashboard",
           icon: LayoutDashboard,
         },
         {
-          title: 'Sales',
-          url: '/sales',
+          title: "Sales",
+          url: "/sales",
           icon: TrendingUp,
         },
         {
-          title: 'Orders',
-          url: '/orders',
+          title: "Orders",
+          url: "/orders",
           icon: ShoppingBag,
         },
         {
-          title: 'Products',
-          url: '/products',
+          title: "Products",
+          url: "/products",
           icon: Box,
         },
       ],
     },
     {
-      title: 'Store Management',
+      title: "Management",
       items: [
         {
-          title: 'Employees',
-          url: '/employees',
+          title: "Categories",
+          url: "/categories",
+          icon: LibraryIcon,
+        },
+        {
+          title: "Employees",
+          url: "/employees",
           icon: UserRoundCogIcon,
         },
         {
-          title: 'Settings',
-          url: '/settings',
+          title: "Settings",
+          url: "/settings",
           icon: SettingsIcon,
         },
       ],
     },
   ],
-};
+}

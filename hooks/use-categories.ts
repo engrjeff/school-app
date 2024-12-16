@@ -1,21 +1,25 @@
-'use client';
+"use client"
 
-import { apiClient } from '@/lib/api-client';
-import { Category } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useStoreId } from "@/features/store/hooks"
+import { Category } from "@prisma/client"
+import { useQuery } from "@tanstack/react-query"
 
-async function getCategories() {
-  const response = await apiClient.get<Category[]>('/categories');
+import { apiClient } from "@/lib/api-client"
 
-  return response.data;
+async function getCategories(storeId: string) {
+  const response = await apiClient.get<Category[]>(
+    `/stores/${storeId}/categories`
+  )
+
+  return response.data
 }
 
 export function useCategories() {
+  const storeId = useStoreId()
+
   return useQuery({
-    queryKey: ['categories'],
-    queryFn: getCategories,
-    refetchOnMount: false,
+    queryKey: [storeId, "categories"],
+    queryFn: () => getCategories(storeId),
     refetchOnWindowFocus: false,
-    staleTime: Infinity,
-  });
+  })
 }
