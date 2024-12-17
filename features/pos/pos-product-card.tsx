@@ -1,52 +1,59 @@
-'use client';
+"use client"
 
-import { Button } from '@/components/ui/button';
+import { useState } from "react"
+import NumberFlow from "@number-flow/react"
+import { ImageIcon, Minus, Plus } from "lucide-react"
 
+import { formatCurrency, getPriceRange } from "@/lib/utils"
+import { ProductItem } from "@/hooks/use-products"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
-import NumberFlow from '@number-flow/react';
-
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ProductItem } from '@/hooks/use-products';
-import { formatCurrency, getPriceRange } from '@/lib/utils';
-import { ImageIcon, Minus, Plus } from 'lucide-react';
-import { useState } from 'react';
-import { usePOSOrdersStore } from './pos-order-store';
+import { usePOSOrdersStore } from "./pos-order-store"
 
 export function POSProductCard({ product }: { product: ProductItem }) {
-  const [qty, setQty] = useState(0);
-  const [attributes, setAttributes] = useState<Record<string, string>>({});
+  const [qty, setQty] = useState(0)
+  const [attributes, setAttributes] = useState<Record<string, string>>({})
 
-  const store = usePOSOrdersStore();
+  const store = usePOSOrdersStore()
 
   // find variants
   const selectedVariant = product.variants.find((v) =>
     v.productAttributeValues.every((attr) =>
       Object.values(attributes).includes(attr.attributeValueId)
     )
-  );
+  )
+
+  const outOfStockVariants = product.variants
+    .filter((v) => v.stock === 0)
+    .map((v) => v.id)
+
+  const isOOS = selectedVariant
+    ? outOfStockVariants.includes(selectedVariant?.id)
+    : false
 
   function handleAddItem() {
-    if (!selectedVariant || !qty) return;
+    if (!selectedVariant || !qty) return
 
     const existing = store.lineItems.find(
       (line) => line.productVariantId === selectedVariant.id
-    );
+    )
 
     if (existing) {
-      store.updateLineItemQty(selectedVariant.id, qty);
+      store.updateLineItemQty(selectedVariant.id, qty)
 
       // reset state
-      setQty(0);
-      setAttributes({});
+      setQty(0)
+      setAttributes({})
 
-      return;
+      return
     }
 
     store.addLineItem({
@@ -59,11 +66,11 @@ export function POSProductCard({ product }: { product: ProductItem }) {
         key: pv.attributeValue.attribute.name,
         value: pv.attributeValue.value,
       })),
-    });
+    })
 
     // reset state
-    setQty(0);
-    setAttributes({});
+    setQty(0)
+    setAttributes({})
   }
 
   return (
@@ -91,10 +98,10 @@ export function POSProductCard({ product }: { product: ProductItem }) {
               <RadioGroup
                 className="grid grid-cols-4 gap-2"
                 name={attr.name}
-                value={attributes[attr.name as keyof typeof attributes] ?? ''}
-                onValueChange={(val) =>
+                value={attributes[attr.name as keyof typeof attributes] ?? ""}
+                onValueChange={(val) => {
                   setAttributes((v) => ({ ...v, [attr.name]: val }))
-                }
+                }}
               >
                 {attr.values.map((option) => (
                   <label
@@ -116,7 +123,10 @@ export function POSProductCard({ product }: { product: ProductItem }) {
           ))}
         </div>
 
-        <div className="mt-auto flex select-none items-center justify-between gap-4 pt-4">
+        <div
+          data-oos={isOOS}
+          className="mt-auto flex select-none items-center justify-between gap-4 pt-4 data-[oos=true]:cursor-not-allowed"
+        >
           <div
             className="inline-flex shrink-0 items-center"
             role="group"
@@ -132,7 +142,7 @@ export function POSProductCard({ product }: { product: ProductItem }) {
               aria-label="Decrease quantity"
               className="border-border bg-background/60"
               onClick={() => setQty((q) => q - 1)}
-              disabled={qty === 0}
+              disabled={qty === 0 || isOOS}
             >
               <Minus size={16} strokeWidth={2} aria-hidden="true" />
             </Button>
@@ -154,9 +164,9 @@ export function POSProductCard({ product }: { product: ProductItem }) {
               className="border-border bg-background/60"
               onClick={() => setQty((q) => q + 1)}
               disabled={
-                product.attributes.length
+                (product.attributes.length
                   ? product.attributes.length !== Object.keys(attributes).length
-                  : false
+                  : false) || isOOS
               }
             >
               <Plus size={16} strokeWidth={2} aria-hidden="true" />
@@ -166,14 +176,14 @@ export function POSProductCard({ product }: { product: ProductItem }) {
           <Button
             type="button"
             size="sm"
-            disabled={!selectedVariant || !qty}
+            disabled={!selectedVariant || !qty || isOOS}
             onClick={handleAddItem}
             className="flex-1"
           >
-            Add Item
+            {isOOS ? "Out of stock" : "Add Item"}
           </Button>
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
