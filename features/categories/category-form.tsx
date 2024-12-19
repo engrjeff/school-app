@@ -10,7 +10,6 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -50,20 +49,34 @@ export function CategoryForm() {
           <DialogTitle>New Category</DialogTitle>
           <DialogDescription>Fill in the details below.</DialogDescription>
         </DialogHeader>
-        <CategoryFormComponent onAfterSave={() => setOpen(false)} />
+        <CategoryFormComponent
+          onCancel={() => setOpen(false)}
+          onAfterSave={() => setOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   )
 }
 
-function CategoryFormComponent({ onAfterSave }: { onAfterSave: () => void }) {
+export function CategoryFormComponent({
+  onAfterSave,
+  onCancel,
+  initialValue,
+  forSelect,
+}: {
+  onAfterSave: (newId: string) => void
+  onCancel: () => void
+  initialValue?: string
+  forSelect?: boolean
+}) {
   const storeId = useStoreId()
 
   const form = useForm<CategoryInputs>({
+    mode: "onChange",
     resolver: zodResolver(categorySchema),
     defaultValues: {
       storeId,
-      name: "",
+      name: initialValue ? initialValue : "",
     },
   })
 
@@ -92,9 +105,63 @@ function CategoryFormComponent({ onAfterSave }: { onAfterSave: () => void }) {
     if (result?.data?.category?.id) {
       toast.success("Category saved!")
 
-      onAfterSave()
+      onAfterSave(result?.data?.category?.id)
     }
   }
+
+  async function handleSave() {
+    const isValid = await form.trigger()
+
+    if (!isValid) return
+
+    const values = form.getValues()
+
+    const result = await action.executeAsync(values)
+
+    if (result?.data?.category?.id) {
+      toast.success("Category saved!")
+
+      onAfterSave(result?.data?.category?.id)
+    }
+  }
+
+  if (forSelect)
+    return (
+      <Form {...form}>
+        <div>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Untitled category" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <Button
+              type="button"
+              onClick={onCancel}
+              variant="ghost"
+              disabled={action.isPending}
+            >
+              Cancel
+            </Button>
+            <SubmitButton
+              type="button"
+              loading={action.isPending}
+              onClick={handleSave}
+            >
+              Save
+            </SubmitButton>
+          </div>
+        </div>
+      </Form>
+    )
 
   return (
     <Form {...form}>
@@ -113,11 +180,14 @@ function CategoryFormComponent({ onAfterSave }: { onAfterSave: () => void }) {
           )}
         />
         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <DialogClose asChild>
-            <Button type="button" variant="ghost" disabled={action.isPending}>
-              Cancel
-            </Button>
-          </DialogClose>
+          <Button
+            type="button"
+            onClick={onCancel}
+            variant="ghost"
+            disabled={action.isPending}
+          >
+            Cancel
+          </Button>
           <SubmitButton type="submit" loading={action.isPending}>
             Create
           </SubmitButton>

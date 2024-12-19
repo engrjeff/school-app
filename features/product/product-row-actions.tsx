@@ -1,36 +1,38 @@
-'use client';
+"use client"
 
-import { Button } from '@/components/ui/button';
+import { useState } from "react"
+import Link from "next/link"
+import { MoreHorizontalIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontalIcon } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useStoreId } from '../store/hooks';
-import { ProductDeleteDialog } from './product-delete-dialog';
+} from "@/components/ui/dropdown-menu"
 
-type RowAction = 'copy' | 'low-stock' | 'delete' | 'edit';
+import { useStoreId } from "../store/hooks"
+import { ProductDeleteDialog } from "./product-delete-dialog"
+
+type RowAction = "copy" | "low-stock" | "delete" | "edit"
 
 export function ProductRowActions({
   productId,
   productName,
 }: {
-  productId: string;
-  productName: string;
+  productId: string
+  productName: string
 }) {
-  const [action, setAction] = useState<RowAction>();
+  const [action, setAction] = useState<RowAction>()
 
-  const storeId = useStoreId();
+  const storeId = useStoreId()
 
   return (
     <>
       <div className="flex items-center justify-center">
-        <Button size="sm" variant="link" className="text-blue-500">
-          Edit
+        <Button asChild size="sm" variant="link" className="text-blue-500">
+          <Link href={`/${storeId}/products/${productId}`}>Edit</Link>
         </Button>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
@@ -52,11 +54,11 @@ export function ProductRowActions({
                 Copy
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setAction('low-stock')}>
+            <DropdownMenuItem onClick={() => setAction("low-stock")}>
               Low Stock Reminder
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setAction('delete')}
+              onClick={() => setAction("delete")}
               className="text-red-500 focus:text-red-500"
             >
               Delete
@@ -68,13 +70,13 @@ export function ProductRowActions({
       <ProductDeleteDialog
         productId={productId}
         productName={productName}
-        open={action === 'delete'}
+        open={action === "delete"}
         onOpenChange={(isOpen) => {
           if (!isOpen) {
-            setAction(undefined);
+            setAction(undefined)
           }
         }}
       />
     </>
-  );
+  )
 }

@@ -2,9 +2,9 @@
 
 import { Fragment, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
+  ArrowLeftIcon,
   GripVerticalIcon,
   PlusIcon,
   RotateCwIcon,
@@ -21,9 +21,8 @@ import {
 } from "react-hook-form"
 import { toast } from "sonner"
 
-import { cn } from "@/lib/utils"
+import { cn, formatDate } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
   FormControl,
@@ -49,43 +48,50 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { CategorySelect } from "@/components/category-select"
 
-import { createProduct } from "./actions"
+import { updateProduct } from "./actions"
 import { generateSku } from "./helpers"
-import { CreateProductInputs, productSchema } from "./schema"
+import {
+  CreateProductInputs,
+  UpdateProductInputs,
+  updateProductSchema,
+} from "./schema"
 
-const defaultValues: CreateProductInputs = {
-  mode: "default",
-  name: "",
-  description: "",
-  categoryId: "",
-  meta: {
-    type: "sku-only",
-    skuObject: {
-      sku: "",
-      price: 0,
-      costPrice: 0,
-      stock: 0,
-      lowStockThreshold: 0,
-    },
-  },
-}
-
-export function ProductForm({
+export function ProductEditForm({
   storeId,
   initialValues,
+  lastUpdated,
 }: {
   storeId: string
-  initialValues?: CreateProductInputs
+  initialValues: UpdateProductInputs
+  lastUpdated: Date
 }) {
-  const form = useForm<CreateProductInputs>({
-    resolver: zodResolver(productSchema),
+  const form = useForm<UpdateProductInputs>({
+    resolver: zodResolver(updateProductSchema),
     mode: "onChange",
-    defaultValues: initialValues ? initialValues : defaultValues,
+    defaultValues: initialValues,
   })
+
+  const hasNoChanges = !form.formState.isDirty
+
+  useEffect(() => {
+    function callback(e: BeforeUnloadEvent) {
+      e.preventDefault()
+    }
+
+    if (!hasNoChanges) {
+      window.addEventListener("beforeunload", callback)
+    } else {
+      window.removeEventListener("beforeunload", callback)
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", callback)
+    }
+  }, [hasNoChanges])
 
   const metaType = form.watch("meta.type")
 
-  const action = useAction(createProduct, {
+  const action = useAction(updateProduct, {
     onError: ({ error }) => {
       if (error.serverError === "Cannot have products with the same name.") {
         form.setError("name", { message: error.serverError })
@@ -110,26 +116,24 @@ export function ProductForm({
         return
       }
 
-      toast.error("The store was not created. Please try again.")
+      toast.error(
+        error.serverError ?? "The store was not updated. Please try again."
+      )
     },
   })
 
-  const router = useRouter()
-
-  const onError: SubmitErrorHandler<CreateProductInputs> = (errors) => {
+  const onError: SubmitErrorHandler<UpdateProductInputs> = (errors) => {
     console.log(errors)
   }
 
-  const onSubmit: SubmitHandler<CreateProductInputs> = async (values) => {
+  const onSubmit: SubmitHandler<UpdateProductInputs> = async (values) => {
     const result = await action.executeAsync({
       ...values,
       storeId,
     })
 
     if (result?.data?.product?.id) {
-      toast.success("Product saved!")
-
-      router.replace(`/${storeId}/products`)
+      toast.success("Product updated!")
     }
   }
 
@@ -144,11 +148,20 @@ export function ProductForm({
         )}
       >
         <div className="flex justify-between">
-          <div>
-            <h1 className="font-semibold">Create Product</h1>
-            <p className="text-muted-foreground text-sm">
-              Create product and variants.
-            </p>
+          <div className="flex items-start gap-2">
+            <Link
+              href={`/${storeId}/products`}
+              aria-label="Go back to product list"
+              className="hover:bg-secondary inline-flex size-8 items-center justify-center rounded-md"
+            >
+              <ArrowLeftIcon className="size-4" aria-hidden={true} />
+            </Link>
+            <div>
+              <h1 className="font-semibold">{initialValues.name}</h1>
+              <p className="text-muted-foreground text-sm">
+                Last updated on {formatDate(lastUpdated)}
+              </p>
+            </div>
           </div>
           <div className="flex items-center justify-end gap-4">
             <Link
@@ -157,8 +170,13 @@ export function ProductForm({
             >
               Discard
             </Link>
-            <SubmitButton size="sm" type="submit" loading={action.isPending}>
-              Save Product
+            <SubmitButton
+              size="sm"
+              type="submit"
+              loading={action.isPending}
+              disabled={hasNoChanges}
+            >
+              Update Product
             </SubmitButton>
           </div>
         </div>
@@ -263,34 +281,7 @@ export function ProductForm({
             </p>
           </div>
 
-          <div className="space-y-3">
-            <FormField
-              control={form.control}
-              name="meta.type"
-              render={({ field }) => (
-                <FormItem className="flex select-none items-center space-x-2 space-y-0 pb-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value === "sku-only" ? false : true}
-                      onCheckedChange={(checked) => {
-                        field.onChange(
-                          checked === true ? "with-variants" : "sku-only"
-                        )
-
-                        if (checked === true) {
-                          form.resetField("meta.skuObject")
-
-                          form.setValue("meta.attributes", [
-                            { name: "", options: [{ value: "" }] },
-                          ])
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormLabel>Enable variants for this product.</FormLabel>
-                </FormItem>
-              )}
-            />
+          <div>
             {metaType === "sku-only" ? (
               <fieldset className="space-y-3">
                 <p className="font-semibold">Pricing & SKU</p>
@@ -425,13 +416,15 @@ export function ProductForm({
           </div>
         </div>
 
-        <VariantSkusFields
-          key={
-            JSON.stringify(form.watch("meta.attributes")) +
-            "-" +
-            form.watch("name")
-          }
-        />
+        {metaType === "sku-only" ? null : (
+          <VariantSkusFields
+            key={
+              JSON.stringify(form.watch("meta.attributes")) +
+              "-" +
+              form.watch("name")
+            }
+          />
+        )}
 
         <div className="flex items-center justify-end gap-4 pt-6">
           <Link
@@ -440,8 +433,13 @@ export function ProductForm({
           >
             Discard
           </Link>
-          <SubmitButton size="sm" type="submit" loading={action.isPending}>
-            Save Product
+          <SubmitButton
+            size="sm"
+            type="submit"
+            loading={action.isPending}
+            disabled={hasNoChanges}
+          >
+            Update Product
           </SubmitButton>
         </div>
       </form>
@@ -825,7 +823,9 @@ function VariantSkusFields() {
             <TableHead className="w-[110px] min-w-[110px] border-r lg:min-w-0">
               Low Stock At
             </TableHead>
-            <TableHead className="w-[140px] max-w-[220px]">SKU</TableHead>
+            <TableHead className="w-[180px] min-w-[180px] max-w-[220px]">
+              SKU
+            </TableHead>
           </TableRow>
         </TableHeader>
 
@@ -928,7 +928,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   })}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-wrap" />
             </FormItem>
           )}
         />
@@ -954,7 +954,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   )}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-wrap" />
             </FormItem>
           )}
         />
@@ -977,7 +977,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   })}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-wrap" />
             </FormItem>
           )}
         />
@@ -1004,7 +1004,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   )}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-wrap" />
             </FormItem>
           )}
         />
@@ -1024,7 +1024,7 @@ function VariantFields({ variantItemIndex }: { variantItemIndex: number }) {
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-wrap" />
             </FormItem>
           )}
         />
