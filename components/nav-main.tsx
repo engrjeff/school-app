@@ -1,6 +1,9 @@
-'use client';
+"use client"
 
-import { type LucideIcon } from 'lucide-react';
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useStoreId } from "@/features/store/hooks"
+import { type LucideIcon } from "lucide-react"
 
 import {
   SidebarGroup,
@@ -9,27 +12,24 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import { useStoreId } from '@/features/store/hooks';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+} from "@/components/ui/sidebar"
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string;
+    title: string
     items?: {
-      title: string;
-      url: string;
-      icon: LucideIcon;
-      isActive?: boolean;
-    }[];
-  }[];
+      title: string
+      url: string
+      icon: LucideIcon
+      isActive?: boolean
+    }[]
+  }[]
 }) {
-  const storeId = useStoreId();
+  const storeId = useStoreId()
 
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return items.map((item) => (
     <SidebarGroup key={item.title}>
@@ -39,7 +39,7 @@ export function NavMain({
           {item.items?.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild isActive={pathname.includes(item.url)}>
-                <Link href={`/${storeId}/${item.url}`}>
+                <Link href={`/${storeId}${item.url}`}>
                   <item.icon /> {item.title}
                 </Link>
               </SidebarMenuButton>
@@ -48,5 +48,5 @@ export function NavMain({
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  ));
+  ))
 }

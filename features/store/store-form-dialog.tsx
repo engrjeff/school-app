@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus } from "lucide-react"
+import { PlusCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -25,10 +25,11 @@ export function StoreFormDialog({
     <Dialog defaultOpen={defaultOpen}>
       {defaultOpen ? null : (
         <DialogTrigger asChild>
-          <Button className="w-full justify-start gap-2 p-2" variant="ghost">
-            <div className="bg-background flex size-6 items-center justify-center rounded-md border">
-              <Plus className="size-4" />
-            </div>
+          <Button
+            className="hover:bg-secondary w-full justify-start gap-2 p-2"
+            variant="ghost"
+          >
+            <PlusCircle className="size-4" />
             <div className="text-muted-foreground font-medium">Add Store</div>
           </Button>
         </DialogTrigger>

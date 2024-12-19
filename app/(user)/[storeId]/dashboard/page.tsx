@@ -1,10 +1,22 @@
-import { KPIs } from '@/features/dashboard/kpis';
-import { OrdersChart } from '@/features/dashboard/orders-chart';
-import { TopProducts } from '@/features/dashboard/top-products';
-import { currentUser } from '@clerk/nextjs/server';
+import { type Metadata } from "next"
+import { KPIs } from "@/features/dashboard/kpis"
+import { OrdersChart } from "@/features/dashboard/orders-chart"
+import { TopProducts } from "@/features/dashboard/top-products"
+import { checkIfOwnerOfStore } from "@/features/store/queries"
+import { currentUser } from "@clerk/nextjs/server"
 
-export default async function DashboardPage() {
-  const user = await currentUser();
+export const metadata: Metadata = {
+  title: "Dashboard",
+}
+
+export default async function DashboardPage({
+  params,
+}: {
+  params: { storeId: string }
+}) {
+  await checkIfOwnerOfStore(params.storeId)
+
+  const user = await currentUser()
 
   return (
     <div className="container max-w-6xl space-y-6">
@@ -25,5 +37,5 @@ export default async function DashboardPage() {
       {/* top products */}
       <TopProducts />
     </div>
-  );
+  )
 }

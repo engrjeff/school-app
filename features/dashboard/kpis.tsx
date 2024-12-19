@@ -1,11 +1,5 @@
-'use client';
+"use client"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from '@/components/ui/card';
 import {
   BadgePercentIcon,
   EqualIcon,
@@ -13,23 +7,29 @@ import {
   StoreIcon,
   TrendingDownIcon,
   TrendingUpIcon,
-} from 'lucide-react';
+} from "lucide-react"
 
-import { Skeleton } from '@/components/ui/skeleton';
-import { useKPIs } from '@/hooks/use-kpis';
+import { useKPIs } from "@/hooks/use-kpis"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function KPIs() {
-  const kpiQuery = useKPIs();
+  const kpiQuery = useKPIs()
 
   if (kpiQuery.isLoading)
     return (
       <div className="grid grid-cols-4 gap-6">
-        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
-        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
-        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
-        <Skeleton className="bg-muted text-card-foreground h-[140px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
+        <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
       </div>
-    );
+    )
 
   return (
     <div className="grid grid-cols-4 gap-6">
@@ -43,22 +43,22 @@ export function KPIs() {
         <CardContent className="mt-auto">
           <div className="mb-2">
             <p className="text-lg font-bold leading-none">
-              {kpiQuery.data?.bestSeller.productName}{' '}
+              {kpiQuery.data?.bestSeller.productName}{" "}
             </p>
             {kpiQuery.data?.bestSeller.attributes?.length ? (
               <span className="text-muted-foreground text-xs leading-none">
                 {kpiQuery.data?.bestSeller.attributes
                   ?.map((a) => a.value)
-                  .join(', ')}
+                  .join(", ")}
               </span>
             ) : null}
           </div>
           <div className="flex items-center gap-1.5 text-sm">
             <p className="text-muted-foreground font-medium">
-              {kpiQuery.data?.bestSeller.orderCount}{' '}
+              {kpiQuery.data?.bestSeller.orderCount}{" "}
               {Number(kpiQuery.data?.bestSeller.orderCount) > 1
-                ? 'items sold'
-                : 'item sold'}
+                ? "items sold"
+                : "item sold"}
             </p>
           </div>
         </CardContent>
@@ -92,7 +92,7 @@ export function KPIs() {
         </CardHeader>
         <CardContent className="mt-auto">
           <p className="mb-1 text-xl font-bold">
-            {kpiQuery.data?.orders.orderItemsCount}{' '}
+            {kpiQuery.data?.orders.orderItemsCount}{" "}
             <span className="text-muted-foreground text-xs font-normal">
               / {kpiQuery.data?.orders.today} orders
             </span>
@@ -122,42 +122,42 @@ export function KPIs() {
           </p>
           <div className="flex items-center gap-1.5 text-sm">
             <p className="text-muted-foreground font-medium">
-              {kpiQuery.data?.discount.ordersCount}{' '}
+              {kpiQuery.data?.discount.ordersCount}{" "}
               {Number(kpiQuery.data?.discount.ordersCount) > 1
-                ? 'orders'
-                : 'order'}
+                ? "orders"
+                : "order"}
             </p>
           </div>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
 function Trend({ trend, value }: { value: number; trend?: string }) {
-  if (trend === 'equal')
+  if (trend === "equal")
     return (
       <div className="inline-flex items-center gap-1 text-amber-500">
-        <EqualIcon size={16} className="size-4" />{' '}
+        <EqualIcon size={16} className="size-4" />{" "}
         <span>{value.toFixed(1)}%</span>
       </div>
-    );
+    )
 
-  if (trend === 'up')
+  if (trend === "up")
     return (
       <div className="inline-flex items-center gap-1 text-green-500">
-        <TrendingUpIcon size={16} className="size-4" />{' '}
+        <TrendingUpIcon size={16} className="size-4" />{" "}
         <span>{value.toFixed(1)}%</span>
       </div>
-    );
+    )
 
-  if (trend === 'down')
+  if (trend === "down")
     return (
       <div className="inline-flex items-center gap-1 text-red-500">
-        <TrendingDownIcon size={16} className="size-4" />{' '}
+        <TrendingDownIcon size={16} className="size-4" />{" "}
         <span>{value.toFixed(1)}%</span>
       </div>
-    );
+    )
 
-  return null;
+  return null
 }

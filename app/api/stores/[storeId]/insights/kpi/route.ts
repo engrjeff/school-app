@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server"
+import { OrderStatus, PaymentStatus } from "@prisma/client"
 
-import prisma from '@/lib/db';
-import { calcPercentDiff, formatCurrency, getDateRange } from '@/lib/utils';
-import { OrderStatus, PaymentStatus } from '@prisma/client';
+import prisma from "@/lib/db"
+import { calcPercentDiff, formatCurrency, getDateRange } from "@/lib/utils"
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic"
 
 // get KPIs
 // 1. best-selling product
@@ -16,9 +16,9 @@ export async function GET(
   { params }: { params: { storeId: string } }
 ) {
   try {
-    const range = getDateRange('today');
+    const range = getDateRange("today")
 
-    const yesterday = getDateRange('yesterday');
+    const yesterday = getDateRange("yesterday")
 
     const ordersQuery = prisma.order.findMany({
       where: {
@@ -36,7 +36,7 @@ export async function GET(
           include: { attributes: true },
         },
       },
-    });
+    })
 
     const yesterdayOrdersQuery = prisma.order.findMany({
       where: {
@@ -52,67 +52,67 @@ export async function GET(
         discount: true,
         lineItems: true,
       },
-    });
+    })
 
     const [orders, yesterdayOrders] = await Promise.all([
       ordersQuery,
       yesterdayOrdersQuery,
-    ]);
+    ])
 
     const sales = orders.reduce((subSalesTotal, order) => {
-      return subSalesTotal + order.totalAmount;
-    }, 0);
+      return subSalesTotal + order.totalAmount
+    }, 0)
 
     const salesYesterday = yesterdayOrders.reduce((subSalesTotal, order) => {
-      return subSalesTotal + order.totalAmount;
-    }, 0);
+      return subSalesTotal + order.totalAmount
+    }, 0)
 
-    const ordersWithDiscount = orders.filter((o) => o.discountId);
+    const ordersWithDiscount = orders.filter((o) => o.discountId)
 
     const todalDiscount = ordersWithDiscount.reduce(
       (d, order) => d + Number(order.discount?.discountAmount),
       0
-    );
+    )
 
     const orderItems = orders
       .map((order) => {
-        return order.lineItems;
+        return order.lineItems
       })
-      .flat();
+      .flat()
 
-    orderItems.sort((a, b) => b.qty - a.qty);
+    orderItems.sort((a, b) => b.qty - a.qty)
 
-    const bestSeller = orderItems.at(0);
+    const bestSeller = orderItems.at(0)
 
     const bestSellerItem = orderItems.filter(
       (o) => o.productVariantId === bestSeller?.productVariantId
-    );
+    )
 
-    const orderItemsCount = orderItems.reduce((c, i) => c + i.qty, 0);
+    const orderItemsCount = orderItems.reduce((c, i) => c + i.qty, 0)
 
     const yesterdayOrderItemsCount = yesterdayOrders.reduce(
       (c, i) => c + i.lineItems.length,
       0
-    );
+    )
 
-    const topProductsMap = new Map<string, (typeof orderItems)[number]>();
+    const topProductsMap = new Map<string, (typeof orderItems)[number]>()
 
     orderItems.forEach((item) => {
       if (topProductsMap.has(item.productVariantId)) {
-        const thisItemQty = topProductsMap.get(item.productVariantId)?.qty ?? 0;
+        const thisItemQty = topProductsMap.get(item.productVariantId)?.qty ?? 0
 
         topProductsMap.set(item.productVariantId, {
           ...item,
           qty: thisItemQty + item.qty,
-        });
+        })
       } else {
-        topProductsMap.set(item.productVariantId, item);
+        topProductsMap.set(item.productVariantId, item)
       }
-    });
+    })
 
-    const topProducts = Array.from(topProductsMap.values());
+    const topProducts = Array.from(topProductsMap.values())
 
-    topProducts.sort((a, b) => b.qty * b.unitPrice - a.qty * a.unitPrice);
+    topProducts.sort((a, b) => b.qty * b.unitPrice - a.qty * a.unitPrice)
 
     const kpiData = {
       sales: {
@@ -123,10 +123,10 @@ export async function GET(
         percentDiff: calcPercentDiff(sales, salesYesterday),
         trend:
           sales === salesYesterday
-            ? 'equal'
+            ? "equal"
             : sales > salesYesterday
-              ? 'up'
-              : 'down',
+              ? "up"
+              : "down",
       },
       orders: {
         today: orders.length,
@@ -136,10 +136,10 @@ export async function GET(
         percentDiff: calcPercentDiff(orderItemsCount, yesterdayOrderItemsCount),
         trend:
           orderItemsCount === yesterdayOrderItemsCount
-            ? 'equal'
+            ? "equal"
             : orderItemsCount > yesterdayOrderItemsCount
-              ? 'up'
-              : 'down',
+              ? "up"
+              : "down",
       },
       discount: {
         ordersCount: ordersWithDiscount.length,
@@ -151,12 +151,12 @@ export async function GET(
         orderCount: bestSellerItem.reduce((t, i) => t + i.qty, 0),
       },
       topProducts: topProducts.slice(0, 8), // first 8 only
-    };
+    }
 
-    return NextResponse.json(kpiData);
+    return NextResponse.json(kpiData)
   } catch (error) {
-    console.log('Get KPIs Error: ', error);
+    console.log("Get KPIs Error: ", error)
 
-    return NextResponse.json({});
+    return NextResponse.json({})
   }
 }

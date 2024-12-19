@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client"
 import prisma from "@/lib/db"
 import { getSkip } from "@/lib/utils"
 
+import { checkIfOwnerOfStore } from "../store/queries"
 import { generateSku } from "./helpers"
 import { CreateProductInputs, UpdateProductInputs } from "./schema"
 
@@ -20,6 +21,8 @@ export type GetProductsArgs = {
 }
 
 export const getProducts = async (args: GetProductsArgs) => {
+  await checkIfOwnerOfStore(args.storeId)
+
   const whereInput: Prisma.ProductWhereInput = {
     storeId: args.storeId,
     categoryId: args.categoryId,
@@ -55,14 +58,17 @@ export const getProducts = async (args: GetProductsArgs) => {
   return { products, pageInfo }
 }
 
-export const getProductToCopyById = async (
+export const getProductToCopyById = async (args: {
   productId?: string
-): Promise<CreateProductInputs | undefined> => {
-  if (!productId) return undefined
+  storeId: string
+}): Promise<CreateProductInputs | undefined> => {
+  await checkIfOwnerOfStore(args.storeId)
+
+  if (!args.productId) return undefined
 
   const product = await prisma.product.findUnique({
     where: {
-      id: productId,
+      id: args.productId,
     },
     include: {
       attributes: {
@@ -135,9 +141,15 @@ export const getProductToCopyById = async (
   }
 }
 
-export const getProductById = async (
-  productId?: string
-): Promise<{ product: UpdateProductInputs; updatedAt: Date } | undefined> => {
+export const getProductById = async ({
+  productId,
+  storeId,
+}: {
+  productId: string
+  storeId: string
+}): Promise<{ product: UpdateProductInputs; updatedAt: Date } | undefined> => {
+  await checkIfOwnerOfStore(storeId)
+
   if (!productId) return undefined
 
   const product = await prisma.product.findUnique({

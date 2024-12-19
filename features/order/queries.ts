@@ -1,24 +1,29 @@
-'use server';
+"use server"
 
-import prisma from '@/lib/db';
-import { DateRangePreset, getDateRange, getSkip } from '@/lib/utils';
-import { OrderStatus, PaymentStatus, Prisma } from '@prisma/client';
+import { OrderStatus, PaymentStatus, Prisma } from "@prisma/client"
 
-const DEFAULT_PAGE = 1;
-const DEFAULT_PAGE_SIZE = 10;
+import prisma from "@/lib/db"
+import { DateRangePreset, getDateRange, getSkip } from "@/lib/utils"
+
+import { checkIfOwnerOfStore } from "../store/queries"
+
+const DEFAULT_PAGE = 1
+const DEFAULT_PAGE_SIZE = 10
 
 export type GetOrdersArgs = {
-  storeId: string;
-  range?: DateRangePreset;
-  q?: string;
-  order_status?: OrderStatus;
-  payment_status?: PaymentStatus;
-  page?: number;
-  pageSize?: number;
-};
+  storeId: string
+  range?: DateRangePreset
+  q?: string
+  order_status?: OrderStatus
+  payment_status?: PaymentStatus
+  page?: number
+  pageSize?: number
+}
 
 export const getOrders = async (args: GetOrdersArgs) => {
-  const range = getDateRange(args.range ?? 'today');
+  await checkIfOwnerOfStore(args.storeId)
+
+  const range = getDateRange(args.range ?? "today")
 
   const whereInput: Prisma.OrderWhereInput = {
     storeId: args.storeId,
@@ -28,15 +33,15 @@ export const getOrders = async (args: GetOrdersArgs) => {
     },
     orderId: {
       contains: args.q,
-      mode: 'insensitive',
+      mode: "insensitive",
     },
     orderStatus: args.order_status,
     paymentStatus: args.payment_status,
-  };
+  }
 
   const totalFiltered = await prisma.order.count({
     where: whereInput,
-  });
+  })
 
   const orders = await prisma.order.findMany({
     where: whereInput,
@@ -47,11 +52,11 @@ export const getOrders = async (args: GetOrdersArgs) => {
       discount: true,
     },
     orderBy: {
-      orderDate: 'desc',
+      orderDate: "desc",
     },
     take: args?.pageSize ?? DEFAULT_PAGE_SIZE,
     skip: getSkip({ limit: DEFAULT_PAGE_SIZE, page: args?.page }),
-  });
+  })
 
   const pageInfo = {
     total: totalFiltered,
@@ -59,13 +64,13 @@ export const getOrders = async (args: GetOrdersArgs) => {
     pageSize: DEFAULT_PAGE_SIZE,
     itemCount: orders.length,
     totalPages: Math.ceil(totalFiltered / DEFAULT_PAGE_SIZE),
-  };
+  }
 
-  return { orders, pageInfo };
-};
+  return { orders, pageInfo }
+}
 
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
 
 export type OrdersWithLineItems = ThenArg<
   ReturnType<typeof getOrders>
->['orders'];
+>["orders"]
