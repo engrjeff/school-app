@@ -1,6 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -8,49 +7,59 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table"
+import { EmptyView } from "@/components/empty-view"
 
-export function EmployeesTable() {
+import { getEmployees } from "../employees/queries"
+
+export async function EmployeesTable({ storeId }: { storeId: string }) {
+  const employees = await getEmployees(storeId)
+
   return (
     <>
       <Table containerClass="border rounded-lg">
         <TableHeader>
           <TableRow>
             <TableHead className="w-9 text-center">#</TableHead>
-            <TableHead className="text-center">Employee Name</TableHead>
-            <TableHead className="text-center">Is active?</TableHead>
+            <TableHead>Employee Name</TableHead>
+            <TableHead>Contact Number</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {['Employee 1', 'Employee 2', 'Employee 3', 'Employee 4'].map(
-            (employee, n) => (
-              <TableRow key={`employee-${employee}`}>
-                <TableCell className="text-center">{n + 1}</TableCell>
-                <TableCell className="text-center">{employee}</TableCell>
+          {employees.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5}>
+                <EmptyView />
+              </TableCell>
+            </TableRow>
+          ) : (
+            employees.map((employee, n) => (
+              <TableRow key={`employee-${employee.id}`}>
+                <TableCell className="text-center w-9">{n + 1}</TableCell>
                 <TableCell>
-                  <div className="flex items-center justify-center space-x-2">
-                    <Switch
-                      id="employee-active"
-                      className="data-[state=unchecked]:bg-border"
-                    />
-                    <Label htmlFor="employee-active" className="sr-only">
-                      Is active?
-                    </Label>
+                  <div>
+                    <p className="font-semibold">{employee.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {employee.email}
+                    </p>
                   </div>
+                </TableCell>
+                <TableCell>{employee.contactNumber}</TableCell>
+                <TableCell className="text-center">
+                  <Badge variant="FULFILLED">{employee.status}</Badge>
                 </TableCell>
                 <TableCell className="text-center">
-                  <div>
-                    <Button size="sm" variant="link" className="text-blue-500">
-                      Edit
-                    </Button>
-                  </div>
+                  <Button size="sm" variant="link" className="text-blue-500">
+                    Edit
+                  </Button>
                 </TableCell>
               </TableRow>
-            )
+            ))
           )}
         </TableBody>
       </Table>
     </>
-  );
+  )
 }

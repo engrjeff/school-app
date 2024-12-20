@@ -34,6 +34,16 @@ export const getStoreById = async (storeId: string) => {
   return store
 }
 
+export const getStoreByIdExternal = async (storeId: string) => {
+  const store = await prisma.store.findUnique({
+    where: {
+      id: storeId,
+    },
+  })
+
+  return store
+}
+
 export const getDiscounts = async (storeId: string) => {
   await checkIfOwnerOfStore(storeId)
 

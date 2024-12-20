@@ -192,7 +192,7 @@ model Employee {
   email         String
   username      String
   name          String
-  contactNumber String
+  contactNumber String?
   pin           String // should be hashed
   status        EmployeeStatus @default(INVITED)
   handledOrders Order[]
@@ -249,8 +249,8 @@ model Order {
 
   lineItems OrderLineItem[]
 
-  createdById String
-  createdBy   Employee @relation(fields: [createdById], references: [id])
+  createdById String?
+  createdBy   Employee? @relation(fields: [createdById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
