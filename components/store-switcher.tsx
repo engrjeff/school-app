@@ -34,7 +34,7 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
   const pathname = usePathname()
 
   const pageRoute =
-    pathname.split("/").filter(Boolean).slice(1).join("/") ?? "dashboard"
+    pathname.split("/").filter(Boolean).slice(1, 2).join("/") ?? "dashboard"
 
   if (!activeStore) return null
 
