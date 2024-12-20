@@ -30,7 +30,7 @@ async function CreateProductPage({ params, searchParams }: PageProps) {
     storeId: params.storeId,
   })
 
-  if (!productToCopy) notFound()
+  if (!productToCopy && searchParams?.copyId) notFound()
 
   return (
     <div className="container relative flex max-w-4xl flex-col space-y-6 overflow-hidden">

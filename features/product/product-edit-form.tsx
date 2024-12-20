@@ -72,6 +72,11 @@ export function ProductEditForm({
   })
 
   const hasNoChanges = !form.formState.isDirty
+  useEffect(() => {
+    if (form.formState.isSubmitSuccessful) {
+      form.reset(initialValues)
+    }
+  }, [form, initialValues])
 
   useEffect(() => {
     function callback(e: BeforeUnloadEvent) {
@@ -127,6 +132,9 @@ export function ProductEditForm({
   }
 
   const onSubmit: SubmitHandler<UpdateProductInputs> = async (values) => {
+    // console.log(initialValues.meta, values.meta)
+    // return
+
     const result = await action.executeAsync({
       ...values,
       storeId,

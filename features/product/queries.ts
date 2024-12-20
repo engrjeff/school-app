@@ -73,7 +73,17 @@ export const getProductToCopyById = async (args: {
     include: {
       attributes: {
         include: {
-          values: { select: { value: true } },
+          values: {
+            select: {
+              value: true,
+            },
+            orderBy: {
+              order: "asc",
+            },
+          },
+        },
+        orderBy: {
+          order: "asc",
         },
       },
       variants: {
@@ -159,10 +169,15 @@ export const getProductById = async ({
     include: {
       attributes: {
         include: {
-          values: { select: { value: true, id: true } },
+          values: {
+            select: { value: true, id: true },
+            orderBy: {
+              order: "asc",
+            },
+          },
         },
         orderBy: {
-          createdAt: "desc",
+          order: "asc",
         },
       },
       variants: {
@@ -226,9 +241,9 @@ export const getProductById = async ({
       variants: product.variants.map((variant) => {
         return {
           attr1:
-            variant.productAttributeValues.at(1)?.attributeValue.value ?? "",
-          attr2:
             variant.productAttributeValues.at(0)?.attributeValue.value ?? "",
+          attr2:
+            variant.productAttributeValues.at(1)?.attributeValue.value ?? "",
           sku: variant.sku,
           price: variant.price,
           costPrice: variant.costPrice,

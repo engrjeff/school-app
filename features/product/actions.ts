@@ -60,10 +60,14 @@ export const createProduct = authActionClient
         description: parsedInput.description,
         imageUrl: parsedInput.imageUrl,
         attributes: {
-          create: attributes.map((attr) => ({
+          create: attributes.map((attr, attrIndex) => ({
             name: attr.name,
+            order: attrIndex + 1,
             values: {
-              create: attr.options.map((opt) => ({ value: opt.value })),
+              create: attr.options.map((opt, optIndex) => ({
+                value: opt.value,
+                order: optIndex + 1,
+              })),
             },
           })),
         },
@@ -71,7 +75,14 @@ export const createProduct = authActionClient
       include: {
         attributes: {
           include: {
-            values: true,
+            values: {
+              orderBy: {
+                order: "asc",
+              },
+            },
+          },
+          orderBy: {
+            order: "asc",
           },
         },
       },
@@ -82,21 +93,36 @@ export const createProduct = authActionClient
 
     if (attr1 && !attr2) {
       if (variants?.length) {
-        const createdVariants = await prisma.productVariant.createMany({
-          data: variants?.map((variant, index) => ({
-            storeId: parsedInput.storeId,
-            productId: product.id,
-            sku: variant.sku,
-            price: variant.price,
-            costPrice: variant.costPrice,
-            imageUrl: parsedInput.imageUrl,
-            stock: variant.stock ?? 0,
-            lowStockThreshold: variant.lowStockThreshold ?? 0,
-            order: index + 1,
-          })),
-        })
+        const createdVariants = await prisma.$transaction(
+          variants.map((variant, index) => {
+            return prisma.productVariant.create({
+              data: {
+                storeId: parsedInput.storeId,
+                productId: product.id,
+                sku: variant.sku,
+                price: variant.price,
+                costPrice: variant.costPrice,
+                imageUrl: parsedInput.imageUrl,
+                stock: variant.stock ?? 0,
+                lowStockThreshold: variant.lowStockThreshold ?? 0,
+                order: index + 1,
+                productAttributeValues: {
+                  create: {
+                    attributeValue: {
+                      connect: {
+                        id: attr1.values.find((v) => v.value === variant.attr1)
+                          ?.id,
+                      },
+                    },
+                    order: 1,
+                  },
+                },
+              },
+            })
+          })
+        )
 
-        console.log("Created variants: ", createdVariants)
+        console.log("Variants: ", createdVariants)
       }
     }
 
@@ -115,35 +141,30 @@ export const createProduct = authActionClient
                 stock: variant.stock ?? 0,
                 lowStockThreshold: variant.lowStockThreshold ?? 0,
                 order: index + 1,
-
                 productAttributeValues: {
-                  create: [
-                    {
-                      attributeValue: {
-                        connect: {
-                          id: attr1.values.find(
-                            (v) => v.value === variant.attr1
-                          )?.id,
-                        },
+                  createMany: {
+                    data: [
+                      {
+                        attributeValueId:
+                          attr1.values.find((v) => v.value === variant.attr1)
+                            ?.id ?? "",
+                        order: 1,
                       },
-                    },
-                    {
-                      attributeValue: {
-                        connect: {
-                          id: attr2.values.find(
-                            (v) => v.value === variant.attr2
-                          )?.id,
-                        },
+                      {
+                        attributeValueId:
+                          attr2.values.find((v) => v.value === variant.attr2)
+                            ?.id ?? "",
+                        order: 2,
                       },
-                    },
-                  ],
+                    ],
+                  },
                 },
               },
             })
           })
         )
 
-        console.log("Created variants: ", createdVariants)
+        console.log("Variants: ", createdVariants)
       }
     }
 
@@ -236,10 +257,14 @@ export const updateProduct = authActionClient
         imageUrl: parsedInput.imageUrl,
         attributes: {
           deleteMany: {},
-          create: attributes.map((attr) => ({
+          create: attributes.map((attr, attrIndex) => ({
             name: attr.name,
+            order: attrIndex + 1,
             values: {
-              create: attr.options.map((opt) => ({ value: opt.value })),
+              create: attr.options.map((opt, optIndex) => ({
+                value: opt.value,
+                order: optIndex + 1,
+              })),
             },
           })),
         },
@@ -250,7 +275,14 @@ export const updateProduct = authActionClient
       include: {
         attributes: {
           include: {
-            values: true,
+            values: {
+              orderBy: {
+                order: "asc",
+              },
+            },
+          },
+          orderBy: {
+            order: "asc",
           },
         },
       },
@@ -261,19 +293,34 @@ export const updateProduct = authActionClient
 
     if (attr1 && !attr2) {
       if (variants?.length) {
-        const createdVariants = await prisma.productVariant.createMany({
-          data: variants?.map((variant, index) => ({
-            storeId: parsedInput.storeId,
-            productId,
-            sku: variant.sku,
-            price: variant.price,
-            costPrice: variant.costPrice,
-            imageUrl: parsedInput.imageUrl,
-            stock: variant.stock ?? 0,
-            lowStockThreshold: variant.lowStockThreshold ?? 0,
-            order: index + 1,
-          })),
-        })
+        const createdVariants = await prisma.$transaction(
+          variants.map((variant, index) => {
+            return prisma.productVariant.create({
+              data: {
+                storeId: parsedInput.storeId,
+                productId,
+                sku: variant.sku,
+                price: variant.price,
+                costPrice: variant.costPrice,
+                imageUrl: parsedInput.imageUrl,
+                stock: variant.stock ?? 0,
+                lowStockThreshold: variant.lowStockThreshold ?? 0,
+                order: index + 1,
+                productAttributeValues: {
+                  create: {
+                    attributeValue: {
+                      connect: {
+                        id: attr1.values.find((v) => v.value === variant.attr1)
+                          ?.id,
+                      },
+                    },
+                    order: 1,
+                  },
+                },
+              },
+            })
+          })
+        )
 
         console.log("Variants: ", createdVariants)
       }
@@ -294,28 +341,23 @@ export const updateProduct = authActionClient
                 stock: variant.stock ?? 0,
                 lowStockThreshold: variant.lowStockThreshold ?? 0,
                 order: index + 1,
-
                 productAttributeValues: {
-                  create: [
-                    {
-                      attributeValue: {
-                        connect: {
-                          id: attr1.values.find(
-                            (v) => v.value === variant.attr1
-                          )?.id,
-                        },
+                  createMany: {
+                    data: [
+                      {
+                        attributeValueId:
+                          attr1.values.find((v) => v.value === variant.attr1)
+                            ?.id ?? "",
+                        order: 1,
                       },
-                    },
-                    {
-                      attributeValue: {
-                        connect: {
-                          id: attr2.values.find(
-                            (v) => v.value === variant.attr2
-                          )?.id,
-                        },
+                      {
+                        attributeValueId:
+                          attr2.values.find((v) => v.value === variant.attr2)
+                            ?.id ?? "",
+                        order: 2,
                       },
-                    },
-                  ],
+                    ],
+                  },
                 },
               },
             })
