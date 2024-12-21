@@ -46,7 +46,7 @@ export function OrderStatusFilter() {
             <CircleDashedIcon size={16} strokeWidth={2} aria-hidden="true" />{" "}
             Status{" "}
             {statusQuery ? (
-              <Badge variant="filter">
+              <Badge variant={statusQuery as OrderStatus}>
                 {getOrderStatusLabel(statusQuery as OrderStatus)}
               </Badge>
             ) : null}

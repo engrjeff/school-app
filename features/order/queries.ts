@@ -47,9 +47,14 @@ export const getOrders = async (args: GetOrdersArgs) => {
     where: whereInput,
     include: {
       lineItems: {
-        include: { attributes: true },
+        include: { attributes: true, productVariant: true },
       },
       discount: true,
+      createdBy: {
+        select: {
+          name: true,
+        },
+      },
     },
     orderBy: {
       orderDate: "desc",

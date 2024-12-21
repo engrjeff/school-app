@@ -23,7 +23,7 @@ export function KPIs() {
 
   if (kpiQuery.isLoading)
     return (
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
         <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
         <Skeleton className="bg-muted text-card-foreground h-[122px] animate-pulse rounded-xl border shadow" />
@@ -32,7 +32,7 @@ export function KPIs() {
     )
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
       <Card className="bg-muted border-l-primary flex flex-col border-l-4">
         <CardHeader className="flex-row items-start justify-between space-y-0 pb-0">
           <CardDescription className="font-medium text-white">

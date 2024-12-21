@@ -3,14 +3,27 @@
 import { revalidatePath } from "next/cache"
 
 import prisma from "@/lib/db"
-import { authActionClient } from "@/lib/safe-action"
+import { requireEmployeeClient } from "@/lib/safe-action"
 
-import { orderSchema, withStoreId } from "./schema"
+import { signOutEmployee } from "../employees/actions"
+import {
+  orderSchema,
+  orderStatusSchema,
+  paymentStatusSchema,
+  withStoreId,
+} from "./schema"
 
-export const createOrder = authActionClient
+export const createOrder = requireEmployeeClient
   .metadata({ actionName: "createOrder" })
   .schema(withStoreId.merge(orderSchema))
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx: { employee } }) => {
+    if (!employee?.id) {
+      await signOutEmployee()
+      revalidatePath(`/${parsedInput.storeId}/pos`)
+
+      throw new Error("Employee not found. Sign in again.")
+    }
+
     const order = await prisma.order.create({
       data: {
         orderId: parsedInput.orderId,
@@ -26,7 +39,7 @@ export const createOrder = authActionClient
         shippingFee: parsedInput.shippingFee,
         serviceCharge: parsedInput.serviceCharge,
         storeId: parsedInput.storeId,
-        createdById: "cm4lh7mux0000kmj0dmcvm15u", // employee!
+        createdById: employee.id, // employee!
         lineItems: {
           create: parsedInput.lineItems.map((line) => ({
             productVariantId: line.productVariantId,
@@ -66,4 +79,56 @@ export const createOrder = authActionClient
     return {
       order,
     }
+  })
+
+export const updateOrderStatus = requireEmployeeClient
+  .metadata({ actionName: "updateOrderStatus" })
+  .schema(orderStatusSchema.merge(withStoreId))
+  .action(async ({ parsedInput, ctx: { employee } }) => {
+    if (!employee?.id) {
+      await signOutEmployee()
+
+      revalidatePath(`/${parsedInput.storeId}/pos`)
+
+      throw new Error("Employee not found. Sign in again.")
+    }
+
+    const order = await prisma.order.update({
+      where: {
+        id: parsedInput.id,
+      },
+      data: {
+        orderStatus: parsedInput.orderStatus,
+      },
+    })
+
+    revalidatePath(`/${parsedInput.storeId}/orders`)
+
+    return order
+  })
+
+export const updatePaymentStatus = requireEmployeeClient
+  .metadata({ actionName: "updatePaymentStatus" })
+  .schema(paymentStatusSchema.merge(withStoreId))
+  .action(async ({ parsedInput, ctx: { employee } }) => {
+    if (!employee?.id) {
+      await signOutEmployee()
+
+      revalidatePath(`/${parsedInput.storeId}/pos`)
+
+      throw new Error("Employee not found. Sign in again.")
+    }
+
+    const order = await prisma.order.update({
+      where: {
+        id: parsedInput.id,
+      },
+      data: {
+        paymentStatus: parsedInput.paymentStatus,
+      },
+    })
+
+    revalidatePath(`/${parsedInput.storeId}/orders`)
+
+    return order
   })

@@ -6,6 +6,8 @@ import {
 } from "next-safe-action"
 import * as z from "zod"
 
+import { verifyEmployeeToken } from "./server"
+
 class ActionError extends Error {}
 
 export const actionClient = createSafeActionClient({
@@ -76,4 +78,10 @@ export const authActionClient = actionClient.use(async ({ next }) => {
   if (!user?.userId) throw new Error("Session not found.")
 
   return next({ ctx: { user } })
+})
+
+export const requireEmployeeClient = actionClient.use(async ({ next }) => {
+  const employee = await verifyEmployeeToken()
+
+  return next({ ctx: { employee } })
 })

@@ -46,7 +46,7 @@ export function PaymentStatusFilter() {
             <CircleDashedIcon size={16} strokeWidth={2} aria-hidden="true" />{" "}
             Payment Status{" "}
             {statusQuery ? (
-              <Badge variant="filter">
+              <Badge variant={statusQuery as PaymentStatus}>
                 {getPaymentStatusLabel(statusQuery as PaymentStatus)}
               </Badge>
             ) : null}

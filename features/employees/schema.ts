@@ -25,4 +25,16 @@ export const employeeSchema = z.object({
   status: z.nativeEnum(EmployeeStatus).default(EmployeeStatus.ACTIVE),
 })
 
+export const employeeSignInSchema = z.object({
+  storeId: z.string({
+    required_error: "Store id is required.",
+  }),
+  email: z
+    .string({ required_error: "Email is required." })
+    .email({ message: "Invalid email." }),
+  pin: z.string({ required_error: "PIN is required." }),
+})
+
 export type EmployeeInputs = z.infer<typeof employeeSchema>
+
+export type EmployeeSignInInputs = z.infer<typeof employeeSignInSchema>

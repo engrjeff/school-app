@@ -1,102 +1,110 @@
-'use client';
+"use client"
 
+import { useState } from "react"
+import NumberFlow from "@number-flow/react"
+import { OrderStatus } from "@prisma/client"
+import { format } from "date-fns"
+import {
+  ArrowLeft,
+  Minus,
+  PackageOpenIcon,
+  Plus,
+  TrashIcon,
+} from "lucide-react"
+import { useAction } from "next-safe-action/hooks"
+import { toast } from "sonner"
+
+import { formatCurrency, generateOrderNumber } from "@/lib/utils"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { NativeSelect } from '@/components/ui/native-select';
-import { NumberInput } from '@/components/ui/number-input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { SubmitButton } from '@/components/ui/submit-button';
-import { formatCurrency, generateOrderNumber } from '@/lib/utils';
-import NumberFlow from '@number-flow/react';
-import { OrderStatus } from '@prisma/client';
-import { format } from 'date-fns';
-import { ArrowLeft, Minus, Plus, TrashIcon } from 'lucide-react';
-import { useAction } from 'next-safe-action/hooks';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { createOrder } from '../order/actions';
-import { orderStatuses } from '../order/helpers';
-import { useStoreId } from '../store/hooks';
-import { DiscountForm, DiscountValue } from './discount-form';
-import { PaymentMethodRadio } from './payment-method-radio';
-import { LineItem, usePOSOrdersStore } from './pos-order-store';
+} from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { NativeSelect } from "@/components/ui/native-select"
+import { NumberInput } from "@/components/ui/number-input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { SubmitButton } from "@/components/ui/submit-button"
+
+import { createOrder } from "../order/actions"
+import { orderStatuses } from "../order/helpers"
+import { useStoreId } from "../store/hooks"
+import { DiscountForm, DiscountValue } from "./discount-form"
+import { PaymentMethodRadio } from "./payment-method-radio"
+import { LineItem, usePOSOrdersStore } from "./pos-order-store"
 
 export function OrderSummary() {
-  const storeId = useStoreId();
+  const storeId = useStoreId()
 
   const createAction = useAction(createOrder, {
     onError: ({ error }) => {
       toast.error(
-        error.serverError ?? 'The order was not created. Please try again.'
-      );
+        error.serverError ?? "The order was not created. Please try again."
+      )
     },
-  });
+  })
 
-  const orders = usePOSOrdersStore((state) => state.lineItems);
-  const resetOrders = usePOSOrdersStore((state) => state.resetLineItems);
+  const orders = usePOSOrdersStore((state) => state.lineItems)
+  const resetOrders = usePOSOrdersStore((state) => state.resetLineItems)
 
-  const [view, setView] = useState<'orders' | 'payment' | 'details'>('orders');
+  const [view, setView] = useState<"orders" | "payment" | "details">("orders")
 
-  const [orderNumber, setOrderNumber] = useState(() => generateOrderNumber());
+  const [orderNumber, setOrderNumber] = useState(() => generateOrderNumber())
 
-  const [shippingFee, setShippingFee] = useState(0);
-  const [serviceCharge, setServiceCharge] = useState(0); // percent
+  const [shippingFee, setShippingFee] = useState(0)
+  const [serviceCharge, setServiceCharge] = useState(0) // percent
 
   const [discount, setDiscount] = useState<DiscountValue>({
     discountAmount: 0,
-    discountCode: '',
-    id: '', // discountId
-  });
+    discountCode: "",
+    id: "", // discountId
+  })
 
-  const [orderStatus, setOrderStatus] = useState<string>(OrderStatus.PREPARING);
+  const [orderStatus, setOrderStatus] = useState<string>(OrderStatus.PREPARING)
 
-  const [paymentMethod, setPaymentMethod] = useState('unpaid');
+  const [paymentMethod, setPaymentMethod] = useState("unpaid")
 
-  const [customerName, setCustomerName] = useState('');
+  const [customerName, setCustomerName] = useState("")
 
-  const [orderDate, setOrderDate] = useState('');
+  const [orderDate, setOrderDate] = useState("")
 
   const subtotal = orders.reduce(
     (total, line) => total + line.unitPrice * line.qty,
     0
-  );
+  )
 
-  const shipping = isNaN(shippingFee) ? 0 : shippingFee;
+  const shipping = isNaN(shippingFee) ? 0 : shippingFee
 
   const serviceChargeDisplay = isNaN(serviceCharge)
-    ? ''
-    : `(${serviceCharge.toFixed(1) + '%'})`;
+    ? ""
+    : `(${serviceCharge.toFixed(1) + "%"})`
 
   const serviceChargeValue = isNaN(serviceCharge)
     ? 0
-    : serviceCharge * 0.01 * subtotal;
+    : serviceCharge * 0.01 * subtotal
 
   const total =
-    subtotal + shipping + discount.discountAmount + serviceChargeValue;
+    subtotal + shipping + discount.discountAmount + serviceChargeValue
 
   function resetAll() {
-    resetOrders();
-    setOrderStatus(OrderStatus.PREPARING);
-    setPaymentMethod('unpaid');
-    setCustomerName('');
-    setOrderDate('');
-    setShippingFee(0);
-    setServiceCharge(0);
-    setDiscount({ discountAmount: 0, discountCode: '', id: '' });
+    resetOrders()
+    setOrderStatus(OrderStatus.PREPARING)
+    setPaymentMethod("unpaid")
+    setCustomerName("")
+    setOrderDate("")
+    setShippingFee(0)
+    setServiceCharge(0)
+    setDiscount({ discountAmount: 0, discountCode: "", id: "" })
 
-    createAction.reset();
+    createAction.reset()
 
-    setView('orders');
+    setView("orders")
 
-    setOrderNumber(generateOrderNumber());
+    setOrderNumber(generateOrderNumber())
   }
 
   async function saveOrder() {
@@ -112,27 +120,28 @@ export function OrderSummary() {
       customerName: customerName ?? undefined,
       discountId: discount.id ?? undefined,
       orderStatus: orderStatus as OrderStatus,
-      paymentStatus: paymentMethod === 'unpaid' ? 'PENDING' : 'PAID',
+      paymentStatus: paymentMethod === "unpaid" ? "PENDING" : "PAID",
       lineItems: orders,
-    });
+    })
 
     if (response?.data?.order.id) {
-      toast.success('Order saved!');
+      toast.success("Order saved!")
 
-      resetAll();
+      resetAll()
     }
   }
 
   if (!orders.length)
     return (
       <aside className="bg-muted sticky top-0 flex size-full max-h-full max-w-sm shrink-0 flex-col items-center justify-center gap-4 overflow-y-auto rounded-lg border p-4">
+        <PackageOpenIcon size={32} strokeWidth={1} />
         <p className="text-muted-foreground text-center">No orders yet.</p>
       </aside>
-    );
+    )
 
   return (
     <aside className="bg-muted sticky top-0 size-full max-h-full max-w-sm shrink-0 overflow-y-auto rounded-lg border p-4">
-      {view === 'orders' ? (
+      {view === "orders" ? (
         <div className="flex h-full flex-col gap-4">
           <p>Order # {orderNumber}</p>
           <ScrollArea>
@@ -150,7 +159,7 @@ export function OrderSummary() {
               <p className="font-semibold">Subtotal</p>
               <NumberFlow
                 value={subtotal}
-                format={{ style: 'currency', currency: 'PHP' }}
+                format={{ style: "currency", currency: "PHP" }}
                 className="block text-right font-mono font-semibold"
               />
             </div>
@@ -159,7 +168,7 @@ export function OrderSummary() {
               <Button
                 type="button"
                 className="w-full rounded-full"
-                onClick={() => setView('payment')}
+                onClick={() => setView("payment")}
               >
                 Continue
               </Button>
@@ -168,7 +177,7 @@ export function OrderSummary() {
         </div>
       ) : null}
 
-      {view === 'payment' ? (
+      {view === "payment" ? (
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2">
             <Button
@@ -177,7 +186,7 @@ export function OrderSummary() {
               variant="ghost"
               aria-label="back to orders"
               className="shrink-0"
-              onClick={() => setView('orders')}
+              onClick={() => setView("orders")}
             >
               <ArrowLeft size={16} aria-hidden="true" />
             </Button>
@@ -211,7 +220,7 @@ export function OrderSummary() {
                       min={0}
                       className="bg-muted border-border"
                       onChange={(e) => {
-                        setShippingFee(e.currentTarget.valueAsNumber);
+                        setShippingFee(e.currentTarget.valueAsNumber)
                       }}
                     />
                   </AccordionContent>
@@ -252,10 +261,10 @@ export function OrderSummary() {
                       max={100}
                       className="bg-muted border-border"
                       onChange={(e) => {
-                        const val = e.currentTarget.valueAsNumber;
-                        if (val > 100 || val < 1) return;
+                        const val = e.currentTarget.valueAsNumber
+                        if (val > 100 || val < 1) return
 
-                        setServiceCharge(val);
+                        setServiceCharge(val)
                       }}
                     />
                   </AccordionContent>
@@ -280,7 +289,7 @@ export function OrderSummary() {
               <Button
                 type="button"
                 className="w-full rounded-full"
-                onClick={() => setView('details')}
+                onClick={() => setView("details")}
               >
                 Add Details
               </Button>
@@ -289,7 +298,7 @@ export function OrderSummary() {
         </div>
       ) : null}
 
-      {view === 'details' ? (
+      {view === "details" ? (
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2">
             <Button
@@ -298,7 +307,7 @@ export function OrderSummary() {
               variant="ghost"
               aria-label="back to orders"
               className="shrink-0"
-              onClick={() => setView('payment')}
+              onClick={() => setView("payment")}
             >
               <ArrowLeft size={16} aria-hidden="true" />
             </Button>
@@ -311,7 +320,7 @@ export function OrderSummary() {
           >
             <div className="space-y-2">
               <Label htmlFor="customerName">
-                Customer Name{' '}
+                Customer Name{" "}
                 <span className="text-muted-foreground text-xs italic">
                   (Optional)
                 </span>
@@ -328,7 +337,7 @@ export function OrderSummary() {
 
             <div className="space-y-2">
               <Label htmlFor="orderDate">
-                Order Date{' '}
+                Order Date{" "}
                 <span aria-hidden="true" className="text-red-500">
                   *
                 </span>
@@ -338,7 +347,7 @@ export function OrderSummary() {
                 name="orderDate"
                 type="datetime-local"
                 className="bg-muted border-border w-min"
-                max={format(new Date(), 'yyyy-MM-dd') + 'T12:00'}
+                max={format(new Date(), "yyyy-MM-dd") + "T12:00"}
                 value={orderDate}
                 onChange={(e) => setOrderDate(e.currentTarget.value)}
               />
@@ -376,30 +385,30 @@ export function OrderSummary() {
         </div>
       ) : null}
     </aside>
-  );
+  )
 }
 
 function OrderLineItem({ line }: { line: LineItem }) {
-  const store = usePOSOrdersStore();
+  const store = usePOSOrdersStore()
 
   return (
     <div className="bg-border/90 flex items-center justify-between rounded-md px-2.5 py-2 text-sm">
       <div>
         <p className="font-medium">
-          {line.productName}{' '}
+          {line.productName}{" "}
           <span className="text-muted-foreground text-xs">
             x<NumberFlow value={line.qty} />
           </span>
         </p>
         <p className="text-muted-foreground text-xs">
-          {line.attributes.map((attr) => attr.value).join(', ')}
+          {line.attributes.map((attr) => attr.value).join(", ")}
         </p>
       </div>
 
       <div>
         <NumberFlow
           value={line.unitPrice * line.qty}
-          format={{ style: 'currency', currency: 'PHP' }}
+          format={{ style: "currency", currency: "PHP" }}
           className="mb-1 block text-right font-mono"
         />
         <div
@@ -418,11 +427,11 @@ function OrderLineItem({ line }: { line: LineItem }) {
             className="size-7 border-neutral-700 bg-transparent"
             onClick={() => {
               if (line.qty === 1) {
-                store.removeLineItem(line.productVariantId);
-                return;
+                store.removeLineItem(line.productVariantId)
+                return
               }
 
-              store.decreaseQty(line.productVariantId);
+              store.decreaseQty(line.productVariantId)
             }}
             disabled={line.qty === 0}
           >
@@ -460,5 +469,5 @@ function OrderLineItem({ line }: { line: LineItem }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,10 +1,13 @@
 import Link from "next/link"
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
+import { currentUser } from "@clerk/nextjs/server"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
-export default function Home() {
+export default async function Home() {
+  const user = await currentUser()
+
   return (
     <div className="container mx-auto flex min-h-full max-w-screen-lg flex-col px-6">
       <header className="flex justify-between py-6">
@@ -31,7 +34,13 @@ export default function Home() {
             </Link>
           </SignedOut>
           <SignedIn>
-            <Link href="/u" className={cn(buttonVariants(), "rounded-full")}>
+            <Link
+              href="/u"
+              className={cn(
+                buttonVariants({ variant: "cool" }),
+                "rounded-full"
+              )}
+            >
               Dashboard
             </Link>
             <UserButton />
@@ -39,9 +48,17 @@ export default function Home() {
         </div>
       </header>
       <main className="flex flex-1 flex-col items-center py-20">
-        <h1 className="my-6 text-center text-6xl font-bold">
-          Welcome to Daily Sales!
-        </h1>
+        <SignedOut>
+          <h1 className="my-6 text-center text-6xl font-bold">
+            Welcome to Daily Sales!
+          </h1>
+        </SignedOut>
+        <SignedIn>
+          <h1 className="my-6 text-center text-6xl font-bold">
+            Welcome back, {user?.firstName}!
+          </h1>
+        </SignedIn>
+
         <p className="text-muted-foreground mb-6 text-center text-lg">
           {"Keep track of your store's sales."}
         </p>

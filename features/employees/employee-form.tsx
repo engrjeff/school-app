@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { EmployeeStatus } from "@prisma/client"
 import { useAction } from "next-safe-action/hooks"
@@ -40,6 +41,8 @@ export function EmployeeForm({ forInvite }: { forInvite?: boolean }) {
     },
   })
 
+  const router = useRouter()
+
   const action = useAction(createEmployee, {
     onError: ({ error }) => {
       toast.error(
@@ -69,17 +72,15 @@ export function EmployeeForm({ forInvite }: { forInvite?: boolean }) {
       const result = await actionInvite.executeAsync(values)
 
       if (result?.data?.employee?.id) {
-        toast.success(
-          forInvite ? "Your data has been saved!" : "Employee saved!"
-        )
+        toast.success("Your data has been saved!")
       }
+
+      window.location.href = `/${storeId}/pos`
     } else {
       const result = await action.executeAsync(values)
 
       if (result?.data?.employee?.id) {
-        toast.success(
-          forInvite ? "Your data has been saved!" : "Employee saved!"
-        )
+        toast.success("Employee saved!")
       }
     }
   }
@@ -189,7 +190,7 @@ export function EmployeeForm({ forInvite }: { forInvite?: boolean }) {
           />
 
           <div className="flex justify-end pt-6">
-            <SubmitButton type="submit" size="sm" disabled={isPending}>
+            <SubmitButton type="submit" size="sm" loading={isPending}>
               {forInvite ? "Save My Data" : "Save Employee"}
             </SubmitButton>
           </div>

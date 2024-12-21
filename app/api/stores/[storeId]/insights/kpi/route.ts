@@ -150,7 +150,7 @@ export async function GET(
         ...bestSeller,
         orderCount: bestSellerItem.reduce((t, i) => t + i.qty, 0),
       },
-      topProducts: topProducts.slice(0, 8), // first 8 only
+      topProducts: topProducts.slice(0, 5), // first 5 only
     }
 
     return NextResponse.json(kpiData)
