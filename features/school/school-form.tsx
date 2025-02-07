@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { CURRICULUM_SETUP_REDIRECT } from "@/routes"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { useSession } from "next-auth/react"
@@ -33,16 +34,26 @@ export function SchoolForm() {
 
   const form = useForm<SchoolInputs>({
     defaultValues: {
-      name: "Morong National High School",
-      schoolId: "301452",
-      address: "T. Claudio Street, Barangay San Juan",
-      zipCode: "1960",
+      // name: "Morong National High School",
+      // schoolId: "301452",
+      // address: "T. Claudio Street, Barangay San Juan",
+      // zipCode: "1960",
+      // fullAddress: "",
+      // phone: "+639211231234",
+      // email: "admin@mnhs.edu",
+      // website: "https://mnhs.edu",
+      // logo: "",
+      // slogan: "Education is first.",
+      name: "",
+      schoolId: "",
+      address: "",
+      zipCode: "",
       fullAddress: "",
-      phone: "+639211231234",
-      email: "admin@mnhs.edu",
-      website: "https://mnhs.edu",
+      phone: "",
+      email: "",
+      website: "",
       logo: "",
-      slogan: "Education is first.",
+      slogan: "",
     },
     resolver: zodResolver(schoolSchema),
     mode: "onChange",
@@ -134,7 +145,7 @@ export function SchoolForm() {
 
       await updateSession()
 
-      window.location.href = "/dashboard"
+      window.location.href = CURRICULUM_SETUP_REDIRECT
     }
   }
 

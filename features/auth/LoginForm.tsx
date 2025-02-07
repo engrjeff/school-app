@@ -6,6 +6,7 @@ import { useAction } from "next-safe-action/hooks"
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
+import { site } from "@/config/site"
 import {
   Form,
   FormControl,
@@ -50,7 +51,7 @@ export function LoginForm() {
 
   return (
     <div className="container max-w-md space-y-2">
-      <h1 className="text-xl font-semibold">Login to SchoolApp</h1>
+      <h1 className="text-xl font-semibold">Login to {site.title}</h1>
       <p className="text-muted-foreground pb-5 text-sm">
         {"Dont't have an account? "}
         <Link

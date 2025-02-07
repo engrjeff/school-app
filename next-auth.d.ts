@@ -8,7 +8,7 @@ declare module "next-auth/jwt" {
     id: string
     role: ROLE
     email: string
-    hasSchoolSetUp: boolean
+    schoolId: string | null
   }
 }
 
@@ -17,13 +17,13 @@ declare module "next-auth" {
     user: {
       id: string
       role: ROLE
-      hasSchoolSetUp: boolean
+      schoolId: string | null
     } & DefaultSession["user"]
   }
 
   interface User {
     id: string
     role: ROLE
-    hasSchoolSetUp: boolean
+    schoolId: string | null
   }
 }

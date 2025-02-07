@@ -3,6 +3,7 @@ import localFont from "next/font/local"
 import NextTopLoader from "nextjs-toploader"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 
+import { site } from "@/config/site"
 import { Toaster } from "@/components/ui/sonner"
 import AuthProvider from "@/components/providers/auth-provider"
 import { ReactQueryProvider } from "@/components/providers/react-query-provider"
@@ -23,10 +24,10 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Student Management",
-    default: "Student Management", // a default is required when creating a template
+    template: `%s | ${site.title}`,
+    default: site.title, // a default is required when creating a template
   },
-  description: "Student management system",
+  description: site.description,
 }
 
 export default function RootLayout({
@@ -39,7 +40,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground h-full font-sans antialiased`}
       >
-        <NextTopLoader color="#2563eb" />
+        <NextTopLoader color="#016FEE" />
         <AuthProvider>
           <ThemeProvider
             attribute="class"

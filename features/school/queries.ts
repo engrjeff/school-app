@@ -7,7 +7,7 @@ import prisma from "@/lib/db"
 export async function checkIfUserHasSchool() {
   const session = await auth()
 
-  if (session?.user.hasSchoolSetUp === true) return true
+  if (session?.user.schoolId) return true
 
   const school = await prisma.school.findFirst({
     where: {
@@ -34,6 +34,9 @@ export async function getSchoolOfUser() {
   const school = await prisma.school.findFirst({
     where: {
       id: userInDb?.schoolId,
+    },
+    include: {
+      programOfferings: true,
     },
   })
 

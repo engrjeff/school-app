@@ -47,6 +47,9 @@ model User {
 
   studentProfile Student? // student profile associated with this user
   teacherProfile Teacher? // teacher profile associated with this user
+
+  @@index([schoolId])
+  @@index([role])
 }
 
 model Account {
@@ -127,17 +130,30 @@ model School {
 
   fullAddress String
 
-  phone     String
-  email     String
-  website   String?
-  logo      String?
-  slogan    String?
+  phone   String
+  email   String
+  website String?
+  logo    String?
+  slogan  String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  schoolAdmins User[]
-  students     Student[]
-  teachers     Teacher[]
+  schoolAdmins     User[]
+  programOfferings ProgramOffering[]
+  schoolYears      SchoolYear[]
+  courses          Course[]
+  students         Student[]
+  teachers         Teacher[]
+  enrollments      Enrollment[]
+  subjects         Subject[]
+}
+
+enum StudentStatus {
+  LISTED
+  ENROLLED
+  DROPPED
+  TRANSFERRED
 }
 
 model Student {
@@ -146,15 +162,18 @@ model Student {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  studentId String @unique
+  studentId String        @unique
   name      String
   email     String
   phone     String
   address   String
   gender    Gender
+  status    StudentStatus
 
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
+
+  enrollments Enrollment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -168,18 +187,261 @@ model Teacher {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  teacherId String @unique
+  teacherId String @unique // something employee number
   name      String
   email     String
   phone     String
   address   String
   gender    Gender
 
+  isActive Boolean @default(true)
+
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
+
+  gradingCriteria GradingCriteria[]
+
+  handledEnrollments Enrollment[]
+  recordedGrades     Grade[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([schoolId])
+}
+
+// curriculum
+model ProgramOffering {
+  id          String @id @default(cuid())
+  title       String // e.g. Regular High School, Senior HS, College of Education
+  description String
+  code        String // SHS, CoEng, CIT, CoE
+
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String
+
+  courses Course[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, title])
+  @@index([schoolId])
+}
+
+model SchoolYear {
+  id    String @id @default(cuid())
+  title String // e.g. 2025
+
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String
+
+  enrollments    Enrollment[]
+  recordedGrades Grade[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId])
+}
+
+model Semester {
+  id    String @id @default(cuid())
+  title String // e.g. 1st Period, 1st Semester
+
+  enrollments    Enrollment[]
+  recordedGrades Grade[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id    String @id @default(cuid())
+  title String // e.g. BS Electronics Engineering, Regular High School
+  code  String // e.g. BSECE, STEM, HS
+
+  isActive    Boolean @default(true)
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programOffering   ProgramOffering? @relation(fields: [programOfferingId], references: [id])
+  programOfferingId String?
+
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String
+
+  subjects        Subject[]
+  gradeYearLevels GradeYearLevel[]
+  enrollments     Enrollment[]
+
+  @@unique([schoolId, code])
+  @@index([programOfferingId])
+  @@index([schoolId])
+}
+
+model GradeYearLevel {
+  id    String @id @default(cuid())
+  title String // e.g. G7, G8, G12, 1st
+
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Section {
+  id    String @id @default(cuid())
+  title String // e.g. Prime, 1 - Sampaguita, 1 ECE-A
+
+  enrollments Enrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subject {
+  id    String @id @default(cuid())
+  title String // e.g. Analytic Geometry
+  code  String // e.g MATH11
+
+  school      School       @relation(fields: [schoolId], references: [id])
+  schoolId    String
+  units       Float        @default(1)
+  description String?
+  enrollments Enrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recordedGrades Grade[]
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  @@index([schoolId])
+  @@index([courseId])
+}
+
+model Enrollment {
+  id String @id @default(cuid())
+
+  school   School @relation(fields: [schoolId], references: [id])
+  schoolId String
+
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  schoolYearId String
+
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String
+
+  semester   Semester @relation(fields: [semesterId], references: [id])
+  semesterId String
+
+  section   Section @relation(fields: [sectionId], references: [id])
+  sectionId String
+
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId String
+
+  teacher Teacher[]
+
+  subjects Subject[]
+
+  grades      Grade[]
+  finalGrades FinalGrade[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolYearId])
+  @@index([semesterId])
+  @@index([sectionId])
+  @@index([studentId])
+  @@index([courseId])
+}
+
+enum GradeRemarks {
+  PASSED
+  FAILED
+  INCOMPLETE
+  CONDITIONAL
+}
+
+model Grade {
+  id String @id @default(cuid())
+
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId String
+
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId String
+
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  schoolYearId String
+
+  semester   Semester @relation(fields: [semesterId], references: [id])
+  semesterId String
+
+  value           Float // 99, 1.2, calculated based on Grading Criteria
+  gradingCriteria GradingCriteria[]
+  remarks         GradeRemarks
+
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolYearId])
+  @@index([semesterId])
+  @@index([enrollmentId])
+}
+
+model FinalGrade {
+  id String @id @default(cuid())
+
+  value       Float
+  remarks     GradeRemarks
+  comment     String?
+  enrollments Enrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GradingCriteria {
+  id String @id @default(cuid())
+
+  title      String // e.g. Written Works, Performance Tasks, Quizzes, Exam
+  percentage Float // e.g. Written Works is 20% (0.2)
+
+  components   GradingCriteriaComponent[]
+  gradeRecords Grade[]
+
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teacherId])
+}
+
+model GradingCriteriaComponent {
+  id String @id @default(cuid())
+
+  title String // e.g. Activity 1, Quiz 1, Final Exam
+  score Float // e.g. 20, 15
+
+  gradingCriteria   GradingCriteria @relation(fields: [gradingCriteriaId], references: [id])
+  gradingCriteriaId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gradingCriteriaId])
 }

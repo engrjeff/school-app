@@ -1,0 +1,35 @@
+import * as z from "zod"
+
+export const commonProgramsSchema = z.object({
+  programs: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      description: z.string(),
+      code: z.string(),
+      courses: z.array(z.object({ title: z.string() })),
+    })
+  ),
+})
+
+export type CommonProgramsInput = z.infer<typeof commonProgramsSchema>
+
+export const programSchema = z.object({
+  title: z
+    .string({ required_error: "Program title is required." })
+    .nonempty({ message: "Program title is required." }),
+  description: z
+    .string({ required_error: "Program description is required." })
+    .nonempty({ message: "Program description is required." }),
+  code: z
+    .string({ required_error: "Program code is required." })
+    .nonempty({ message: "Program code is required." }),
+})
+
+export const updateProgramSchema = programSchema.extend({
+  id: z
+    .string({ required_error: "Program ID is required." })
+    .nonempty({ message: "Program ID is required." }),
+})
+
+export type ProgramInput = z.infer<typeof programSchema>

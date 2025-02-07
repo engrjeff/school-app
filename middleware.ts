@@ -34,7 +34,7 @@ export default auth((req) => {
   if (isLoggedIn) {
     if (
       nextUrl.pathname !== SCHOOL_SETUP_REDIRECT &&
-      !req.auth?.user.hasSchoolSetUp &&
+      !req.auth?.user.schoolId &&
       req.auth?.user.role === ROLE.SCHOOLADMIN
     )
       return NextResponse.redirect(new URL(SCHOOL_SETUP_REDIRECT, nextUrl))

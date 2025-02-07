@@ -12,6 +12,7 @@ export const createSchool = adminActionClient
     const school = await prisma.school.create({
       data: {
         ...parsedInput,
+        fullAddress: parsedInput.fullAddress!,
         schoolAdmins: {
           connect: {
             id: user.id,

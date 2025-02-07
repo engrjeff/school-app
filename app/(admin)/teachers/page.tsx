@@ -1,11 +1,12 @@
 import { type Metadata } from "next"
 import Link from "next/link"
 import TeachersTable from "@/features/teachers/teachers-table"
-import { PlusIcon } from "lucide-react"
+import { ImportIcon, PlusIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+import { SearchField } from "@/components/search-field"
 
 export const metatdata: Metadata = {
   title: "Teachers",
@@ -14,16 +15,21 @@ export const metatdata: Metadata = {
 function TeachersPage() {
   return (
     <>
-      <AppHeader pageTitle="Teachers">
-        <div className="ml-auto">
-          <Button asChild size="sm">
-            <Link href="/teachers/new">
-              Add Teacher <PlusIcon className="size-4" />
-            </Link>
-          </Button>
-        </div>
-      </AppHeader>
+      <AppHeader pageTitle="Teachers" />
       <AppContent>
+        <div className="flex items-center justify-between">
+          <SearchField className="w-[300px]" />
+          <div className="ml-auto space-x-3">
+            <Button type="button" size="sm" variant="secondaryOutline">
+              <ImportIcon /> Import
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/teachers/new">
+                <PlusIcon className="size-4" /> Add Teacher
+              </Link>
+            </Button>
+          </div>
+        </div>
         <TeachersTable />
       </AppContent>
     </>

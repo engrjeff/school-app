@@ -72,7 +72,7 @@ export default function TeachersTable() {
         </TableHeader>
         <TableBody>
           {items.map((item) => (
-            <TableRow key={item.id} className="hover:bg-background">
+            <TableRow key={item.id} className="hover:bg-accent/50">
               <TableCell>
                 <div className="flex items-center gap-3">
                   <img

@@ -22,8 +22,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (dbUser) {
         token.id = dbUser.id
         token.role = dbUser.role
-        token.hasSchoolSetUp =
-          dbUser.role === ROLE.SCHOOLADMIN && Boolean(dbUser.school)
+        token.schoolId =
+          dbUser.role !== ROLE.SCHOOLADMIN ? null : dbUser.schoolId
       }
       return token
     },
@@ -34,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.email = token.email
         session.user.image = token.picture
         session.user.role = token.role
-        session.user.hasSchoolSetUp = token.hasSchoolSetUp
+        session.user.schoolId = token.schoolId
       }
       return session
     },

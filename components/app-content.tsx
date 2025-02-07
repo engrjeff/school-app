@@ -6,7 +6,7 @@ export function AppContent(
   props: React.PropsWithChildren<HTMLAttributes<HTMLDivElement>>
 ) {
   return (
-    <div className={cn("flex flex-1 flex-col gap-4 p-4 pt-0", props.className)}>
+    <div className={cn("flex flex-1 flex-col gap-4 p-4", props.className)}>
       {props.children}
     </div>
   )

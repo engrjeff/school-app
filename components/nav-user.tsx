@@ -50,7 +50,7 @@ export function NavUser() {
                 {user?.image ? (
                   <AvatarImage src={user?.image} alt={user.name!} />
                 ) : null}
-                <AvatarFallback className="bg-primary rounded-lg">
+                <AvatarFallback className="bg-primary text-primary-foreground rounded-lg">
                   {getInitials(user.name!)}
                 </AvatarFallback>
               </Avatar>
@@ -73,7 +73,7 @@ export function NavUser() {
                   {user.image ? (
                     <AvatarImage src={user?.image} alt={user.name!} />
                   ) : null}
-                  <AvatarFallback className="bg-primary rounded-lg ">
+                  <AvatarFallback className="bg-primary text-primary-foreground rounded-lg">
                     {getInitials(user.name!)}
                   </AvatarFallback>
                 </Avatar>

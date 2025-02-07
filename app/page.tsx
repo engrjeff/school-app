@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowRight, BookCheck, Shield, UserCheck } from "lucide-react"
 
+import { site } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 
@@ -9,7 +10,7 @@ export default async function Home() {
     <div className="container mx-auto flex min-h-full max-w-screen-lg flex-col items-center justify-center px-6">
       <main>
         <h1 className="text-2xl font-bold">
-          Welcome to <span className="text-primary">School App</span>
+          Welcome to <span className="text-primary">{site.title}</span>
         </h1>
         <p className="text-muted-foreground mb-6">
           Select user type to continue.
@@ -22,13 +23,19 @@ export default async function Home() {
             </Link>
           </Button>
           <Button size="xl" variant="outline" className="w-full" asChild>
-            <Link href="/sign-in?role=teacher">
-              <UserCheck /> Teacher
+            <Link
+              href="/sign-in?role=teacher"
+              className="bg-accent/50 pointer-events-none cursor-not-allowed"
+            >
+              <UserCheck /> Teacher (WIP)
             </Link>
           </Button>
           <Button size="xl" variant="outline" className="w-full" asChild>
-            <Link href="/sign-in?role=student">
-              <BookCheck /> Student
+            <Link
+              href="/sign-in?role=student"
+              className="bg-accent/50 pointer-events-none cursor-not-allowed"
+            >
+              <BookCheck /> Student (WIP)
             </Link>
           </Button>
         </div>
