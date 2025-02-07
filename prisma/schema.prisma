@@ -119,14 +119,15 @@ model Authenticator {
 
 // school
 model School {
-  id       String @id @default(cuid())
-  schoolId String @unique
-  name     String
-  address  String
-  town     String
-  province String
-  region   String
-  zipCode  String
+  id        String @id @default(cuid())
+  schoolId  String @unique
+  name      String
+  shortName String
+  address   String
+  town      String
+  province  String
+  region    String
+  zipCode   String
 
   fullAddress String
 

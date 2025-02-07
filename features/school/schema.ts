@@ -2,6 +2,7 @@ import * as z from "zod"
 
 export const schoolSchema = z.object({
   name: z.string().nonempty({ message: "School name is required." }),
+  shortName: z.string().nonempty({ message: "School short name is required." }),
   schoolId: z.string().nonempty({ message: "School ID is required." }),
   address: z.string().nonempty({ message: "School address is required." }),
   region: z.string().nonempty({ message: "Region is required." }),

@@ -45,6 +45,7 @@ export function SchoolForm() {
       // logo: "",
       // slogan: "Education is first.",
       name: "",
+      shortName: "",
       schoolId: "",
       address: "",
       zipCode: "",
@@ -170,6 +171,29 @@ export function SchoolForm() {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="shortName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      What is the short name of your school?
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        autoFocus
+                        placeholder="Enter school short name"
+                        id="name"
+                        className="dark:bg-muted/30 h-12"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>ex. Morong NHS or MNHS</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
