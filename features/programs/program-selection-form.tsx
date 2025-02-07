@@ -43,7 +43,7 @@ export function ProgramSelectionForm() {
     const result = await action.executeAsync(values)
 
     if (result?.data?.createdPrograms) {
-      window.location.href = "/setup-curriculum/courses"
+      window.location.href = "/dashboard"
     }
   }
 
