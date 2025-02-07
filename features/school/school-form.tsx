@@ -76,9 +76,12 @@ export function SchoolForm() {
 
   async function goToNext() {
     if (step === 1) {
-      const isStepOneValid = await form.trigger(["name", "schoolId"], {
-        shouldFocus: true,
-      })
+      const isStepOneValid = await form.trigger(
+        ["name", "shortName", "schoolId"],
+        {
+          shouldFocus: true,
+        }
+      )
       if (!isStepOneValid) return
     }
 
