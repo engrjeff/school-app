@@ -1,6 +1,5 @@
 import { loginSchema } from "@/features/auth/schema"
 import { AccessDenied } from "@auth/core/errors"
-import { ROLE } from "@prisma/client"
 import bcrypt from "bcryptjs"
 import { type NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
@@ -45,7 +44,7 @@ export default {
           id,
           image,
           role,
-          hasSchoolSetUp: role === ROLE.SCHOOLADMIN && Boolean(school),
+          schoolId: school?.id ? school.id : null,
         }
       },
     }),
