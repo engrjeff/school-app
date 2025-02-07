@@ -308,7 +308,7 @@ model Subject {
   title String // e.g. Analytic Geometry
   code  String // e.g MATH11
 
-  school      School       @relation(fields: [schoolId], references: [id])
+  school      School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId    String
   units       Float        @default(1)
   description String?
