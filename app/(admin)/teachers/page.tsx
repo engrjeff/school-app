@@ -8,7 +8,7 @@ import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
 import { SearchField } from "@/components/search-field"
 
-export const metatdata: Metadata = {
+export const metadata: Metadata = {
   title: "Teachers",
 }
 

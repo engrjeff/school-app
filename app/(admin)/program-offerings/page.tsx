@@ -7,7 +7,7 @@ import { getSchoolOfUser } from "@/features/school/queries"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
 
-export const metatdata: Metadata = {
+export const metadata: Metadata = {
   title: "Program Offerings",
 }
 
