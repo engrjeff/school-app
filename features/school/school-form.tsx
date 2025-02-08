@@ -190,7 +190,6 @@ export function SchoolForm() {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        autoFocus
                         placeholder="Enter school short name"
                         id="name"
                         className="dark:bg-muted/30 h-12"

@@ -47,7 +47,7 @@ export function ResetPasswordForm({ token }: { token: ResetPasswordToken }) {
               name="newPassword"
               id="newPassword"
               placeholder="Enter your password"
-              className="bg-muted/30"
+              className="bg-muted/30 h-12"
               autoFocus
             />
           </div>
@@ -59,11 +59,11 @@ export function ResetPasswordForm({ token }: { token: ResetPasswordToken }) {
               name="confirmPassword"
               id="confirmPassword"
               placeholder="Enter your password again"
-              className="bg-muted/30"
+              className="bg-muted/30 h-12"
             />
           </div>
           <div className="pt-6">
-            <SubmitButton loading={false} className="w-full">
+            <SubmitButton size="lg" loading={false} className="w-full">
               Update password
             </SubmitButton>
           </div>

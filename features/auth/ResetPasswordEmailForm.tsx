@@ -46,14 +46,14 @@ export function ResetPasswordEmailForm({ email }: { email?: string }) {
               placeholder="youremail@example.com"
               name="email"
               id="email"
-              className="bg-muted/30"
+              className="bg-muted/30 h-12"
               autoFocus
               defaultValue={email}
               ref={emailFieldRef}
             />
           </div>
           <div className="pt-6">
-            <SubmitButton loading={false} className="w-full">
+            <SubmitButton loading={false} size="lg" className="w-full">
               Send reset instructions
             </SubmitButton>
           </div>

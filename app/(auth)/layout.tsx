@@ -19,7 +19,7 @@ export default function AuthLayout({
           <ChevronLeft className="mr-3 size-4" /> Home
         </Link>
       </div>
-      <main className="flex flex-1 items-center justify-center">
+      <main className="flex flex-1 items-center justify-center px-4">
         {children}
       </main>
     </div>

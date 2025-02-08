@@ -82,7 +82,7 @@ export function SignUpForm() {
                       autoFocus
                       placeholder="Enter your name"
                       id="name"
-                      className="dark:bg-muted/30"
+                      className="dark:bg-muted/30 h-12"
                       {...field}
                     />
                   </FormControl>
@@ -102,7 +102,7 @@ export function SignUpForm() {
                       type="email"
                       placeholder="youremail@example.com"
                       id="email"
-                      className="dark:bg-muted/30"
+                      className="dark:bg-muted/30 h-12"
                       {...field}
                     />
                   </FormControl>
@@ -121,7 +121,7 @@ export function SignUpForm() {
                     <PasswordInput
                       id="password"
                       placeholder="Enter your password"
-                      className="dark:bg-muted/30"
+                      className="dark:bg-muted/30 h-12"
                       {...field}
                     />
                   </FormControl>
@@ -130,7 +130,11 @@ export function SignUpForm() {
               )}
             />
             <div className="pt-6">
-              <SubmitButton loading={action.isPending} className="w-full">
+              <SubmitButton
+                size="lg"
+                loading={action.isPending}
+                className="w-full"
+              >
                 Create Account
               </SubmitButton>
             </div>
