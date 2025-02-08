@@ -6,6 +6,7 @@ import { getSchoolOfUser } from "@/features/school/queries"
 
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+import { SearchField } from "@/components/search-field"
 
 export const metadata: Metadata = {
   title: "Program Offerings",
@@ -22,10 +23,7 @@ async function ProgramOfferingsPage() {
 
       <AppContent>
         <div className="flex items-center justify-between">
-          <h2 className="mb-2 text-sm">
-            Programs offered by{" "}
-            <span className="text-primary font-medium">{school?.name}</span>
-          </h2>
+          <SearchField className="w-[300px]" />
           <ProgramOfferingForm />
         </div>
         <ProgramOfferingsTable programOfferings={school?.programOfferings} />

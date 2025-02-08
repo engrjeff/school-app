@@ -4,16 +4,16 @@ import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard",
+  title: "School Profile",
 }
 
-function AdminDashboardPage() {
+function SchoolProfilePage() {
   return (
     <>
-      <AppHeader pageTitle="Dashboard" />
-      <AppContent>Dashboard here</AppContent>
+      <AppHeader pageTitle="School Profile" />
+      <AppContent>School Profile here</AppContent>
     </>
   )
 }
 
-export default AdminDashboardPage
+export default SchoolProfilePage

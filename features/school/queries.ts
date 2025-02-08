@@ -37,6 +37,9 @@ export async function getSchoolOfUser() {
     },
     include: {
       programOfferings: true,
+      courses: {
+        include: { programOffering: true },
+      },
     },
   })
 

@@ -1,7 +1,13 @@
 "use client"
 
+import Link from "next/link"
 import { School } from "@prisma/client"
-import { ChevronsUpDown, SchoolIcon, UserPlus } from "lucide-react"
+import {
+  ChevronsUpDown,
+  ExternalLink,
+  SchoolIcon,
+  UserPlus,
+} from "lucide-react"
 
 import {
   DropdownMenu,
@@ -51,6 +57,12 @@ export function SchoolHeading({ school }: { school: School }) {
             <DropdownMenuItem className="gap-2 p-2">
               <UserPlus className="size-4 shrink-0" />
               Enroll Students
+            </DropdownMenuItem>
+            <DropdownMenuItem className="gap-2 p-2" asChild>
+              <Link href={`#`}>
+                <ExternalLink className="size-4 shrink-0" />
+                View in School Directory
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

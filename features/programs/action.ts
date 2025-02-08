@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 
+import { COMMON_PROGRAM_OFFERINGS } from "@/config/constants"
 import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
 
@@ -23,19 +24,51 @@ export const createCurriculumPrograms = adminActionClient
             code: program.code,
             description: program.description,
             schoolId: user.schoolId!,
-            courses: {
-              createMany: {
-                data: program.courses.map((course) => ({
-                  title: course.title,
-                  code: program.code,
-                  schoolId: user.schoolId!,
-                })),
-              },
-            },
+            // courses: {
+            //   createMany: {
+            //     data: program.courses.map((course) => ({
+            //       title: course.title,
+            //       code: program.code,
+            //       schoolId: user.schoolId!,
+            //     })),
+            //   },
+            // },
           },
         })
       })
     )
+
+    // create courses with subjects
+    await Promise.all(
+      createdPrograms.map(async (program) => {
+        const pr = COMMON_PROGRAM_OFFERINGS.find(
+          (p) => p.title === program.title
+        )!
+
+        return prisma.$transaction(
+          pr.courses.map((course) => {
+            return prisma.course.create({
+              data: {
+                schoolId: program.schoolId,
+                programOfferingId: program.id,
+                title: course.title,
+                code: course.code,
+                subjects: {
+                  createMany: {
+                    data: course.subjects.map((subject) => ({
+                      units: 1,
+                      schoolId: program.schoolId,
+                      title: subject.title,
+                      code: subject.code ?? "--",
+                    })),
+                  },
+                },
+              },
+            })
+          })
+        )
+      })
+    ).then((values) => values)
 
     return { createdPrograms }
   })

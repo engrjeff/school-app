@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Course } from "@prisma/client"
+import { Subject } from "@prisma/client"
 import { MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -15,18 +15,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type RowAction = "update" | "add-subject"
+type RowAction = "make-inactive"
 
-export function CourseRowActions({ course }: { course: Course }) {
+export function SubjectRowActions({ subject }: { subject: Subject }) {
   const [action, setAction] = useState<RowAction>()
 
-  console.log(action, course.title)
+  console.log(action, subject.title)
 
   return (
     <>
       <div className="flex items-center justify-center">
         <Button variant="link" asChild>
-          <Link href={`/courses/${course.id}/subjects`}>View Subjects</Link>
+          <Link href={`#`}>Update</Link>
         </Button>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
@@ -39,12 +39,19 @@ export function CourseRowActions({ course }: { course: Course }) {
               Actions
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setAction("update")}>
-              Update
+            <DropdownMenuItem asChild>
+              <Link href={`#`}>View Students</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Add Subject</DropdownMenuItem>
-            <DropdownMenuItem>View Teachers</DropdownMenuItem>
-            <DropdownMenuItem>View Students</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`#`}>View Teachers</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setAction("make-inactive")}
+              className="text-destructive focus:text-destructive"
+            >
+              Make Inactive
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

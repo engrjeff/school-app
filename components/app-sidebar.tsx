@@ -9,6 +9,7 @@ import {
   ChartColumnBig,
   LayoutGrid,
   SchoolIcon,
+  SquareStack,
   TableProperties,
   UserCheck,
   Users,
@@ -58,11 +59,11 @@ const data = {
         url: "/program-offerings",
         icon: Book,
       },
-      // {
-      //   name: "Courses",
-      //   url: "/courses",
-      //   icon: SquareStack,
-      // },
+      {
+        name: "Courses",
+        url: "/courses",
+        icon: SquareStack,
+      },
     ],
   },
   reporting: {

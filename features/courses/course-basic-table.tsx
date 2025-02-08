@@ -14,10 +14,10 @@ import {
 
 import { CourseRowActions } from "./course-row-actions"
 
-export function CourseTable({
-  program,
+export function CourseBasicTable({
+  courses,
 }: {
-  program: ProgramOffering & { courses: Course[] }
+  courses: Array<Course & { programOffering: ProgramOffering | null }>
 }) {
   return (
     <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
@@ -30,14 +30,14 @@ export function CourseTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {program.courses?.length ? (
-          program.courses?.map((course) => (
+        {courses?.length ? (
+          courses?.map((course) => (
             <TableRow key={course.id} className="hover:bg-accent/50">
               <TableCell>
                 <div>
                   <p className="font-medium">{course.title}</p>
                   <p className="text-muted-foreground text-xs">
-                    {program.title}
+                    {course.programOffering?.title}
                   </p>
                 </div>
               </TableCell>
@@ -52,14 +52,12 @@ export function CourseTable({
           <TableRow className="hover:bg-transparent">
             <TableCell colSpan={4} height={500}>
               <div className="flex h-full flex-col items-center justify-center rounded-lg border border-dashed">
-                <p className="text-center text-base">
-                  No courses for {program.title} yet.
-                </p>
+                <p className="text-center text-base">No courses yet.</p>
                 <p className="text-muted-foreground mb-4 text-center">
                   Add a course now.
                 </p>
                 <Button size="sm" className="h-9" asChild>
-                  <Link href={`/program-offerings/${program.id}/courses/new`}>
+                  <Link href={`/courses/new`}>
                     <PlusCircleIcon className="size-4" />
                     <span>Add Course</span>
                   </Link>

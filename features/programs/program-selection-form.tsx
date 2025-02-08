@@ -23,7 +23,9 @@ import { SubmitButton } from "@/components/ui/submit-button"
 import { createCurriculumPrograms } from "./action"
 import { CommonProgramsInput, commonProgramsSchema } from "./schema"
 
-type ProgramOffering = (typeof COMMON_PROGRAM_OFFERINGS)[number]
+type ProgramOfferingType = (typeof COMMON_PROGRAM_OFFERINGS)[number]
+
+type ProgramOffering = Omit<ProgramOfferingType, "courses">
 
 export function ProgramSelectionForm() {
   const form = useForm<CommonProgramsInput>({
@@ -43,7 +45,8 @@ export function ProgramSelectionForm() {
     const result = await action.executeAsync(values)
 
     if (result?.data?.createdPrograms) {
-      window.location.href = "/dashboard"
+      toast.success("Courses were successfully saved!")
+      window.location.href = "/program-offerings"
     }
   }
 
@@ -66,6 +69,10 @@ export function ProgramSelectionForm() {
               </FormItem>
             )}
           />
+
+          <p className="text-muted-foreground mt-4 text-sm">
+            Note: if your school college programs, you can add those later.
+          </p>
           <div className="flex justify-between pt-6">
             <Button variant="ghost" asChild>
               <Link href="/dashboard">Set up later</Link>

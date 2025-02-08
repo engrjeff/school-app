@@ -34,9 +34,10 @@ export function SchoolForm() {
 
   const form = useForm<SchoolInputs>({
     defaultValues: {
-      // name: "Morong National High School",
+      // name: "University of Rizal Syste - Morong",
       // schoolId: "301452",
-      // address: "T. Claudio Street, Barangay San Juan",
+      // shortName: "URSM",
+      // address: "Sumulong Street, Barangay San Jose",
       // zipCode: "1960",
       // fullAddress: "",
       // phone: "+639211231234",
@@ -242,7 +243,7 @@ export function SchoolForm() {
                     <FormLabel>Where is your school located?</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Enter school address"
+                        placeholder="Enter school street address"
                         id="address"
                         className="dark:bg-muted/30"
                         autoFocus
@@ -303,6 +304,7 @@ export function SchoolForm() {
                             value: item.province_code,
                           })) ?? []
                         }
+                        disabled={!form.watch("region")}
                       />
                       <FormMessage />
                     </FormItem>
@@ -328,6 +330,9 @@ export function SchoolForm() {
                             label: item.city_name,
                             value: item.city_code,
                           })) ?? []
+                        }
+                        disabled={
+                          !form.watch("region") || !form.watch("province")
                         }
                       />
                       <FormMessage />
