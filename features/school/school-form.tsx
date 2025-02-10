@@ -239,7 +239,7 @@ export function SchoolForm() {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Where is your school located?</FormLabel>
+                    <FormLabel>Street Address</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Enter school street address"

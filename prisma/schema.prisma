@@ -151,7 +151,7 @@ model School {
 }
 
 enum StudentStatus {
-  LISTED
+  REGISTERED
   ENROLLED
   DROPPED
   TRANSFERRED
@@ -160,26 +160,38 @@ enum StudentStatus {
 model Student {
   id String @id @default(cuid())
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  studentId String        @unique
-  name      String
-  email     String
-  phone     String
+  studentId String
+  firstName String
+  lastName  String
+  birthdate DateTime?
+  suffix    String?
+  email     String?
+  phone     String?
   address   String
   gender    Gender
-  status    StudentStatus
+  status    StudentStatus @default(REGISTERED)
 
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
 
   enrollments Enrollment[]
 
+  currentGradeYearLevel   GradeYearLevel? @relation(fields: [currentGradeYearLevelId], references: [id])
+  currentGradeYearLevelId String?
+
+  currentCourse   Course? @relation(fields: [currentCourseId], references: [id])
+  currentCourseId String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([schoolId, studentId])
   @@index([schoolId])
+  @@index([currentGradeYearLevelId])
+  @@index([currentCourseId])
 }
 
 model Teacher {
@@ -277,6 +289,7 @@ model Course {
   subjects        Subject[]
   gradeYearLevels GradeYearLevel[]
   enrollments     Enrollment[]
+  students        Student[]
 
   @@unique([schoolId, code])
   @@index([programOfferingId])
@@ -284,11 +297,14 @@ model Course {
 }
 
 model GradeYearLevel {
-  id    String @id @default(cuid())
-  title String // e.g. G7, G8, G12, 1st
+  id          String @id @default(cuid())
+  displayName String // e.g. Grade or Year
+  level       String // e.g. 1, 2, 3, or 1st, 2nd, 3rd
 
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String
+
+  students Student[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -44,9 +44,15 @@ export function ProgramSelectionForm() {
   async function onSubmit(values: CommonProgramsInput) {
     const result = await action.executeAsync(values)
 
+    const redirectTo = values.programs.find(
+      (p) => p.title === "Senior High School"
+    )
+      ? "/setup-curriculum/courses"
+      : "/program-offerings"
+
     if (result?.data?.createdPrograms) {
-      toast.success("Courses were successfully saved!")
-      window.location.href = "/program-offerings"
+      toast.success("Program offerings were successfully saved!")
+      window.location.href = redirectTo
     }
   }
 
@@ -71,7 +77,7 @@ export function ProgramSelectionForm() {
           />
 
           <p className="text-muted-foreground mt-4 text-sm">
-            Note: if your school college programs, you can add those later.
+            Note: If your school has college programs, you can add those later.
           </p>
           <div className="flex justify-between pt-6">
             <Button variant="ghost" asChild>

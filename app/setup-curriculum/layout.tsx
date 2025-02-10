@@ -1,6 +1,7 @@
 import * as React from "react"
 import Link from "next/link"
 
+import { site } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { CurriculumStepProgress } from "@/components/curriculum-step-progress"
 
@@ -15,7 +16,9 @@ function SetupCurriculumLayout({ children }: { children: React.ReactNode }) {
     <>
       <header className="container mx-auto grid max-w-7xl grid-cols-[200px_auto_200px] items-center justify-between p-4">
         <div>
-          <span className="text-primary text-xl font-semibold">SchoolApp</span>
+          <span className="text-primary text-xl font-semibold">
+            {site.title}
+          </span>
         </div>
         <CurriculumStepProgress steps={steps} />
         <Button variant="ghost" asChild>

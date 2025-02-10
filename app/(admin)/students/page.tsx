@@ -1,7 +1,12 @@
 import { type Metadata } from "next"
 import Link from "next/link"
+import { StudentImportDialog } from "@/features/school/student-import-dialog"
+import {
+  getStudentsOfCurrentSchool,
+  type GetStudentsArgs,
+} from "@/features/students/queries"
 import { StudentsTable } from "@/features/students/students-table"
-import { BookIcon, Filter, ImportIcon, PlusIcon } from "lucide-react"
+import { BookIcon, Filter, PlusIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -13,19 +18,29 @@ import {
 } from "@/components/ui/popover"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+import { Pagination } from "@/components/pagination"
 import { SearchField } from "@/components/search-field"
 
 export const metadata: Metadata = {
   title: "Students",
 }
 
-function StudentsPage() {
+async function StudentsPage({
+  searchParams,
+}: {
+  searchParams: GetStudentsArgs
+}) {
+  const { students, pageInfo } = await getStudentsOfCurrentSchool(searchParams)
+
   return (
     <>
       <AppHeader pageTitle="Students" />
       <AppContent>
         <div className="flex items-center justify-between gap-4">
-          <SearchField className="w-[300px]" />
+          <SearchField
+            className="w-[300px]"
+            placeholder="Search for name, LRN"
+          />
 
           {/* Filter by grade/year level */}
           <Popover>
@@ -102,10 +117,8 @@ function StudentsPage() {
               </div>
             </PopoverContent>
           </Popover>
-          <div className="ml-auto space-x-3">
-            <Button type="button" size="sm" variant="secondaryOutline">
-              <ImportIcon /> Import
-            </Button>
+          <div className="ml-auto flex items-center space-x-3">
+            <StudentImportDialog />
             <Button asChild size="sm">
               <Link href="#">
                 <PlusIcon className="size-4" /> Add Student
@@ -114,7 +127,8 @@ function StudentsPage() {
           </div>
         </div>
 
-        <StudentsTable />
+        <StudentsTable students={students} />
+        {pageInfo && <Pagination pageInfo={pageInfo} />}
       </AppContent>
     </>
   )
