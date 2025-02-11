@@ -1,6 +1,5 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import { chunk } from "remeda"
 
 import prisma from "@/lib/db"
@@ -25,8 +24,6 @@ export const importStudents = adminActionClient
         })
       })
     )
-
-    revalidatePath("/students")
 
     return {
       students,

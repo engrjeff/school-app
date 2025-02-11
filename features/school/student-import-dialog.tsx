@@ -245,7 +245,10 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
       toast.success(
         `${studentData.length} students were successfully imported.`
       )
+
       onAfterSave()
+
+      window.location.reload()
     }
   }
 
