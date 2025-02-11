@@ -7,6 +7,7 @@ import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
 
 import {
+  commonCoursesSchema,
   commonProgramsSchema,
   programSchema,
   updateProgramSchema,
@@ -24,15 +25,6 @@ export const createCurriculumPrograms = adminActionClient
             code: program.code,
             description: program.description,
             schoolId: user.schoolId!,
-            // courses: {
-            //   createMany: {
-            //     data: program.courses.map((course) => ({
-            //       title: course.title,
-            //       code: program.code,
-            //       schoolId: user.schoolId!,
-            //     })),
-            //   },
-            // },
           },
         })
       })
@@ -63,6 +55,11 @@ export const createCurriculumPrograms = adminActionClient
                     })),
                   },
                 },
+                gradeYearLevels: {
+                  createMany: {
+                    data: pr.gradeYearLevels,
+                  },
+                },
               },
             })
           })
@@ -71,6 +68,54 @@ export const createCurriculumPrograms = adminActionClient
     ).then((values) => values)
 
     return { createdPrograms }
+  })
+
+export const createCommonSHSCourses = adminActionClient
+  .metadata({ actionName: "createCommonCourses" })
+  .schema(commonCoursesSchema)
+  .action(async ({ parsedInput: { courses }, ctx: { user } }) => {
+    // find senior high
+    const shs = await prisma.programOffering.findFirst({
+      where: {
+        code: "SHS",
+        schoolId: user.schoolId!,
+      },
+    })
+
+    if (!shs) return null
+
+    const createdCourses = await prisma.$transaction(
+      courses.map((course) => {
+        return prisma.course.create({
+          data: {
+            schoolId: shs.schoolId,
+            programOfferingId: shs.id,
+            title: course.title,
+            code: course.code,
+            subjects: {
+              createMany: {
+                data: course.subjects.map((subject) => ({
+                  units: 1,
+                  schoolId: shs.schoolId,
+                  title: subject.title,
+                  code: subject.code ?? "--",
+                })),
+              },
+            },
+            gradeYearLevels: {
+              createMany: {
+                data: [
+                  { displayName: "Grade", level: "11" },
+                  { displayName: "Grade", level: "12" },
+                ],
+              },
+            },
+          },
+        })
+      })
+    )
+
+    return { createdCourses }
   })
 
 export const createProgram = adminActionClient

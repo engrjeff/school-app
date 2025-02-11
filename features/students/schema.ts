@@ -13,8 +13,27 @@ export const studentSchema = z.object({
   email: z
     .union([z.literal(""), z.string().email({ message: "Invalid email." })])
     .optional(),
+
+  currentCourseId: z.string().trim().optional(),
+  currentGradeYearLevelId: z.string().trim().optional(),
 })
 
 export type StudentInputs = z.infer<typeof studentSchema>
 
-export const importStudentSchema = studentSchema.array()
+export const importStudentSchema = studentSchema
+  .array()
+  .superRefine((items, ctx) => {
+    const uniqueItemsCount = new Set(
+      items.map((item) => item.studentId.toLowerCase())
+    ).size
+
+    const errorPosition = items.length - 1
+
+    if (uniqueItemsCount !== items.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Cannot have duplicate student ID or LRN: ${items[errorPosition].studentId}`,
+        path: [errorPosition, "studentId"],
+      })
+    }
+  })

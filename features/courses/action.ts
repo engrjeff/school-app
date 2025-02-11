@@ -14,7 +14,7 @@ export const createCourse = adminActionClient
         title: parsedInput.title,
         code: parsedInput.code,
         description: parsedInput.description,
-        schoolId: parsedInput.schoolId ?? user.schoolId,
+        schoolId: user.schoolId!,
         programOfferingId: parsedInput.programOfferingId,
         subjects: {
           createMany: {
@@ -23,7 +23,15 @@ export const createCourse = adminActionClient
               code: subject.code,
               description: subject.description,
               units: subject.units,
-              schoolId: parsedInput.schoolId ?? user.schoolId,
+              schoolId: user.schoolId!,
+            })),
+          },
+        },
+        gradeYearLevels: {
+          createMany: {
+            data: parsedInput.gradeYearLevels.levels.map((level) => ({
+              displayName: parsedInput.gradeYearLevels.displayName,
+              level: level.level,
             })),
           },
         },

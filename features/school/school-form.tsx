@@ -217,7 +217,8 @@ export function SchoolForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                      The unique ID that identifies your school.
+                      The unique ID that identifies your school. Refer to DepEd
+                      or CHED.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

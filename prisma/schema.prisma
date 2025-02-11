@@ -364,7 +364,7 @@ model Enrollment {
   student   Student @relation(fields: [studentId], references: [id])
   studentId String
 
-  teacher Teacher[]
+  teachers Teacher[]
 
   subjects Subject[]
 

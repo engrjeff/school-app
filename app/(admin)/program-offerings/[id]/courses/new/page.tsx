@@ -1,9 +1,14 @@
+import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { CourseForm } from "@/features/courses/course-form"
 import { getProgramById } from "@/features/programs/queries"
 
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+
+export const metadata: Metadata = {
+  title: "New Course",
+}
 
 /**
  *

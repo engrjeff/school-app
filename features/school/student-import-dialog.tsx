@@ -8,6 +8,7 @@ import {
   CircleAlert,
   Grid2x2Check,
   ImportIcon,
+  Info,
   Loader2,
 } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
@@ -15,6 +16,8 @@ import { toast } from "sonner"
 import * as XLSX from "xlsx"
 import { ZodError } from "zod"
 
+import { useCourses } from "@/hooks/use-courses"
+import { useGradeYearLevels } from "@/hooks/use-grade-levels"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -33,6 +36,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { SubmitButton } from "@/components/ui/submit-button"
 import {
   Table,
@@ -125,9 +136,16 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
 
   const [fileLoading, setFileLoading] = useState(false)
 
+  const [view, setView] = useState<"upload" | "preview" | "error">("upload")
+
   const [studentData, setStudentData] = useState<StudentInputs[] | null>(null)
 
-  const [view, setView] = useState<"upload" | "preview" | "error">("upload")
+  // optional fields
+  const [course, setCourse] = useState<string>()
+  const [gradeYearLevel, setGradeYearLevel] = useState<string>()
+
+  const courses = useCourses()
+  const gradeYearLevels = useGradeYearLevels(course)
 
   const [validationErrors, setValidationErrors] =
     useState<ZodError<StudentInputs[]>>()
@@ -196,6 +214,8 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
           address: d.address,
           email: d.email,
           phone: d.phone,
+          currentCourseId: course,
+          currentGradeYearLevelId: gradeYearLevel,
         }))
       )
 
@@ -223,7 +243,7 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
 
     if (result?.data?.students) {
       toast.success(
-        `${result.data.students.count} students were successfully imported.`
+        `${studentData.length} students were successfully imported.`
       )
       onAfterSave()
     }
@@ -272,40 +292,110 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
         </div>
       )}
       {view === "upload" && (
-        <label
-          htmlFor={id}
-          className="hover:bg-accent flex h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed"
-        >
-          {fileLoading ? (
-            <>
-              <Loader2
-                strokeWidth={1.5}
-                className="text-muted-foreground size-5 animate-spin"
+        <div className="space-y-4">
+          <div className="bg-accent rounded border border-l-2 border-l-blue-500 px-4 py-3">
+            <p className="text-sm">
+              <Info
+                className="-mt-0.5 me-3 inline-flex text-blue-500"
+                size={16}
+                strokeWidth={2}
+                aria-hidden="true"
               />
-              <span className="text-muted-foreground text-center text-sm">
-                Loading file...
-              </span>
-            </>
-          ) : (
-            <>
-              <ImportIcon
-                strokeWidth={1.5}
-                className="text-muted-foreground size-5"
-              />
-              <span className="text-muted-foreground text-center text-sm">
-                Select a file
-              </span>
-            </>
-          )}
-          <input
-            type="file"
-            hidden
-            name={id}
-            id={id}
-            accept=".xlsx, .xls, .csv"
-            onChange={handleFileUpload}
-          />
-        </label>
+              It is advisable to import students by the course in which they are
+              listed or registered.
+            </p>
+          </div>
+
+          <div>
+            <div className="grid grid-cols-3 items-center gap-4 px-1">
+              <div>
+                <Label htmlFor="course" className="mb-2 inline-block">
+                  Course{" "}
+                  <span className="text-muted-foreground inline-block text-xs">
+                    (Optional)
+                  </span>
+                </Label>
+                <Select
+                  name="course"
+                  disabled={courses.isLoading}
+                  value={course}
+                  onValueChange={(courseValue) => {
+                    setGradeYearLevel(undefined)
+                    setCourse(courseValue)
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courses.data?.map((c) => (
+                      <SelectItem value={c.id}>{c.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="gradeYearLevel" className="mb-2 inline-block">
+                  Grade/Year Level{" "}
+                  <span className="text-muted-foreground inline-block text-xs">
+                    (Optional)
+                  </span>
+                </Label>
+                <Select
+                  name="gradeYearLevel"
+                  value={gradeYearLevel}
+                  onValueChange={setGradeYearLevel}
+                  disabled={!course || gradeYearLevels.isLoading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select grade/year level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {gradeYearLevels.data?.map((g) => (
+                      <SelectItem value={g.id}>
+                        {g.displayName} {g.level}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <label
+            htmlFor={id}
+            className="hover:bg-accent flex h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed"
+          >
+            {fileLoading ? (
+              <>
+                <Loader2
+                  strokeWidth={1.5}
+                  className="text-muted-foreground size-5 animate-spin"
+                />
+                <span className="text-muted-foreground text-center text-sm">
+                  Loading file...
+                </span>
+              </>
+            ) : (
+              <>
+                <ImportIcon
+                  strokeWidth={1.5}
+                  className="text-muted-foreground size-5"
+                />
+                <span className="text-muted-foreground text-center text-sm">
+                  Select a file
+                </span>
+              </>
+            )}
+            <input
+              type="file"
+              hidden
+              name={id}
+              id={id}
+              accept=".xlsx, .xls, .csv"
+              onChange={handleFileUpload}
+            />
+          </label>
+        </div>
       )}
 
       {view === "preview" && studentData?.length && (

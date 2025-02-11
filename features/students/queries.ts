@@ -10,12 +10,20 @@ export type GetStudentsArgs = {
   q?: string
   page?: number
   pageSize?: number
+  sort?: string
+  order?: string
+  course?: string
 }
 
 export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
   const session = await auth()
 
   if (!session?.user.schoolId) return { students: [] }
+
+  const sortKey = args?.sort ?? "lastName"
+  const sortOrder = (args?.order ?? "asc") as "asc" | "desc"
+
+  const courseFilter = args?.course ? args.course.split(",") : undefined
 
   const whereInput: Prisma.StudentWhereInput = {
     schoolId: session?.user.schoolId,
@@ -41,6 +49,9 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
           },
         ]
       : undefined,
+    currentCourseId: {
+      in: courseFilter,
+    },
   }
 
   const totalFiltered = await prisma.student.count({
@@ -49,14 +60,16 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
 
   const students = await prisma.student.findMany({
     where: whereInput,
+    include: {
+      currentCourse: true,
+      currentGradeYearLevel: true,
+    },
     orderBy: {
-      lastName: "asc",
+      [sortKey]: sortOrder,
     },
     take: args?.pageSize ?? DEFAULT_PAGE_SIZE,
     skip: getSkip({ limit: DEFAULT_PAGE_SIZE, page: args?.page }),
   })
-
-  console.log(totalFiltered)
 
   const pageInfo = {
     total: totalFiltered,

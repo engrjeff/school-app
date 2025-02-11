@@ -1,15 +1,14 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react"
-import { parseAsInteger, useQueryState } from "nuqs"
 
 import { PageInfo } from "@/lib/types"
+import { usePageState } from "@/hooks/use-page-state"
 import { Button } from "@/components/ui/button"
 
 export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
@@ -77,21 +76,4 @@ export function Pagination({ pageInfo }: { pageInfo: PageInfo }) {
       ) : null}
     </div>
   )
-}
-
-export function usePageState(initialPage?: number) {
-  const searchParams = useSearchParams()
-
-  const pageQuery = searchParams.get("page")
-
-  const [page, setPage] = useQueryState(
-    "page",
-    parseAsInteger
-      .withDefault(
-        initialPage ? initialPage : pageQuery ? Number(pageQuery) : 1
-      )
-      .withOptions({ shallow: false })
-  )
-
-  return [page, setPage] as const
 }

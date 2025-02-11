@@ -36,7 +36,15 @@ export async function getSchoolOfUser() {
       id: userInDb?.schoolId,
     },
     include: {
-      programOfferings: true,
+      programOfferings: {
+        include: {
+          _count: {
+            select: {
+              courses: true,
+            },
+          },
+        },
+      },
       courses: {
         include: { programOffering: true },
       },

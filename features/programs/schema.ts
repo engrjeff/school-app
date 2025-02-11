@@ -25,6 +25,23 @@ export const commonProgramsSchema = z.object({
 
 export type CommonProgramsInput = z.infer<typeof commonProgramsSchema>
 
+export const commonCoursesSchema = z.object({
+  courses: z
+    .object({
+      title: z.string(),
+      code: z.string(),
+      subjects: z
+        .object({
+          title: z.string(),
+          code: z.string().optional(),
+        })
+        .array(),
+    })
+    .array(),
+})
+
+export type CommonCoursesInput = z.infer<typeof commonCoursesSchema>
+
 export const programSchema = z.object({
   title: z
     .string({ required_error: "Program title is required." })

@@ -15,6 +15,13 @@ export const actionClient = createSafeActionClient({
     console.error("Action error:", e.message)
 
     if (e instanceof PrismaClientKnownRequestError) {
+      if (
+        e.message.includes(
+          "Unique constraint failed on the fields: (`schoolId`,`studentId`)"
+        )
+      ) {
+        return "Cannot have duplicate student ID or LRN."
+      }
     }
 
     if (e instanceof AuthError) {

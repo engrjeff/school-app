@@ -235,6 +235,7 @@ export const COMMON_PROGRAM_OFFERINGS = [
       { title: "Nursery", code: "Nursery", subjects: [] },
       { title: "Kindergarten", code: "Kindergarten", subjects: [] },
     ],
+    gradeYearLevels: [{ displayName: "Year", level: "1" }],
   },
   {
     id: 2,
@@ -289,6 +290,10 @@ export const COMMON_PROGRAM_OFFERINGS = [
         ],
       },
     ],
+    gradeYearLevels: [1, 2, 3, 4, 5, 6].map((g) => ({
+      displayName: "Grade",
+      level: g.toString(),
+    })),
   },
   {
     id: 3,
@@ -343,13 +348,21 @@ export const COMMON_PROGRAM_OFFERINGS = [
         ],
       },
     ],
+    gradeYearLevels: [7, 8, 9, 10].map((g) => ({
+      displayName: "Grade",
+      level: g.toString(),
+    })),
   },
   {
     id: 4,
     title: "Senior High School",
     description: "Grade 11-12",
     code: "SHS",
-    courses: SHS_TRACKS.map((track) => track.strands).flat(),
+    courses: [],
+    gradeYearLevels: [11, 12].map((g) => ({
+      displayName: "Grade",
+      level: g.toString(),
+    })),
   },
   // {
   //   id: 5,

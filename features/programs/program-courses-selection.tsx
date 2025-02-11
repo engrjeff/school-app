@@ -7,7 +7,7 @@ import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import { COMMON_PROGRAM_OFFERINGS } from "@/config/constants"
+import { SHS_TRACKS } from "@/config/constants"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -20,20 +20,20 @@ import {
 import { Label } from "@/components/ui/label"
 import { SubmitButton } from "@/components/ui/submit-button"
 
-import { createCurriculumPrograms } from "./action"
-import { CommonProgramsInput, commonProgramsSchema } from "./schema"
+import { createCommonSHSCourses } from "./action"
+import { CommonCoursesInput, commonCoursesSchema } from "./schema"
 
-type ProgramOfferingType = (typeof COMMON_PROGRAM_OFFERINGS)[number]
+type ProgramCourse = (typeof SHS_TRACKS)[number]["strands"][number]
 
-type ProgramOffering = Omit<ProgramOfferingType, "courses" | "gradeYearLevels">
-
-export function ProgramSelectionForm() {
-  const form = useForm<CommonProgramsInput>({
-    defaultValues: { programs: [] },
-    resolver: zodResolver(commonProgramsSchema),
+export function ProgramCoursesSelection() {
+  const form = useForm<CommonCoursesInput>({
+    defaultValues: {
+      courses: [],
+    },
+    resolver: zodResolver(commonCoursesSchema),
   })
 
-  const action = useAction(createCurriculumPrograms, {
+  const action = useAction(createCommonSHSCourses, {
     onError: ({ error }) => {
       if (error.serverError) {
         toast.error(error.serverError)
@@ -41,17 +41,13 @@ export function ProgramSelectionForm() {
     },
   })
 
-  async function onSubmit(values: CommonProgramsInput) {
+  async function onSubmit(values: CommonCoursesInput) {
     const result = await action.executeAsync(values)
 
-    const redirectTo = values.programs.find(
-      (p) => p.title === "Senior High School"
-    )
-      ? "/setup-curriculum/courses"
-      : "/program-offerings"
+    const redirectTo = "/program-offerings"
 
-    if (result?.data?.createdPrograms) {
-      toast.success("Program offerings were successfully saved!")
+    if (result?.data?.createdCourses) {
+      toast.success("Senior High School tracks were successfully saved!")
       window.location.href = redirectTo
     }
   }
@@ -62,12 +58,12 @@ export function ProgramSelectionForm() {
         <fieldset disabled={action.isPending} className="disabled:cursor-wait">
           <FormField
             control={form.control}
-            name="programs"
+            name="courses"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="sr-only">Programs</FormLabel>
+                <FormLabel className="sr-only">Courses</FormLabel>
                 <FormControl>
-                  <ProgramOfferingSelector
+                  <ProgramCourseSelector
                     values={field.value}
                     onChange={field.onChange}
                   />
@@ -77,7 +73,8 @@ export function ProgramSelectionForm() {
           />
 
           <p className="text-muted-foreground mt-4 text-sm">
-            Note: If your school has college programs, you may add those later.
+            Note: If your school has college programs and other courses, you may
+            add those later.
           </p>
           <div className="flex justify-between pt-6">
             <Button variant="ghost" asChild>
@@ -93,43 +90,50 @@ export function ProgramSelectionForm() {
   )
 }
 
-function ProgramOfferingSelector({
+function ProgramCourseSelector({
   values,
   onChange,
 }: {
-  values: ProgramOffering[]
-  onChange: (values: ProgramOffering[]) => void
+  values: ProgramCourse[]
+  onChange: (values: ProgramCourse[]) => void
 }) {
-  function handleSelectChange(program: ProgramOffering, checked: boolean) {
+  function handleSelectChange(course: ProgramCourse, checked: boolean) {
     if (checked === false) {
-      onChange(values.filter((v) => v.title !== program.title))
+      onChange(values.filter((v) => v.title !== course.title))
     } else {
-      onChange([...values, program].sort((a, b) => a.id - b.id))
+      onChange([...values, course])
     }
   }
 
   return (
-    <div className="space-y-4">
-      {COMMON_PROGRAM_OFFERINGS.map((program) => (
-        <ProgramOfferingCheckbox
-          key={program.title}
-          program={program}
-          selected={
-            values.find((v) => v.title === program.title) ? true : false
-          }
-          onSelect={(checked) => handleSelectChange(program, checked)}
-        />
+    <ul className="space-y-4">
+      {SHS_TRACKS.map((course) => (
+        <li className="space-y-2">
+          <p className="text-primary text-sm font-medium">{course.track}</p>
+          <div className="space-y-2">
+            {course.strands.map((item) => (
+              <ProgramCourseCheckbox
+                key={item.title}
+                course={item}
+                selected={
+                  values.find((v) => v.title === item.title) ? true : false
+                }
+                onSelect={(checked) => handleSelectChange(item, checked)}
+              />
+            ))}
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
 
-function ProgramOfferingCheckbox({
-  program,
+function ProgramCourseCheckbox({
+  course,
   selected,
   onSelect,
 }: {
-  program: ProgramOffering
+  course: ProgramCourse
   selected: boolean
   onSelect: (checked: boolean) => void
 }) {
@@ -144,9 +148,9 @@ function ProgramOfferingCheckbox({
         onCheckedChange={(checked) => onSelect(checked === true ? true : false)}
       />
       <div className="grid grow gap-2">
-        <Label htmlFor={id}>{program.title}</Label>
+        <Label htmlFor={id}>{course.title}</Label>
         <p id={`${id}-description`} className="text-muted-foreground text-xs">
-          {program.description}
+          {course.code}
         </p>
       </div>
     </div>
