@@ -47,6 +47,9 @@ export async function getSchoolOfUser() {
       },
       courses: {
         include: { programOffering: true },
+        orderBy: {
+          createdAt: "asc",
+        },
       },
     },
   })

@@ -148,6 +148,7 @@ model School {
   teachers         Teacher[]
   enrollments      Enrollment[]
   subjects         Subject[]
+  sections         Section[]
 }
 
 enum StudentStatus {
@@ -200,12 +201,13 @@ model Teacher {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  teacherId String @unique // something employee number
-  name      String
-  email     String
-  phone     String
-  address   String
-  gender    Gender
+  teacherId   String @unique // something employee number
+  designation String // like Teacher 1, Teacher 2, Master Teacher 1
+  name        String
+  email       String
+  phone       String
+  address     String
+  gender      Gender
 
   isActive Boolean @default(true)
 
@@ -304,6 +306,8 @@ model GradeYearLevel {
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String
 
+  sections Section[]
+
   students Student[]
 
   createdAt DateTime @default(now())
@@ -311,13 +315,25 @@ model GradeYearLevel {
 }
 
 model Section {
-  id    String @id @default(cuid())
-  title String // e.g. Prime, 1 - Sampaguita, 1 ECE-A
+  id   String @id @default(cuid())
+  name String // e.g. Prime, 1 - Sampaguita, 1 ECE-A
 
   enrollments Enrollment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  gradeYearLevel   GradeYearLevel @relation(fields: [gradeYearLevelId], references: [id], onDelete: Cascade)
+  gradeYearLevelId String
+
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String
+
+  order Int
+
+  @@unique([name, gradeYearLevelId])
+  @@index([gradeYearLevelId])
+  @@index([schoolId])
 }
 
 model Subject {

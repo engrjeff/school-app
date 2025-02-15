@@ -1,9 +1,11 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
+
 import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
 
-import { courseSchema } from "./schema"
+import { courseSchema, updateCourseSchema } from "./schema"
 
 export const createCourse = adminActionClient
   .metadata({ actionName: "createCourse" })
@@ -37,6 +39,25 @@ export const createCourse = adminActionClient
         },
       },
     })
+
+    return { course }
+  })
+
+export const updateCourse = adminActionClient
+  .metadata({ actionName: "updateCourse" })
+  .schema(updateCourseSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    const course = await prisma.course.update({
+      where: { id: parsedInput.id },
+      data: {
+        title: parsedInput.title,
+        code: parsedInput.code,
+        description: parsedInput.description,
+        schoolId: user.schoolId!,
+      },
+    })
+
+    revalidatePath(`/courses/${parsedInput.id}`)
 
     return { course }
   })

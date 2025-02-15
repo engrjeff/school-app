@@ -27,12 +27,16 @@ export function NavMainMenu({
   const pathname = usePathname()
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarGroupLabel>{menu.heading}</SidebarGroupLabel>
       <SidebarMenu>
         {menu.items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild isActive={pathname.startsWith(item.url)}>
+            <SidebarMenuButton
+              tooltip={item.name}
+              asChild
+              isActive={pathname.startsWith(item.url)}
+            >
               <Link href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

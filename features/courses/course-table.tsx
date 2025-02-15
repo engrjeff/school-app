@@ -33,7 +33,7 @@ export function CourseTable({
         {program.courses?.length ? (
           program.courses?.map((course) => (
             <TableRow key={course.id} className="hover:bg-accent/50">
-              <TableCell>
+              <TableCell className="whitespace-nowrap">
                 <div>
                   <p className="font-medium">{course.title}</p>
                   <p className="text-muted-foreground text-xs">
@@ -42,7 +42,9 @@ export function CourseTable({
                 </div>
               </TableCell>
               <TableCell>{course.code}</TableCell>
-              <TableCell>{course.description ?? "-"}</TableCell>
+              <TableCell>
+                <p className="line-clamp-2">{course.description ?? "-"}</p>
+              </TableCell>
               <TableCell className="text-center">
                 <CourseRowActions course={course} />
               </TableCell>

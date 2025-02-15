@@ -80,6 +80,15 @@ export const courseSchema = z.object({
   gradeYearLevels: gradeYearLevelSchema,
 })
 
+export const updateCourseSchema = z.object({
+  id: z.string().nonempty({ message: "Course ID is required." }),
+  title: z.string().trim().nonempty({ message: "Course title is required." }),
+  code: z.string().trim().nonempty({ message: "Course code is required." }),
+  description: z.string().trim().optional(),
+})
+
 export type CourseInputs = z.infer<typeof courseSchema>
+
+export type UpdateCourseInputs = z.infer<typeof updateCourseSchema>
 
 export type SubjectInputs = z.infer<typeof subjectSchema>

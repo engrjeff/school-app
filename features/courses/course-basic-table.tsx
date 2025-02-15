@@ -34,16 +34,25 @@ export function CourseBasicTable({
           courses?.map((course) => (
             <TableRow key={course.id} className="hover:bg-accent/50">
               <TableCell>
-                <div>
-                  <p className="font-medium">{course.title}</p>
-                  <p className="text-muted-foreground text-xs">
-                    {course.programOffering?.title}
-                  </p>
-                </div>
+                <Link
+                  href={`/courses/${course.id}`}
+                  className="group inline-block"
+                >
+                  <div>
+                    <p className="font-medium group-hover:underline">
+                      {course.title}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {course.programOffering?.title}
+                    </p>
+                  </div>
+                </Link>
               </TableCell>
-              <TableCell>{course.code}</TableCell>
-              <TableCell>{course.description ?? "-"}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="whitespace-nowrap">{course.code}</TableCell>
+              <TableCell>
+                <p className="line-clamp-2">{course.description ?? "-"}</p>
+              </TableCell>
+              <TableCell className="whitespace-nowrap text-center">
                 <CourseRowActions course={course} />
               </TableCell>
             </TableRow>

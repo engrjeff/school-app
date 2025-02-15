@@ -80,15 +80,8 @@ export function StudentImportDialog() {
             <DialogTitle>Import Students</DialogTitle>
             <DialogDescription asChild>
               <div>
-                Upload a{" "}
-                <Badge className="border-secondary bg-secondary/30 px-0.5 font-mono">
-                  .xlsx
-                </Badge>{" "}
-                or{" "}
-                <Badge className="border-secondary bg-secondary/30 px-0.5 font-mono">
-                  .csv
-                </Badge>{" "}
-                file.
+                Upload a <Badge variant="code">.xlsx</Badge> or{" "}
+                <Badge variant="code">.csv</Badge> file.
               </div>
             </DialogDescription>
           </DialogHeader>

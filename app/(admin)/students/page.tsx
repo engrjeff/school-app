@@ -5,14 +5,15 @@ import {
   getStudentsOfCurrentSchool,
   type GetStudentsArgs,
 } from "@/features/students/queries"
-import { StudentsCourseFilter } from "@/features/students/students-course-filter"
 import { StudentsTable } from "@/features/students/students-table"
 import { PlusIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+import { CourseFilter } from "@/components/course-filter"
 import { Pagination } from "@/components/pagination"
+import { ProgramOfferingFilter } from "@/components/program-offering-filter"
 import { SearchField } from "@/components/search-field"
 
 export const metadata: Metadata = {
@@ -35,8 +36,10 @@ async function StudentsPage({
             className="w-[300px]"
             placeholder="Search for name, LRN"
           />
+          {/* Filter by program */}
+          <ProgramOfferingFilter />
           {/* Filter by course */}
-          <StudentsCourseFilter />
+          <CourseFilter />
           <div className="ml-auto flex items-center space-x-3">
             <StudentImportDialog />
             <Button asChild size="sm">

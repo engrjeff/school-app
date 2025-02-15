@@ -13,6 +13,7 @@ export type GetStudentsArgs = {
   sort?: string
   order?: string
   course?: string
+  program?: string
 }
 
 export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
@@ -23,6 +24,7 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
   const sortKey = args?.sort ?? "lastName"
   const sortOrder = (args?.order ?? "asc") as "asc" | "desc"
 
+  const programFilter = args?.program ? args.program : undefined
   const courseFilter = args?.course ? args.course.split(",") : undefined
 
   const whereInput: Prisma.StudentWhereInput = {
@@ -49,8 +51,11 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
           },
         ]
       : undefined,
-    currentCourseId: {
-      in: courseFilter,
+    currentCourse: {
+      id: {
+        in: courseFilter,
+      },
+      programOfferingId: programFilter,
     },
   }
 

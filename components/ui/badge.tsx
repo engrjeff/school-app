@@ -19,6 +19,7 @@ const badgeVariants = cva(
         FEMALE: "bg-rose-400/10 border-rose-400/20 text-rose-400 capitalize",
         Male: "bg-blue-400/10 border-blue-400/20 text-blue-400 capitalize",
         Female: "bg-rose-400/10 border-rose-400/20 text-rose-400 capitalize",
+        code: "border-secondary bg-secondary/30 px-0.5 font-mono",
       },
     },
     defaultVariants: {
