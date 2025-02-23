@@ -25,6 +25,7 @@ interface TableFacetFilterProps {
     value: string
   }[]
   singleSelection?: boolean
+  onChangeCallback?: VoidFunction
 }
 
 export function TableFacetFilter({
@@ -33,6 +34,7 @@ export function TableFacetFilter({
   selectedLabelKey = "value",
   options,
   singleSelection,
+  onChangeCallback,
 }: TableFacetFilterProps) {
   const [queryParam, setQueryParam] = useQueryState(
     filterKey,
@@ -50,6 +52,7 @@ export function TableFacetFilter({
       queryParam={queryParam}
       onApply={setQueryParam}
       singleSelection={singleSelection}
+      onChangeCallback={onChangeCallback}
     />
   )
 }
@@ -60,6 +63,7 @@ function FilterComponent({
   options,
   selectedLabelKey,
   singleSelection,
+  onChangeCallback,
   onApply,
 }: Omit<TableFacetFilterProps, "filterKey"> & {
   queryParam: string[]
@@ -164,6 +168,11 @@ function FilterComponent({
             className="h-[30px] w-full"
             onClick={() => {
               onApply(selected)
+
+              if (onChangeCallback) {
+                onChangeCallback()
+              }
+
               setOpen(false)
 
               if (page) {

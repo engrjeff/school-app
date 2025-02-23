@@ -57,7 +57,7 @@ function SortLinkComponent({ title, sortValue, className }: SortLinkProps) {
       href={`${pathname}?${createQueryString(sortValue)}`}
       className={cn(
         buttonVariants({ variant: "ghost" }),
-        "text-muted-foreground h-11 px-0 font-medium",
+        "text-muted-foreground h-10 p-0 font-medium",
         className
       )}
       onClick={() => setOrderIndex((c) => c + 1)}

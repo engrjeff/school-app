@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { SortLink } from "@/components/sort-link"
 
 import { ProgramOfferingRowActions } from "./program-offering-row-actions"
 
@@ -23,10 +24,16 @@ export function ProgramOfferingsTable({
     <Table className="table-auto">
       <TableHeader>
         <TableRow className="hover:bg-transparent">
-          <TableHead className="h-11">Title</TableHead>
-          <TableHead className="h-11">Code</TableHead>
-          <TableHead className="h-11">Description</TableHead>
-          <TableHead className="h-11 text-center">Actions</TableHead>
+          <TableHead>
+            <SortLink title="Title" sortValue="title" />
+          </TableHead>
+          <TableHead>
+            <SortLink title="Code" sortValue="code" />
+          </TableHead>
+          <TableHead>
+            <SortLink title="Description" sortValue="description" />
+          </TableHead>
+          <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

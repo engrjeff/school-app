@@ -471,6 +471,7 @@ export function SchoolForm() {
                       <Input
                         className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
                         type="file"
+                        accept="image/*"
                         {...field}
                       />
                     </FormControl>

@@ -22,6 +22,7 @@ import {
 } from "react-hook-form"
 import { toast } from "sonner"
 
+import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -44,6 +45,13 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { NumberInput } from "@/components/ui/number-input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { SubmitButton } from "@/components/ui/submit-button"
 import {
   Table,
@@ -58,14 +66,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { createCourse } from "./action"
 import { CourseInputs, courseSchema } from "./schema"
 
-export function CourseForm({ programId }: { programId: string }) {
+export function CourseForm({
+  programOfferingId,
+}: {
+  programOfferingId?: string
+}) {
   const form = useForm<CourseInputs>({
     resolver: zodResolver(courseSchema),
     mode: "onChange",
     defaultValues: {
       title: "",
       code: "",
-      programOfferingId: programId,
+      programOfferingId: programOfferingId ?? "",
       subjects: [
         // {
         //   title: "College Algebra",
@@ -124,6 +136,8 @@ export function CourseForm({ programId }: { programId: string }) {
 
   const subjects = form.watch("subjects")
 
+  const programs = useProgramOfferings()
+
   const action = useAction(createCourse, {
     onError: ({ error }) => {
       if (error.serverError) {
@@ -142,7 +156,9 @@ export function CourseForm({ programId }: { programId: string }) {
     if (result?.data?.course) {
       toast.success(`Course saved!`)
 
-      window.location.href = `/program-offerings/${programId}/courses`
+      form.reset()
+
+      window.location.href = `/courses`
     }
   }
 
@@ -157,7 +173,7 @@ export function CourseForm({ programId }: { programId: string }) {
             aria-label="go back"
             asChild
           >
-            <Link href={`/program-offerings/${programId}/courses`}>
+            <Link href={`/courses`}>
               <ArrowLeft />
             </Link>
           </Button>
@@ -169,9 +185,7 @@ export function CourseForm({ programId }: { programId: string }) {
           </div>
           <div className="ml-auto flex items-center space-x-3">
             <Button size="sm" variant="secondary" asChild>
-              <Link href={`/program-offerings/${programId}/courses`}>
-                Discard
-              </Link>
+              <Link href={`/courses`}>Discard</Link>
             </Button>
             <SubmitButton size="sm" loading={action.isPending}>
               Save Course
@@ -185,6 +199,37 @@ export function CourseForm({ programId }: { programId: string }) {
             className="bg-accent/40 space-y-3 rounded-lg border p-6 disabled:cursor-wait disabled:opacity-90"
           >
             <p className="font-medium">Course Details</p>
+            <FormField
+              control={form.control}
+              name="programOfferingId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Program</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={programs.isLoading || Boolean(programOfferingId)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a program" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {programs.data?.map((program) => (
+                        <SelectItem key={program.id} value={program.id}>
+                          {program.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    The program to which the course is associated.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="title"

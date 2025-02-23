@@ -2,9 +2,10 @@ import { Gender } from "@prisma/client"
 import * as z from "zod"
 
 export const studentSchema = z.object({
-  studentId: z.string().nonempty({ message: "Student ID [LRN) is required." }),
+  studentId: z.string().nonempty({ message: "Student ID (LRN) is required." }),
   firstName: z.string().nonempty({ message: "First name is required." }),
   lastName: z.string().nonempty({ message: "Last name is required." }),
+  middleName: z.string().optional(),
   suffix: z.string().optional(),
   birthdate: z.string(),
   gender: z.nativeEnum(Gender, { message: "Invalid gender." }),

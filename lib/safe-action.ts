@@ -22,6 +22,21 @@ export const actionClient = createSafeActionClient({
       ) {
         return "Cannot have duplicate student ID or LRN."
       }
+
+      if (
+        e.message.includes(
+          "Unique constraint failed on the fields: (`schoolId`,`teacherId`)"
+        )
+      ) {
+        return "Cannot have duplicate teacher/employee ID."
+      }
+      if (
+        e.message.includes(
+          "Unique constraint failed on the fields: (`teacherId`)"
+        )
+      ) {
+        return "Cannot have duplicate teacher/employee ID."
+      }
     }
 
     if (e instanceof AuthError) {

@@ -1,10 +1,10 @@
 import { type Metadata } from "next"
 import Link from "next/link"
-import { StudentImportDialog } from "@/features/school/student-import-dialog"
 import {
   getStudentsOfCurrentSchool,
   type GetStudentsArgs,
 } from "@/features/students/queries"
+import { StudentImportDialog } from "@/features/students/student-import-dialog"
 import { StudentsTable } from "@/features/students/students-table"
 import { PlusIcon } from "lucide-react"
 
@@ -39,11 +39,11 @@ async function StudentsPage({
           {/* Filter by program */}
           <ProgramOfferingFilter />
           {/* Filter by course */}
-          <CourseFilter />
+          <CourseFilter key={searchParams.program} />
           <div className="ml-auto flex items-center space-x-3">
             <StudentImportDialog />
             <Button asChild size="sm">
-              <Link href="#">
+              <Link href="/students/new">
                 <PlusIcon className="size-4" /> Add Student
               </Link>
             </Button>

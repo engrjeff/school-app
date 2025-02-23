@@ -4,16 +4,17 @@ import * as React from "react"
 import { SchoolHeading } from "@/features/school/school-heading"
 import { School } from "@prisma/client"
 import {
-  Award,
-  Book,
-  ChartColumnBig,
-  Grid,
-  LayoutGrid,
+  AwardIcon,
+  BookIcon,
+  ChartColumnBigIcon,
+  GridIcon,
+  LayoutGridIcon,
+  LayoutPanelTopIcon,
   SchoolIcon,
-  SquareStack,
-  TableProperties,
-  UserCheck,
-  Users,
+  SquareStackIcon,
+  TablePropertiesIcon,
+  UserCheckIcon,
+  UsersIcon,
 } from "lucide-react"
 
 import {
@@ -38,17 +39,17 @@ const data = {
       {
         name: "Dashboard",
         url: "/dashboard",
-        icon: LayoutGrid,
+        icon: LayoutGridIcon,
       },
       {
         name: "Teachers",
         url: "/teachers",
-        icon: UserCheck,
+        icon: UserCheckIcon,
       },
       {
         name: "Students",
         url: "/students",
-        icon: Users,
+        icon: UsersIcon,
       },
     ],
   },
@@ -58,17 +59,22 @@ const data = {
       {
         name: "Program Offerings",
         url: "/program-offerings",
-        icon: Book,
+        icon: BookIcon,
       },
       {
         name: "Courses",
         url: "/courses",
-        icon: SquareStack,
+        icon: SquareStackIcon,
+      },
+      {
+        name: "Faculties",
+        url: "/faculties",
+        icon: LayoutPanelTopIcon,
       },
       {
         name: "Sections",
         url: "/sections",
-        icon: Grid,
+        icon: GridIcon,
       },
     ],
   },
@@ -76,19 +82,19 @@ const data = {
     heading: "School Reports",
     items: [
       {
-        name: "Grades",
+        name: "Enrollments",
         url: "#",
-        icon: TableProperties,
+        icon: TablePropertiesIcon,
       },
       {
         name: "Rankings",
         url: "#",
-        icon: ChartColumnBig,
+        icon: ChartColumnBigIcon,
       },
       {
         name: "Awardees",
         url: "#",
-        icon: Award,
+        icon: AwardIcon,
       },
     ],
   },

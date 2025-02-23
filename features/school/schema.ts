@@ -31,3 +31,7 @@ export const schoolSchema = z.object({
 })
 
 export type SchoolInputs = z.infer<typeof schoolSchema>
+
+export const updateSchoolSchema = schoolSchema.extend({
+  id: z.string().nonempty({ message: "School ID is required." }),
+})

@@ -3,7 +3,14 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ProgramOffering } from "@prisma/client"
-import { MoreHorizontal } from "lucide-react"
+import {
+  LayoutPanelTopIcon,
+  MoreHorizontal,
+  PencilIcon,
+  PlusIcon,
+  UserCheckIcon,
+  UserCogIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -30,9 +37,7 @@ export function ProgramOfferingRowActions({
     <>
       <div className="flex items-center justify-center">
         <Button variant="link" asChild>
-          <Link href={`/program-offerings/${program.id}/courses`}>
-            View Courses
-          </Link>
+          <Link href={`/courses?program=${program.id}`}>View Courses</Link>
         </Button>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
@@ -46,11 +51,29 @@ export function ProgramOfferingRowActions({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setAction("update")}>
-              Update
+              <PencilIcon className="size-3" /> Update
             </DropdownMenuItem>
-            <DropdownMenuItem>Add Course</DropdownMenuItem>
-            <DropdownMenuItem>View Teachers</DropdownMenuItem>
-            <DropdownMenuItem>View Students</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/courses/new?program=${program.id}`}>
+                <PlusIcon className="size-4" /> Add Course
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href={`/teachers?program=${program.id}`}>
+                <UserCogIcon className="size-4" /> View Teachers
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/students?program=${program.id}`}>
+                <UserCheckIcon className="size-4" /> View Students
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/faculties?program=${program.id}`}>
+                <LayoutPanelTopIcon className="size-4" /> View Faculties
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

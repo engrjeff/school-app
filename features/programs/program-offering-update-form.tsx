@@ -123,7 +123,7 @@ function ProgramOfferingUpdateForm({
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input autoFocus placeholder="Program title" {...field} />
+                  <Input placeholder="Program title" {...field} />
                 </FormControl>
                 <FormDescription>e.g. Senior High School</FormDescription>
                 <FormMessage />

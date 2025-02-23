@@ -1,11 +1,12 @@
 "use client"
 
 import { ChangeEvent, useId, useState } from "react"
-import { importStudents } from "@/features/students/actions"
-import { Gender } from "@prisma/client"
+import { useSearchParams } from "next/navigation"
+import { Faculty } from "@prisma/client"
 import {
   ChevronDown,
   CircleAlert,
+  CircleCheckIcon,
   Grid2x2Check,
   ImportIcon,
   Info,
@@ -16,8 +17,7 @@ import { toast } from "sonner"
 import * as XLSX from "xlsx"
 import { ZodError } from "zod"
 
-import { useCourses } from "@/hooks/use-courses"
-import { useGradeYearLevels } from "@/hooks/use-grade-levels"
+import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -54,10 +54,15 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { importStudentSchema, StudentInputs } from "../students/schema"
-import { StudentImportPreviewTable } from "./student-import-preview-table"
+import { importFaculties } from "./actions"
+import { FacultyImportPreviewTable } from "./faculty-import-preview-table"
+import { facultyArraySchema, FacultyInputs } from "./schema"
 
-export function StudentImportDialog() {
+export function FacultyImportDialog({
+  currentFaculties,
+}: {
+  currentFaculties: Faculty[]
+}) {
   const [open, setOpen] = useState(false)
 
   const contentKey = useId()
@@ -77,7 +82,7 @@ export function StudentImportDialog() {
         </DialogTrigger>
         <DialogContent className="overflow-hidden sm:max-w-screen-lg">
           <DialogHeader>
-            <DialogTitle>Import Students</DialogTitle>
+            <DialogTitle>Import Faculty Data</DialogTitle>
             <DialogDescription asChild>
               <div>
                 Upload a <Badge variant="code">.xlsx</Badge> or{" "}
@@ -87,6 +92,7 @@ export function StudentImportDialog() {
           </DialogHeader>
           <ImportDialogContent
             key={contentKey}
+            currentFaculties={currentFaculties}
             onAfterSave={() => setOpen(false)}
           />
         </DialogContent>
@@ -105,7 +111,7 @@ export function StudentImportDialog() {
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
             <a
-              href="/templates/edumetrics-student-import-template.xlsx"
+              href="/templates/edumetrics-faculty-import-template.xlsx"
               download
               target="_blank"
             >
@@ -124,26 +130,35 @@ export function StudentImportDialog() {
   )
 }
 
-function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
+function ImportDialogContent({
+  currentFaculties,
+  onAfterSave,
+}: {
+  currentFaculties: Faculty[]
+  onAfterSave: VoidFunction
+}) {
   const id = useId()
 
   const [fileLoading, setFileLoading] = useState(false)
 
+  const searchParams = useSearchParams()
+
+  const programs = useProgramOfferings()
+
+  const [programId, setProgramId] = useState(
+    () => searchParams.get("program") ?? ""
+  )
+
   const [view, setView] = useState<"upload" | "preview" | "error">("upload")
 
-  const [studentData, setStudentData] = useState<StudentInputs[] | null>(null)
+  const [facultyData, setFacultyData] = useState<FacultyInputs[] | null>(null)
 
-  // optional fields
-  const [course, setCourse] = useState<string>()
-  const [gradeYearLevel, setGradeYearLevel] = useState<string>()
-
-  const courses = useCourses()
-  const gradeYearLevels = useGradeYearLevels(course)
+  const [rowEntryErrors, setRowEntryErrors] = useState<EntryError[]>()
 
   const [validationErrors, setValidationErrors] =
-    useState<ZodError<StudentInputs[]>>()
+    useState<ZodError<FacultyInputs[]>>()
 
-  const importAction = useAction(importStudents, {
+  const importAction = useAction(importFaculties, {
     onError: ({ error }) => {
       if (error.serverError) {
         toast.error(error.serverError)
@@ -181,40 +196,33 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
 
       const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
-      const sheetData = XLSX.utils.sheet_to_json<StudentInputs>(sheet, {
+      const sheetData = XLSX.utils.sheet_to_json<FacultyInputs>(sheet, {
         raw: false,
-        header: [
-          "studentId",
-          "firstName",
-          "lastName",
-          "suffix",
-          "birthdate",
-          "gender",
-          "address",
-          "email",
-          "phone",
-        ],
+        header: ["title", "description"],
       })
 
-      const validatedData = importStudentSchema.safeParse(
+      const entryErrors = validateItems(
+        sheetData.slice(1).map((d) => d.title),
+        currentFaculties.map((f) => f.title.trim().toLowerCase())
+      )
+
+      if (entryErrors.some((e) => e.invalid)) {
+        setView("error")
+        setRowEntryErrors(entryErrors)
+        return
+      }
+
+      const validatedData = facultyArraySchema.safeParse(
         sheetData.slice(1).map((d) => ({
-          studentId: d.studentId,
-          firstName: d.firstName,
-          lastName: d.lastName,
-          suffix: d.suffix,
-          birthdate: d.birthdate,
-          gender: mapGender(d.gender),
-          address: d.address,
-          email: d.email,
-          phone: d.phone,
-          currentCourseId: course,
-          currentGradeYearLevelId: gradeYearLevel,
+          title: d.title,
+          description: d.description,
+          programOfferingId: programId,
         }))
       )
 
       if (validatedData.success) {
         setView("preview")
-        setStudentData(validatedData.data)
+        setFacultyData(validatedData.data)
       } else {
         setValidationErrors(validatedData.error)
         setView("error")
@@ -225,18 +233,18 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
   }
 
   async function handleImport() {
-    if (!studentData?.length) return
+    if (!facultyData?.length) return
 
-    const result = await importAction.executeAsync(studentData)
+    const result = await importAction.executeAsync(facultyData)
 
     if (result?.validationErrors) {
       toast.error("Check invalid row data entry.")
       return
     }
 
-    if (result?.data?.students) {
+    if (result?.data?.faculties.count) {
       toast.success(
-        `${studentData.length} students were successfully imported.`
+        `${facultyData.length} faculties were successfully imported.`
       )
 
       onAfterSave()
@@ -272,14 +280,22 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
               <TableHeader className="sticky top-0 z-10 backdrop-blur-sm">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="h-11">Row #</TableHead>
-                  <TableHead className="h-11">Invalid Fields</TableHead>
+                  <TableHead className="h-11">Title</TableHead>
+                  <TableHead className="h-11">Issue</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {validationErrors?.issues?.map((error, errIndex) => (
+                {rowEntryErrors?.map((error, errIndex) => (
                   <TableRow key={`error-${errIndex + 1}`}>
-                    <TableCell>{Number(error.path[0]) + 1}</TableCell>
-                    <TableCell>{error.message}</TableCell>
+                    <TableCell>{errIndex + 1}</TableCell>
+                    <TableCell>{error.item}</TableCell>
+                    <TableCell>
+                      {error.invalid ? (
+                        <span className="text-red-500">{error.reason}</span>
+                      ) : (
+                        <CircleCheckIcon className="size-4 text-green-500" />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -297,65 +313,31 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
                 strokeWidth={2}
                 aria-hidden="true"
               />
-              It is advisable to import students by the course in which they are
-              listed or registered.
+              It is advisable to import faculy data by program.
             </p>
           </div>
 
-          <div>
-            <div className="grid grid-cols-3 items-center gap-4 px-1">
-              <div>
-                <Label htmlFor="course" className="mb-2 inline-block">
-                  Course{" "}
-                  <span className="text-muted-foreground inline-block text-xs">
-                    (Optional)
-                  </span>
-                </Label>
-                <Select
-                  name="course"
-                  disabled={courses.isLoading}
-                  value={course}
-                  onValueChange={(courseValue) => {
-                    setGradeYearLevel(undefined)
-                    setCourse(courseValue)
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {courses.data?.map((c) => (
-                      <SelectItem value={c.id}>{c.title}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="gradeYearLevel" className="mb-2 inline-block">
-                  Grade/Year Level{" "}
-                  <span className="text-muted-foreground inline-block text-xs">
-                    (Optional)
-                  </span>
-                </Label>
-                <Select
-                  name="gradeYearLevel"
-                  value={gradeYearLevel}
-                  onValueChange={setGradeYearLevel}
-                  disabled={!course || gradeYearLevels.isLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select grade/year level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {gradeYearLevels.data?.map((g) => (
-                      <SelectItem value={g.id}>
-                        {g.displayName} {g.level}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          <div className="w-1/4 px-1">
+            <Label htmlFor="course" className="mb-2 inline-block">
+              Program{" "}
+            </Label>
+            <Select
+              name="program"
+              disabled={programs.isLoading}
+              value={programId}
+              onValueChange={setProgramId}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a program" />
+              </SelectTrigger>
+              <SelectContent>
+                {programs.data?.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <label
             htmlFor={id}
@@ -394,8 +376,8 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
         </div>
       )}
 
-      {view === "preview" && studentData?.length && (
-        <StudentImportPreviewTable studentPreviewData={studentData} />
+      {view === "preview" && facultyData?.length && (
+        <FacultyImportPreviewTable facultyPreviewData={facultyData} />
       )}
       <DialogFooter className="mt-6">
         {view !== "upload" ? (
@@ -403,7 +385,7 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
             type="button"
             variant="outline"
             onClick={() => {
-              setStudentData(null)
+              setFacultyData(null)
               setValidationErrors(undefined)
               setView("upload")
             }}
@@ -420,7 +402,7 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
         )}
         <SubmitButton
           type="button"
-          disabled={!studentData?.length}
+          disabled={!facultyData?.length}
           loading={importAction.isPending}
           onClick={handleImport}
         >
@@ -431,10 +413,59 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
   )
 }
 
-function mapGender(gender: string) {
-  if (gender.toLowerCase() === "male") return Gender.MALE
+function findDuplicatePositions(arr: string[]): Record<string, number[]> {
+  const positions: Record<string, number[]> = {}
+  const duplicates: Record<string, number[]> = {}
 
-  if (gender.toLowerCase() === "female") return Gender.FEMALE
+  arr.forEach((item, index) => {
+    if (item) {
+      const itemLower = item.toLowerCase()
+      if (!positions[itemLower]) {
+        positions[itemLower] = []
+      }
+      positions[itemLower].push(index)
+    }
+  })
 
-  return gender
+  for (const key in positions) {
+    if (positions[key].length > 1) {
+      duplicates[key] = positions[key]
+    }
+  }
+
+  return duplicates
+}
+
+type EntryError = {
+  item: string | null | undefined
+  invalid: boolean
+  reason: string | null
+}
+
+function validateItems(
+  arr: (string | null | undefined)[],
+  currentArr: string[]
+): EntryError[] {
+  const duplicatePositions = findDuplicatePositions(arr as string[])
+
+  return arr.map((item) => {
+    if (!item) {
+      return { item, invalid: true, reason: "Blank entry" }
+    }
+
+    if (currentArr.includes(item.toLowerCase())) {
+      return {
+        item,
+        invalid: true,
+        reason: "Already exists",
+      }
+    }
+    return {
+      item,
+      invalid: duplicatePositions.hasOwnProperty(item.toLowerCase()),
+      reason: duplicatePositions.hasOwnProperty(item.toLowerCase())
+        ? "With duplicate(s)"
+        : null,
+    }
+  })
 }

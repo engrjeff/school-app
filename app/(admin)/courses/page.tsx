@@ -1,4 +1,5 @@
 import { type Metadata } from "next"
+import Link from "next/link"
 import { CourseBasicTable } from "@/features/courses/course-basic-table"
 import {
   GetCoursesArgs,
@@ -30,8 +31,15 @@ async function CoursesPage({ searchParams }: { searchParams: GetCoursesArgs }) {
           <ProgramOfferingFilter />
 
           <div className="ml-auto space-x-3">
-            <Button size="sm">
-              <CirclePlus /> Add Course
+            <Button size="sm" asChild>
+              <Link
+                href={{
+                  pathname: "/courses/new",
+                  query: { program: searchParams.program },
+                }}
+              >
+                <CirclePlus /> Add Course
+              </Link>
             </Button>
           </div>
         </div>

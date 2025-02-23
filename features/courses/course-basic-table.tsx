@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { SortLink } from "@/components/sort-link"
 
 import { CourseRowActions } from "./course-row-actions"
 
@@ -23,10 +24,16 @@ export function CourseBasicTable({
     <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
       <TableHeader>
         <TableRow className="hover:bg-transparent">
-          <TableHead className="h-11">Title</TableHead>
-          <TableHead className="h-11">Code</TableHead>
-          <TableHead className="h-11">Description</TableHead>
-          <TableHead className="h-11 text-center">Actions</TableHead>
+          <TableHead>
+            <SortLink title="Title" sortValue="title" />
+          </TableHead>
+          <TableHead>
+            <SortLink title="Code" sortValue="code" />
+          </TableHead>
+          <TableHead>
+            <SortLink title="Description" sortValue="description" />
+          </TableHead>
+          <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -39,7 +46,7 @@ export function CourseBasicTable({
                   className="group inline-block"
                 >
                   <div>
-                    <p className="font-medium group-hover:underline">
+                    <p className="whitespace-nowrap font-medium group-hover:underline">
                       {course.title}
                     </p>
                     <p className="text-muted-foreground text-xs">

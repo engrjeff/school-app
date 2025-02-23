@@ -1,9 +1,8 @@
 import { Course, GradeYearLevel, Student } from "@prisma/client"
 import { format } from "date-fns"
-import { InboxIcon, MoreHorizontal } from "lucide-react"
+import { InboxIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
@@ -14,6 +13,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { SortLink } from "@/components/sort-link"
+
+import { StudentRowActions } from "./student-row-actions"
 
 export function StudentsTable({
   students,
@@ -61,7 +62,8 @@ export function StudentsTable({
               <TableCell>
                 <div>
                   <p>
-                    {student.lastName}, {student.firstName} {student.suffix}
+                    {student.lastName}, {student.firstName} {student.middleName}{" "}
+                    {student.suffix}
                   </p>
                   <p className="text-muted-foreground text-xs">
                     {student.email}
@@ -103,9 +105,7 @@ export function StudentsTable({
                 </Badge>
               </TableCell>
               <TableCell className="text-center">
-                <Button type="button" size="icon" variant="ghost">
-                  <MoreHorizontal />
-                </Button>
+                <StudentRowActions student={student} />
               </TableCell>
             </TableRow>
           ))

@@ -3,7 +3,7 @@
 import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
 
-import { schoolSchema } from "./schema"
+import { schoolSchema, updateSchoolSchema } from "./schema"
 
 export const createSchool = adminActionClient
   .metadata({ actionName: "createSchool" })
@@ -18,6 +18,26 @@ export const createSchool = adminActionClient
             id: user.id,
           },
         },
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    return {
+      school,
+    }
+  })
+
+export const updateSchool = adminActionClient
+  .metadata({ actionName: "updateSchool" })
+  .schema(updateSchoolSchema)
+  .action(async ({ parsedInput: { id, ...data } }) => {
+    const school = await prisma.school.update({
+      where: { id },
+      data: {
+        ...data,
+        fullAddress: data.fullAddress!,
       },
       select: {
         id: true,

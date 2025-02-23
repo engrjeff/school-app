@@ -11,7 +11,6 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
-import { format } from "date-fns"
 import {
   ChevronDown,
   ChevronFirst,
@@ -47,16 +46,17 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { StudentInputs } from "../students/schema"
+import { ImportTeacherInputs } from "./schema"
 
-const columns: ColumnDef<StudentInputs>[] = [
+const columns: ColumnDef<ImportTeacherInputs["teachers"][number]>[] = [
   {
-    header: "Student ID (LRN)",
-    accessorKey: "studentId",
+    header: "Teacher ID (Employee ID)",
+    accessorKey: "teacherId",
     cell: ({ row }) => (
-      <div className="font-mono font-medium">{row.getValue("studentId")}</div>
+      <div className="text-center font-mono font-medium">
+        {row.getValue("teacherId")}
+      </div>
     ),
-    size: 180,
   },
   {
     header: "First Name",
@@ -67,20 +67,16 @@ const columns: ColumnDef<StudentInputs>[] = [
     accessorKey: "lastName",
   },
   {
+    header: "Middle Name",
+    accessorKey: "middleName",
+  },
+  {
     header: "Suffix",
     accessorKey: "suffix",
   },
   {
-    header: "Birthdate",
-    accessorKey: "birthdate",
-    cell: ({ row }) => (
-      <span>
-        {row.original.birthdate
-          ? format(new Date(row.original.birthdate), "MMM dd, yyyy")
-          : "--"}
-      </span>
-    ),
-    size: 180,
+    header: "Designation",
+    accessorKey: "designation",
   },
   {
     header: "Gender",
@@ -106,10 +102,10 @@ const columns: ColumnDef<StudentInputs>[] = [
   },
 ]
 
-export function StudentImportPreviewTable({
-  studentPreviewData,
+export function TeacherImportPreviewTable({
+  teacherPreviewData,
 }: {
-  studentPreviewData: StudentInputs[]
+  teacherPreviewData: ImportTeacherInputs["teachers"]
 }) {
   const id = useId()
   const [pagination, setPagination] = useState<PaginationState>({
@@ -119,13 +115,13 @@ export function StudentImportPreviewTable({
 
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: "studentId",
+      id: "teacherId",
       desc: false,
     },
   ])
 
   const table = useReactTable({
-    data: studentPreviewData,
+    data: teacherPreviewData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -149,10 +145,10 @@ export function StudentImportPreviewTable({
             strokeWidth={2}
             aria-hidden="true"
           />
-          Parsed {studentPreviewData.length} rows.
+          Parsed {teacherPreviewData.length} rows.
         </p>
       </div>
-      <div className="max-h-[400px] w-full max-w-full overflow-auto ">
+      <div className="max-h-[300px] w-full max-w-full overflow-auto ">
         <Table className="[&_td]:border-border [&_th]:border-border table-auto border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
           <TableHeader className="sticky top-0 z-10 backdrop-blur-sm">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -362,7 +358,7 @@ export function StudentImportPreviewTable({
         </div>
       </div>
       <p className="text-muted-foreground mt-4 text-center text-sm">
-        Student Data Import Preview
+        Teacher Data Import Preview
       </p>
     </div>
   )

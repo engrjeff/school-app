@@ -1,6 +1,8 @@
-import { MoreHorizontal } from "lucide-react"
+import { Faculty, ProgramOffering, Teacher } from "@prisma/client"
+import { InboxIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -9,102 +11,93 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { SortLink } from "@/components/sort-link"
 
-const items = [
-  {
-    id: "1",
-    name: "Alex Thompson",
-    username: "@alexthompson",
-    image:
-      "https://res.cloudinary.com/dlzlfasou/image/upload/v1736358071/avatar-40-02_upqrxi.jpg",
-    email: "alex.t@company.com",
-    location: "San Francisco, US",
-    status: "Active",
-    balance: "$1,250.00",
-  },
-  {
-    id: "2",
-    name: "Sarah Chen",
-    username: "@sarahchen",
-    image:
-      "https://res.cloudinary.com/dlzlfasou/image/upload/v1736358073/avatar-40-01_ij9v7j.jpg",
-    email: "sarah.c@company.com",
-    location: "Singapore",
-    status: "Active",
-    balance: "$600.00",
-  },
-  {
-    id: "4",
-    name: "Maria Garcia",
-    username: "@mariagarcia",
-    image:
-      "https://res.cloudinary.com/dlzlfasou/image/upload/v1736358072/avatar-40-03_dkeufx.jpg",
-    email: "m.garcia@company.com",
-    location: "Madrid, Spain",
-    status: "Active",
-    balance: "$0.00",
-  },
-  {
-    id: "5",
-    name: "David Kim",
-    username: "@davidkim",
-    image:
-      "https://res.cloudinary.com/dlzlfasou/image/upload/v1736358070/avatar-40-05_cmz0mg.jpg",
-    email: "d.kim@company.com",
-    location: "Seoul, KR",
-    status: "Active",
-    balance: "-$1,000.00",
-  },
-]
+import { TeacherRowActions } from "./teacher-row-actions"
 
-export default function TeachersTable() {
+type TeacherEntries = Array<
+  Teacher & { programs: ProgramOffering[]; faculties: Faculty[] }
+>
+
+export function TeachersTable({ teachers }: { teachers: TeacherEntries }) {
   return (
-    <div>
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead>Name</TableHead>
-            <TableHead>Position</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-center">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {items.map((item) => (
-            <TableRow key={item.id} className="hover:bg-accent/50">
+    <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead>
+            <Checkbox />
+          </TableHead>
+          <TableHead>
+            <SortLink title="Name" sortValue="lastName" />
+          </TableHead>
+          <TableHead className="text-center">
+            <SortLink title="Teacher ID" sortValue="teacherId" />
+          </TableHead>
+          <TableHead>
+            <SortLink title="Designation" sortValue="designation" />
+          </TableHead>
+          <TableHead>Faculties/Departments</TableHead>
+          <TableHead className="text-center">
+            <SortLink title="Gender" sortValue="gender" />
+          </TableHead>
+          <TableHead>Phone</TableHead>
+          <TableHead className="text-center">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {teachers?.length ? (
+          teachers.map((teacher) => (
+            <TableRow key={teacher.id} className="hover:bg-accent/50">
               <TableCell>
-                <div className="flex items-center gap-3">
-                  <img
-                    className="rounded-full"
-                    src={item.image}
-                    width={40}
-                    height={40}
-                    alt={item.name}
-                  />
-                  <div>
-                    <div className="font-medium">{item.name}</div>
-                    <span className="text-muted-foreground mt-0.5 text-xs">
-                      {item.username}
-                    </span>
-                  </div>
+                <Checkbox />
+              </TableCell>
+              <TableCell>
+                <div>
+                  <p>
+                    {teacher.lastName}, {teacher.firstName} {teacher.middleName}{" "}
+                    {teacher.suffix}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {teacher.email}
+                  </p>
                 </div>
               </TableCell>
-              <TableCell>{item.email}</TableCell>
-              <TableCell>{item.location}</TableCell>
-              <TableCell>{item.status}</TableCell>
+              <TableCell className="text-center font-mono">
+                {teacher.teacherId}
+              </TableCell>
+              <TableCell>{teacher.designation}</TableCell>
+              <TableCell>
+                <div>
+                  <p>{teacher.faculties.map((f) => f.title).join(", ")}</p>
+                  <p className="text-muted-foreground text-xs">
+                    {teacher.programs.at(0)?.title}
+                  </p>
+                </div>
+              </TableCell>
               <TableCell className="text-center">
-                <Button aria-label="actions" size="icon" variant="ghost">
-                  <MoreHorizontal />
-                </Button>
+                <Badge variant={teacher.gender}>
+                  {teacher.gender.toLowerCase()}
+                </Badge>
+              </TableCell>
+              <TableCell className="font-mono">{teacher.phone}</TableCell>
+              <TableCell className="text-center">
+                <TeacherRowActions teacher={teacher} />
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <p className="text-muted-foreground mt-4 text-center text-sm">
-        List of Teachers
-      </p>
-    </div>
+          ))
+        ) : (
+          <TableRow className="hover:bg-transparent">
+            <TableCell colSpan={8} height={300}>
+              <div className="text-muted-foreground flex flex-col justify-center text-center">
+                <span>
+                  <InboxIcon strokeWidth={1} className="inline-block" />
+                </span>
+                <p>No teachers listed yet.</p>
+              </div>
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   )
 }

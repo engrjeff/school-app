@@ -82,6 +82,7 @@ export function CourseUpdateForm({
     onError: ({ error }) => {
       if (error.serverError) {
         toast.error(error.serverError)
+        return
       }
     },
   })

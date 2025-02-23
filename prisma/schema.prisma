@@ -149,6 +149,7 @@ model School {
   enrollments      Enrollment[]
   subjects         Subject[]
   sections         Section[]
+  faculties        Faculty[]
 }
 
 enum StudentStatus {
@@ -164,16 +165,17 @@ model Student {
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  studentId String
-  firstName String
-  lastName  String
-  birthdate DateTime?
-  suffix    String?
-  email     String?
-  phone     String?
-  address   String
-  gender    Gender
-  status    StudentStatus @default(REGISTERED)
+  studentId  String
+  firstName  String
+  lastName   String
+  middleName String?
+  suffix     String?
+  birthdate  DateTime?
+  email      String?
+  phone      String?
+  address    String
+  gender     Gender
+  status     StudentStatus @default(REGISTERED)
 
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
@@ -198,16 +200,20 @@ model Student {
 model Teacher {
   id String @id @default(cuid())
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  teacherId   String @unique // something employee number
-  designation String // like Teacher 1, Teacher 2, Master Teacher 1
-  name        String
-  email       String
-  phone       String
-  address     String
-  gender      Gender
+  teacherId      String  @unique // something employee number
+  designation    String // like Teacher 1, Teacher 2, Master Teacher 1
+  firstName      String
+  lastName       String
+  middleName     String?
+  suffix         String?
+  email          String
+  phone          String
+  address        String
+  gender         Gender
+  profilePicture String?
 
   isActive Boolean @default(true)
 
@@ -218,11 +224,37 @@ model Teacher {
 
   handledEnrollments Enrollment[]
   recordedGrades     Grade[]
+  faculties          Faculty[] // the teacher belongs to these faculties
+  programs           ProgramOffering[] // the teacher teaches under these programs
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([schoolId, teacherId])
   @@index([schoolId])
+  @@index([userId])
+}
+
+model Faculty {
+  id String @id @default(cuid())
+
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId String
+
+  programOffering   ProgramOffering @relation(fields: [programOfferingId], references: [id])
+  programOfferingId String
+
+  title       String
+  description String?
+
+  teachers Teacher[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, programOfferingId, title])
+  @@index([schoolId])
+  @@index([programOfferingId])
 }
 
 // curriculum
@@ -235,7 +267,9 @@ model ProgramOffering {
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
 
-  courses Course[]
+  courses   Course[]
+  faculties Faculty[]
+  teachers  Teacher[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
