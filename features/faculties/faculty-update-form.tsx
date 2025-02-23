@@ -45,7 +45,7 @@ export function FacultyUpdateForm({
     defaultValues: {
       id: faculty.id,
       title: faculty.title,
-      description: faculty.description,
+      description: faculty.description ?? "",
       programOfferingId: faculty.programOfferingId,
     },
   })
