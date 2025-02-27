@@ -155,7 +155,11 @@ export function FacultyUpdateForm({
         </fieldset>
 
         <div className="mt-6 flex items-center justify-end gap-3">
-          <Button type="button" variant="secondaryOutline">
+          <Button
+            type="button"
+            variant="secondaryOutline"
+            onClick={onAfterSave}
+          >
             Cancel
           </Button>
           <SubmitButton type="submit" loading={action.isPending}>
