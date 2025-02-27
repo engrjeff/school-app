@@ -93,7 +93,27 @@ export async function getTeacherById(id: string) {
 
   const teacher = await prisma.teacher.findUnique({
     where: { id },
-    include: { school: true },
+    include: {
+      school: true,
+      faculties: {
+        include: {
+          programOffering: true,
+        },
+      },
+      classes: {
+        include: {
+          subject: true,
+          section: true,
+          semester: true,
+          schoolYear: true,
+          _count: {
+            select: {
+              students: true,
+            },
+          },
+        },
+      },
+    },
   })
 
   return teacher

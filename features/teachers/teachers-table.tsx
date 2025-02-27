@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Faculty, ProgramOffering, Teacher } from "@prisma/client"
 import { InboxIcon } from "lucide-react"
 
@@ -53,10 +54,16 @@ export function TeachersTable({ teachers }: { teachers: TeacherEntries }) {
               </TableCell>
               <TableCell>
                 <div>
-                  <p>
-                    {teacher.lastName}, {teacher.firstName} {teacher.middleName}{" "}
-                    {teacher.suffix}
-                  </p>
+                  <Link
+                    href={`/teachers/${teacher.id}`}
+                    className="hover:underline"
+                    prefetch
+                  >
+                    <p>
+                      {teacher.lastName}, {teacher.firstName}{" "}
+                      {teacher.middleName} {teacher.suffix}
+                    </p>
+                  </Link>
                   <p className="text-muted-foreground text-xs">
                     {teacher.email}
                   </p>
