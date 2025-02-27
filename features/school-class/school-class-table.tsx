@@ -128,7 +128,7 @@ function StudentRows({
       <TableRow className="hover:bg-transparent">
         <TableHeadPlain
           colSpan={6}
-          className="h-8 text-xs uppercase font-semibold bg-secondary/70"
+          className="bg-secondary/70 h-8 text-xs font-semibold uppercase"
         >
           {group}
         </TableHeadPlain>
@@ -141,7 +141,7 @@ function StudentRows({
               {student.suffix}
             </p>
           </TableCell>
-          <TableCell className="text-right border-r-2 first:border-l last:border-r">
+          <TableCell className="border-r-2 text-right first:border-l last:border-r">
             {student.studentId}
           </TableCell>
           <TableCell className="text-muted-foreground border-r-2 first:border-l last:border-r">
