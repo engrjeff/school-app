@@ -59,7 +59,7 @@ export const generateMetadata = async ({
   }
 }
 
-async function StudentDetalPag({ params }: PageProps) {
+async function StudentDetalPage({ params }: PageProps) {
   const { student } = await getStudentById(params.id)
 
   if (!student) return notFound()
@@ -219,4 +219,4 @@ async function StudentDetalPag({ params }: PageProps) {
   )
 }
 
-export default StudentDetalPag
+export default StudentDetalPage
