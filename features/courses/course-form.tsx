@@ -26,6 +26,7 @@ import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -299,10 +300,14 @@ export function CourseForm({
             <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="h-11">Title</TableHead>
-                  <TableHead className="h-11">Code</TableHead>
-                  <TableHead className="h-11 text-right">Units</TableHead>
-                  <TableHead className="h-11 text-right">Actions</TableHead>
+                  <TableHead className="bg-secondary h-11">Title</TableHead>
+                  <TableHead className="bg-secondary h-11">Code</TableHead>
+                  <TableHead className="bg-secondary h-11 text-right">
+                    Units
+                  </TableHead>
+                  <TableHead className="bg-secondary h-11 text-right">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -310,7 +315,7 @@ export function CourseForm({
                   subjects.map((subjectField, sIndex) => (
                     <TableRow
                       key={`subject-${sIndex + 1}`}
-                      className="hover:bg-accent/50"
+                      className="hover:bg-transparent"
                     >
                       <TableCell className="w-1/2 xl:w-[250px]">
                         <p className="line-clamp-1">{subjectField.title}</p>
@@ -324,9 +329,8 @@ export function CourseForm({
                         <Button
                           type="button"
                           size="iconXs"
-                          variant="outline"
+                          variant="ghost"
                           aria-label="delete"
-                          className="text-destructive"
                           onClick={() => {
                             subjectFields.remove(sIndex)
                           }}
@@ -375,58 +379,6 @@ export function CourseForm({
                 </FormItem>
               )}
             />
-            {/* <FormField
-              control={form.control}
-              name="gradeYearLevels.type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Level Type</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      className="gap-2"
-                      defaultValue="numerical"
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <div className="flex items-start gap-2 rounded-lg border p-3">
-                        <RadioGroupItem
-                          value="numerical"
-                          id="numerical"
-                          aria-describedby="numerical-description"
-                        />
-                        <div className="grid grow gap-2">
-                          <Label htmlFor="numerical">Numerical</Label>
-                          <p
-                            id="numerical-description"
-                            className="text-muted-foreground text-xs"
-                          >
-                            Ideal for courses like Elementary to Senior High
-                            School.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2 rounded-lg border p-3">
-                        <RadioGroupItem
-                          value="ordinal"
-                          id="ordinal"
-                          aria-describedby="ordinal-description"
-                        />
-                        <div className="grid grow gap-2">
-                          <Label htmlFor="ordinal">Ordinal</Label>
-                          <p
-                            id="ordinal-description"
-                            className="text-muted-foreground text-xs"
-                          >
-                            Ideal for College courses, like 1st Year
-                          </p>
-                        </div>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
             <div className="space-y-2">
               <Label>Levels</Label>
               {gradeYearLevels.fields.map((levels, levelIndex) => (
@@ -493,11 +445,11 @@ function SubjectDialog() {
 
   const [open, setOpen] = useState(false)
 
+  const schoolId = session?.data?.user?.schoolId as string
+
   const form = useFormContext<CourseInputs>()
 
   const subjects = useFieldArray({ control: form.control, name: "subjects" })
-
-  const schoolId = session?.data?.user?.schoolId as string
 
   const index = subjects.fields.length - 1
 
@@ -514,14 +466,8 @@ function SubjectDialog() {
   return (
     <Dialog
       open={open}
-      onOpenChange={async (isOpen) => {
+      onOpenChange={(isOpen) => {
         if (!isOpen) {
-          const isValid = await form.trigger(`subjects.${index}`, {
-            shouldFocus: true,
-          })
-
-          if (!isValid) return
-
           subjects.remove(index)
           setOpen(false)
         } else {
@@ -622,8 +568,9 @@ function SubjectDialog() {
           )}
         />
         <DialogFooter>
+          <DialogClose></DialogClose>
           <Button type="button" onClick={handleClose}>
-            Save
+            Add
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -639,8 +586,6 @@ function SubjectEditDialog({
   const [open, setOpen] = useState(false)
 
   const form = useFormContext<CourseInputs>()
-
-  const subjects = useFieldArray({ control: form.control, name: "subjects" })
 
   async function handleClose() {
     const isValid = await form.trigger(`subjects.${subjectFieldIndex}`, {
@@ -663,7 +608,6 @@ function SubjectEditDialog({
 
           if (!isValid) return
 
-          subjects.remove(subjectFieldIndex)
           setOpen(false)
         } else {
           setOpen(isOpen)
@@ -671,7 +615,7 @@ function SubjectEditDialog({
       }}
     >
       <DialogTrigger asChild>
-        <Button type="button" size="iconXs" variant="outline" aria-label="edit">
+        <Button type="button" size="iconXs" variant="ghost" aria-label="edit">
           <PencilIcon />
         </Button>
       </DialogTrigger>
@@ -753,7 +697,7 @@ function SubjectEditDialog({
         />
         <DialogFooter>
           <Button type="button" onClick={handleClose}>
-            Save
+            Update
           </Button>
         </DialogFooter>
       </DialogContent>
