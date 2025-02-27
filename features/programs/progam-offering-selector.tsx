@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { parseAsString, useQueryState } from "nuqs"
 
 import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import {
@@ -14,16 +14,18 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export function ProgramOfferingSelector() {
   const programs = useProgramOfferings()
-  const params = useSearchParams()
 
-  const router = useRouter()
+  const [programParam, setProgramParam] = useQueryState(
+    "program",
+    parseAsString.withOptions({ shallow: false })
+  )
 
   if (programs.isLoading) return <Skeleton className="h-9 w-36 px-4 py-2" />
 
   return (
     <Select
-      defaultValue={params.get("program") ?? ""}
-      onValueChange={(value) => router.push(`/school-years?program=${value}`)}
+      defaultValue={programParam ?? ""}
+      onValueChange={(value) => setProgramParam(value)}
     >
       <SelectTrigger className="gap-4 border-none font-semibold">
         <SelectValue placeholder="Programs" />
