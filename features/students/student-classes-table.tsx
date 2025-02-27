@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Class, Subject, Teacher } from "@prisma/client"
+import { Class, SchoolYear, Semester, Subject, Teacher } from "@prisma/client"
 import {
   ColumnDef,
   flexRender,
@@ -56,25 +56,40 @@ import {
 interface DetailedSchoolClass extends Class {
   subject: Subject
   teacher: Teacher
+  schoolYear: SchoolYear
+  semester: Semester
 }
 
 const columns: ColumnDef<DetailedSchoolClass>[] = [
   {
-    header: "Subject Title",
-    accessorKey: "subject.title",
+    header: "Semester",
+    accessorKey: "semester.title",
     cell: ({ row }) => (
-      <p className="line-clamp-1">{row.original.subject.title}</p>
+      <Link
+        href={`/school-years/${row.original.schoolYearId}/semesters/${row.original.semesterId}`}
+        className="group"
+      >
+        <p className="line-clamp-1 group-hover:underline">
+          {row.original.semester.title}
+        </p>
+        <p className="text-muted-foreground text-xs">
+          S.Y. {row.original.schoolYear.title}
+        </p>
+      </Link>
     ),
   },
   {
-    header: "Subject Code",
-    accessorKey: "subject.code",
+    header: "Subject Title",
+    accessorKey: "subject.title",
     cell: ({ row }) => (
-      <p className="line-clamp-1">
-        {row.original.subject.code === "--"
-          ? row.original.subject.title
-          : row.original.subject.code}
-      </p>
+      <>
+        <p className="line-clamp-1">{row.original.subject.title}</p>
+        <p className="text-muted-foreground text-xs">
+          {row.original.subject.code === "--"
+            ? "No Subject Code"
+            : row.original.subject.code}
+        </p>
+      </>
     ),
   },
   {

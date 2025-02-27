@@ -101,6 +101,8 @@ export async function getStudentById(studentId: string) {
         include: {
           subject: true,
           teacher: true,
+          schoolYear: true,
+          semester: true,
         },
       },
     },
