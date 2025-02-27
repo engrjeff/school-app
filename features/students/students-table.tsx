@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Course, GradeYearLevel, Student } from "@prisma/client"
 import { format } from "date-fns"
 import { InboxIcon } from "lucide-react"
@@ -61,10 +62,16 @@ export function StudentsTable({
               </TableCell>
               <TableCell>
                 <div>
-                  <p>
-                    {student.lastName}, {student.firstName} {student.middleName}{" "}
-                    {student.suffix}
-                  </p>
+                  <Link
+                    href={`/students/${student.id}`}
+                    className="hover:underline"
+                    prefetch
+                  >
+                    <p>
+                      {student.lastName}, {student.firstName}{" "}
+                      {student.middleName} {student.suffix}
+                    </p>
+                  </Link>
                   <p className="text-muted-foreground text-xs">
                     {student.email}
                   </p>

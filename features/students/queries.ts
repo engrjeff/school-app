@@ -89,3 +89,22 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
     pageInfo,
   }
 }
+
+export async function getStudentById(studentId: string) {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    include: {
+      currentCourse: true,
+      currentGradeYearLevel: true,
+      currentSection: true,
+      classes: {
+        include: {
+          subject: true,
+          teacher: true,
+        },
+      },
+    },
+  })
+
+  return { student }
+}
