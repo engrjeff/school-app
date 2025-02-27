@@ -3,7 +3,9 @@
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CirclePlus } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useAction } from "next-safe-action/hooks"
+import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -29,9 +31,16 @@ import { NumberInput } from "@/components/ui/number-input"
 import { SubmitButton } from "@/components/ui/submit-button"
 import { Textarea } from "@/components/ui/textarea"
 
+import { createSubject } from "./actions"
 import { SubjectInputs, subjectSchema } from "./schema"
 
-export function SubjectFormDialog({ courseId }: { courseId: string }) {
+export function SubjectFormDialog({
+  courseId,
+  courseName,
+}: {
+  courseId: string
+  courseName: string
+}) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -43,16 +52,22 @@ export function SubjectFormDialog({ courseId }: { courseId: string }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Course Subject</DialogTitle>
+          <DialogTitle>Add Subject for {courseName}</DialogTitle>
           <DialogDescription>Fill in the form below.</DialogDescription>
         </DialogHeader>
-        <SubjectForm courseId={courseId} />
+        <SubjectForm courseId={courseId} onAfterSave={() => setOpen(false)} />
       </DialogContent>
     </Dialog>
   )
 }
 
-function SubjectForm({ courseId }: { courseId: string }) {
+function SubjectForm({
+  courseId,
+  onAfterSave,
+}: {
+  courseId: string
+  onAfterSave: VoidFunction
+}) {
   const form = useForm<SubjectInputs>({
     resolver: zodResolver(subjectSchema),
     defaultValues: {
@@ -64,10 +79,34 @@ function SubjectForm({ courseId }: { courseId: string }) {
     },
   })
 
+  const action = useAction(createSubject, {
+    onError: ({ error }) =>
+      toast.error(error.serverError ?? "An error occurred."),
+  })
+
+  const onError: SubmitErrorHandler<SubjectInputs> = (errors) => {
+    console.log(`Subject Create Errors: `, errors)
+  }
+
+  const onSubmit: SubmitHandler<SubjectInputs> = async (data) => {
+    const result = await action.executeAsync(data)
+
+    if (result?.data?.subject) {
+      toast.success(`Subject saved!`)
+
+      form.reset()
+
+      onAfterSave()
+    }
+  }
+
   return (
     <Form {...form}>
-      <form>
-        <fieldset>
+      <form onSubmit={form.handleSubmit(onSubmit, onError)}>
+        <fieldset
+          disabled={action.isPending}
+          className="space-y-3 disabled:cursor-not-allowed disabled:opacity-90"
+        >
           <input
             type="text"
             hidden
@@ -81,7 +120,7 @@ function SubjectForm({ courseId }: { courseId: string }) {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="English 1" {...field} />
+                  <Input placeholder="e.g. English 1" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,7 +134,7 @@ function SubjectForm({ courseId }: { courseId: string }) {
                 <FormItem>
                   <FormLabel>Subject Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="ENG1" {...field} />
+                    <Input placeholder="e.g. ENG1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,12 +183,15 @@ function SubjectForm({ courseId }: { courseId: string }) {
               </FormItem>
             )}
           />
-
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <DialogClose asChild>
-              <Button type="button">Cancel</Button>
+              <Button type="button" variant="secondaryOutline">
+                Cancel
+              </Button>
             </DialogClose>
-            <SubmitButton type="submit">Save</SubmitButton>
+            <SubmitButton type="submit" loading={action.isPending}>
+              Save
+            </SubmitButton>
           </DialogFooter>
         </fieldset>
       </form>

@@ -37,6 +37,13 @@ export const actionClient = createSafeActionClient({
       ) {
         return "Cannot have duplicate teacher/employee ID."
       }
+      if (
+        e.message.includes(
+          "Unique constraint failed on the fields: (`schoolId`,`schoolYearId`,`semesterId`,`programOfferingId`,`courseId`,`gradeYearLevelId`,`sectionId`,`subjectId`)"
+        )
+      ) {
+        return "A class with the selected details already exists."
+      }
     }
 
     if (e instanceof AuthError) {

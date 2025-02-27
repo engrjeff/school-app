@@ -34,3 +34,65 @@ export function toProperPhoneNumber(phone: string) {
     ? phone
     : `+63${phone}`
 }
+
+export function findDuplicatePositions(
+  arr: string[]
+): Record<string, number[]> {
+  const positions: Record<string, number[]> = {}
+  const duplicates: Record<string, number[]> = {}
+
+  arr.forEach((item, index) => {
+    if (item) {
+      const itemLower = item.toLowerCase()
+      if (!positions[itemLower]) {
+        positions[itemLower] = []
+      }
+      positions[itemLower].push(index)
+    }
+  })
+
+  for (const key in positions) {
+    if (positions[key].length > 1) {
+      duplicates[key] = positions[key]
+    }
+  }
+
+  return duplicates
+}
+
+export type EntryError = {
+  item: string | null | undefined
+  row: number
+  invalid: boolean
+  reason: string | null
+}
+
+export function validateItems(
+  arr: (string | null | undefined)[],
+  currentArr: string[]
+): EntryError[] {
+  const duplicatePositions = findDuplicatePositions(arr as string[])
+
+  return arr.map((item, i) => {
+    if (!item) {
+      return { item, row: i + 1, invalid: true, reason: "Blank entry" }
+    }
+
+    if (currentArr.includes(item.toLowerCase())) {
+      return {
+        item,
+        row: i + 1,
+        invalid: true,
+        reason: "Already exists",
+      }
+    }
+    return {
+      item,
+      row: i + 1,
+      invalid: duplicatePositions.hasOwnProperty(item.toLowerCase()),
+      reason: duplicatePositions.hasOwnProperty(item.toLowerCase())
+        ? "With duplicate(s)"
+        : null,
+    }
+  })
+}

@@ -67,6 +67,10 @@ const columns: ColumnDef<StudentInputs>[] = [
     accessorKey: "lastName",
   },
   {
+    header: "Middle Name",
+    accessorKey: "middleName",
+  },
+  {
     header: "Suffix",
     accessorKey: "suffix",
   },

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Course } from "@prisma/client"
 import { DialogClose } from "@radix-ui/react-dialog"
-import { Pencil } from "lucide-react"
+import { PencilIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -43,11 +43,12 @@ export function CourseUpdateFormDialog({ course }: { course: Course }) {
       <DialogTrigger asChild>
         <Button
           type="button"
-          size="iconXs"
-          variant="secondary"
-          aria-label="edit basic course details"
+          size="iconXXs"
+          variant="ghost"
+          aria-label={`update ${course.title}`}
+          className="absolute right-2 top-1 hover:border"
         >
-          <Pencil />
+          <PencilIcon />
         </Button>
       </DialogTrigger>
       <DialogContent>

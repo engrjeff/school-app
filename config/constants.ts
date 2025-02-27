@@ -41,29 +41,30 @@ export const SHS_TRACKS = [
         title: "Science, Technology, Engineering and Mathematics (STEM) Strand",
         code: "STEM",
         subjects: [
-          { title: "Pre-Calculus" },
-          { title: "Basic Calculus" },
-          { title: "General Biology 1" },
-          { title: "General Biology 2" },
-          { title: "General Physics 1" },
-          { title: "General Physics 2" },
-          { title: "General Chemistry 1 and 2" },
-          { title: "Work Immersion" },
+          { title: "Pre-Calculus", code: "PRECALC" },
+          { title: "Basic Calculus", code: "BASIC CALC" },
+          { title: "General Biology 1", code: "GEN BIO 1" },
+          { title: "General Biology 2", code: "GEN BIO 2" },
+          { title: "General Physics 1", code: "GEN PHY 1" },
+          { title: "General Physics 2", code: "GEN PHY 2" },
+          { title: "General Chemistry 1", code: "GEN CHEM 1" },
+          { title: "General Chemistry 2", code: "GEN CHEM 2" },
+          { title: "Work Immersion", code: "WORK" },
         ],
       },
       {
         title: "General Academic Strand",
         code: "GAS",
         subjects: [
-          { title: "Humanities 1" },
-          { title: "Humanities 2" },
-          { title: "Social Science 1" },
+          { title: "Humanities 1", code: "HUM 1" },
+          { title: "Humanities 2", code: "HUM 2" },
+          { title: "Social Science 1", code: "SOC SCI 1" },
           { title: "Applied Economics" },
           { title: "Organization and Management" },
-          { title: "Disaster Readiness and Risk Reduction" },
-          { title: "Elective 1" },
-          { title: "Elective 2" },
-          { title: "Work Immersion" },
+          { title: "Disaster Readiness and Risk Reduction", code: "DRRR" },
+          { title: "Elective 1", code: "ELEC 1" },
+          { title: "Elective 2", code: "ELEC 2" },
+          { title: "Work Immersion", code: "WORK" },
         ],
       },
     ],
@@ -307,15 +308,19 @@ export const COMMON_PROGRAM_OFFERINGS = [
         subjects: [
           {
             title: "Filipino",
+            code: "FIL",
           },
           {
             title: "English",
+            code: "ENG",
           },
           {
             title: "Mathematics",
+            code: "MATH",
           },
           {
             title: "Science",
+            code: "SCI",
           },
           {
             title: "Araling Panlipunan",
@@ -327,15 +332,19 @@ export const COMMON_PROGRAM_OFFERINGS = [
           },
           {
             title: "Music",
+            code: "MUSIC",
           },
           {
             title: "Arts",
+            code: "ARTS",
           },
           {
             title: "Physical Education",
+            code: "PE",
           },
           {
             title: "Health",
+            code: "HEALTH",
           },
           {
             title: "Edukasyong Pantahanan at Pangkabuhayan",

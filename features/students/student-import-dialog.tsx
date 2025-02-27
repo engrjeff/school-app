@@ -2,9 +2,11 @@
 
 import { ChangeEvent, useId, useState } from "react"
 import { importStudents } from "@/features/students/actions"
+import { Student } from "@prisma/client"
 import {
   ChevronDown,
   CircleAlert,
+  CircleCheckIcon,
   Grid2x2Check,
   ImportIcon,
   Info,
@@ -15,7 +17,7 @@ import { toast } from "sonner"
 import * as XLSX from "xlsx"
 import { ZodError } from "zod"
 
-import { mapGender } from "@/lib/utils"
+import { EntryError, mapGender, validateItems } from "@/lib/utils"
 import { useCourses } from "@/hooks/use-courses"
 import { useGradeYearLevels } from "@/hooks/use-grade-levels"
 import { Badge } from "@/components/ui/badge"
@@ -57,7 +59,11 @@ import {
 import { importStudentSchema, StudentInputs } from "./schema"
 import { StudentImportPreviewTable } from "./student-import-preview-table"
 
-export function StudentImportDialog() {
+export function StudentImportDialog({
+  currentStudents,
+}: {
+  currentStudents: Student[]
+}) {
   const [open, setOpen] = useState(false)
 
   const contentKey = useId()
@@ -88,6 +94,7 @@ export function StudentImportDialog() {
           <ImportDialogContent
             key={contentKey}
             onAfterSave={() => setOpen(false)}
+            currentStudents={currentStudents}
           />
         </DialogContent>
       </Dialog>
@@ -124,14 +131,24 @@ export function StudentImportDialog() {
   )
 }
 
-function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
+function ImportDialogContent({
+  onAfterSave,
+  currentStudents,
+}: {
+  onAfterSave: VoidFunction
+  currentStudents: Student[]
+}) {
   const id = useId()
 
   const [fileLoading, setFileLoading] = useState(false)
 
-  const [view, setView] = useState<"upload" | "preview" | "error">("upload")
+  const [view, setView] = useState<
+    "upload" | "preview" | "error" | "row-error"
+  >("upload")
 
   const [studentData, setStudentData] = useState<StudentInputs[] | null>(null)
+
+  const [rowEntryErrors, setRowEntryErrors] = useState<EntryError[]>()
 
   // optional fields
   const [course, setCourse] = useState<string>()
@@ -187,6 +204,7 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
           "studentId",
           "firstName",
           "lastName",
+          "middleName",
           "suffix",
           "birthdate",
           "gender",
@@ -196,11 +214,23 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
         ],
       })
 
+      const entryErrors = validateItems(
+        sheetData.slice(1).map((d) => d.studentId),
+        currentStudents.map((f) => f.studentId.trim().toLowerCase())
+      )
+
+      if (entryErrors.some((e) => e.invalid)) {
+        setView("row-error")
+        setRowEntryErrors(entryErrors.filter((e) => e.invalid))
+        return
+      }
+
       const validatedData = importStudentSchema.safeParse(
         sheetData.slice(1).map((d) => ({
           studentId: d.studentId,
           firstName: d.firstName,
           lastName: d.lastName,
+          middleName: d.middleName,
           suffix: d.suffix,
           birthdate: d.birthdate,
           gender: mapGender(d.gender),
@@ -227,6 +257,11 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
   async function handleImport() {
     if (!studentData?.length) return
 
+    if (!course || !gradeYearLevel) {
+      toast.error(`Select a course and grade level.`)
+      return
+    }
+
     const result = await importAction.executeAsync(studentData)
 
     if (result?.validationErrors) {
@@ -246,7 +281,49 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
   }
 
   return (
-    <div className="overflow-auto">
+    <div className="space-y-4 overflow-auto">
+      {view === "upload" && (
+        <div className="bg-accent rounded border border-l-2 border-l-blue-500 px-4 py-3">
+          <p className="text-sm">
+            <Info
+              className="-mt-0.5 me-3 inline-flex text-blue-500"
+              size={16}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+            It is advisable to import students by the course in which they are
+            listed or registered.
+          </p>
+        </div>
+      )}
+      {view === "row-error" && (
+        <div className="max-h-[400px] w-full max-w-full overflow-auto ">
+          <Table className="[&_td]:border-border [&_th]:border-border table-auto border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
+            <TableHeader className="sticky top-0 z-10 backdrop-blur-sm">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="h-11">Row #</TableHead>
+                <TableHead className="h-11">Student ID</TableHead>
+                <TableHead className="h-11">Issue</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rowEntryErrors?.map((error, errIndex) => (
+                <TableRow key={`error-${errIndex + 1}`}>
+                  <TableCell>{error.row}</TableCell>
+                  <TableCell>{error.item}</TableCell>
+                  <TableCell>
+                    {error.invalid ? (
+                      <span className="text-red-500">{error.reason}</span>
+                    ) : (
+                      <CircleCheckIcon className="size-4 text-green-500" />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
       {view === "error" && (
         <div className="space-y-4 overflow-hidden">
           <div className="bg-accent flex items-center gap-4 rounded border border-l-2 border-l-red-500 px-4 py-3">
@@ -287,81 +364,63 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
           </div>
         </div>
       )}
+      <div className="grid grid-cols-3 items-center gap-4 px-1">
+        <div>
+          <Label htmlFor="course" className="mb-2 inline-block">
+            Course
+          </Label>
+          <Select
+            name="course"
+            disabled={courses.isLoading}
+            value={course}
+            onValueChange={(courseValue) => {
+              setGradeYearLevel(undefined)
+              setCourse(courseValue)
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a course" />
+            </SelectTrigger>
+            <SelectContent>
+              {courses.data?.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="gradeYearLevel" className="mb-2 inline-block">
+            Grade/Year Level
+          </Label>
+          <Select
+            name="gradeYearLevel"
+            value={gradeYearLevel}
+            onValueChange={setGradeYearLevel}
+            disabled={!course || gradeYearLevels.isLoading}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select grade/year level" />
+            </SelectTrigger>
+            <SelectContent>
+              {gradeYearLevels.data?.map((g) => (
+                <SelectItem value={g.id}>
+                  {g.displayName} {g.level}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       {view === "upload" && (
-        <div className="space-y-4">
-          <div className="bg-accent rounded border border-l-2 border-l-blue-500 px-4 py-3">
-            <p className="text-sm">
-              <Info
-                className="-mt-0.5 me-3 inline-flex text-blue-500"
-                size={16}
-                strokeWidth={2}
-                aria-hidden="true"
-              />
-              It is advisable to import students by the course in which they are
-              listed or registered.
-            </p>
-          </div>
-
-          <div>
-            <div className="grid grid-cols-3 items-center gap-4 px-1">
-              <div>
-                <Label htmlFor="course" className="mb-2 inline-block">
-                  Course{" "}
-                  <span className="text-muted-foreground inline-block text-xs">
-                    (Optional)
-                  </span>
-                </Label>
-                <Select
-                  name="course"
-                  disabled={courses.isLoading}
-                  value={course}
-                  onValueChange={(courseValue) => {
-                    setGradeYearLevel(undefined)
-                    setCourse(courseValue)
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {courses.data?.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="gradeYearLevel" className="mb-2 inline-block">
-                  Grade/Year Level{" "}
-                  <span className="text-muted-foreground inline-block text-xs">
-                    (Optional)
-                  </span>
-                </Label>
-                <Select
-                  name="gradeYearLevel"
-                  value={gradeYearLevel}
-                  onValueChange={setGradeYearLevel}
-                  disabled={!course || gradeYearLevels.isLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select grade/year level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {gradeYearLevels.data?.map((g) => (
-                      <SelectItem value={g.id}>
-                        {g.displayName} {g.level}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+        <fieldset
+          disabled={!course || !gradeYearLevel}
+          className="group disabled:cursor-not-allowed"
+        >
           <label
             htmlFor={id}
-            className="hover:bg-accent flex h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed"
+            className="hover:bg-accent flex h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed group-disabled:cursor-not-allowed group-disabled:hover:bg-transparent"
           >
             {fileLoading ? (
               <>
@@ -393,7 +452,7 @@ function ImportDialogContent({ onAfterSave }: { onAfterSave: VoidFunction }) {
               onChange={handleFileUpload}
             />
           </label>
-        </div>
+        </fieldset>
       )}
 
       {view === "preview" && studentData?.length && (

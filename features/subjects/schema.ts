@@ -11,3 +11,11 @@ export const subjectSchema = z.object({
 })
 
 export type SubjectInputs = z.infer<typeof subjectSchema>
+
+export const requireSubjectIdSchema = z.object({
+  id: z
+    .string({ required_error: "Subject id is required." })
+    .nonempty({ message: "Subject id is required." }),
+})
+
+export const updateSubjectSchema = subjectSchema.merge(requireSubjectIdSchema)

@@ -10,7 +10,11 @@ export async function getCourseById(id: string) {
   const course = await prisma.course.findUnique({
     where: { id },
     include: {
-      subjects: true,
+      subjects: {
+        orderBy: {
+          title: "asc",
+        },
+      },
       gradeYearLevels: true,
     },
   })

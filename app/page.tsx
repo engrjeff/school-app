@@ -23,11 +23,8 @@ export default async function Home() {
             </Link>
           </Button>
           <Button size="xl" variant="outline" className="w-full" asChild>
-            <Link
-              href="/sign-in?role=teacher"
-              className="bg-accent/50 pointer-events-none cursor-not-allowed"
-            >
-              <UserCheck /> Teacher (WIP)
+            <Link href="/sign-in?role=teacher" className="bg-accent/50">
+              <UserCheck /> Teacher
             </Link>
           </Button>
           <Button size="xl" variant="outline" className="w-full" asChild>

@@ -120,7 +120,7 @@ export function TeacherForm() {
             <Button size="sm" variant="secondary" asChild>
               <Link href={`/teachers`}>Discard</Link>
             </Button>
-            <SubmitButton size="sm" loading={false}>
+            <SubmitButton size="sm" loading={action.isPending}>
               Save Teacher
             </SubmitButton>
           </div>

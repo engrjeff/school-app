@@ -17,7 +17,12 @@ import { toast } from "sonner"
 import * as XLSX from "xlsx"
 import { ZodError } from "zod"
 
-import { mapGender, toProperPhoneNumber } from "@/lib/utils"
+import {
+  EntryError,
+  mapGender,
+  toProperPhoneNumber,
+  validateItems,
+} from "@/lib/utils"
 import { useFaculties } from "@/hooks/use-faculties"
 import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import { Badge } from "@/components/ui/badge"
@@ -492,64 +497,4 @@ function ImportDialogContent({
       </DialogFooter>
     </div>
   )
-}
-
-function findDuplicatePositions(arr: string[]): Record<string, number[]> {
-  const positions: Record<string, number[]> = {}
-  const duplicates: Record<string, number[]> = {}
-
-  arr.forEach((item, index) => {
-    if (item) {
-      const itemLower = item.toLowerCase()
-      if (!positions[itemLower]) {
-        positions[itemLower] = []
-      }
-      positions[itemLower].push(index)
-    }
-  })
-
-  for (const key in positions) {
-    if (positions[key].length > 1) {
-      duplicates[key] = positions[key]
-    }
-  }
-
-  return duplicates
-}
-
-type EntryError = {
-  item: string | null | undefined
-  row: number
-  invalid: boolean
-  reason: string | null
-}
-
-function validateItems(
-  arr: (string | null | undefined)[],
-  currentArr: string[]
-): EntryError[] {
-  const duplicatePositions = findDuplicatePositions(arr as string[])
-
-  return arr.map((item, i) => {
-    if (!item) {
-      return { item, row: i + 1, invalid: true, reason: "Blank entry" }
-    }
-
-    if (currentArr.includes(item.toLowerCase())) {
-      return {
-        item,
-        row: i + 1,
-        invalid: true,
-        reason: "Already exists",
-      }
-    }
-    return {
-      item,
-      row: i + 1,
-      invalid: duplicatePositions.hasOwnProperty(item.toLowerCase()),
-      reason: duplicatePositions.hasOwnProperty(item.toLowerCase())
-        ? "With duplicate(s)"
-        : null,
-    }
-  })
 }

@@ -61,7 +61,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-border hover:bg-accent data-[state=selected]:bg-accent border-b transition-colors",
+      "border-border hover:bg-accent data-[state=selected]:bg-accent/40 border-b transition-colors",
       className
     )}
     {...props}
@@ -83,6 +83,21 @@ const TableHead = React.forwardRef<
   />
 ))
 TableHead.displayName = "TableHead"
+
+const TableHeadPlain = React.forwardRef<
+  HTMLTableCellElement,
+  React.ThHTMLAttributes<HTMLTableCellElement>
+>(({ className, ...props }, ref) => (
+  <th
+    ref={ref}
+    className={cn(
+      "text-muted-foreground bg-sidebar relative h-11 select-none border-y border-r-2 px-3 text-left align-middle font-medium first:border-l last:border-r [&:has([role=checkbox])]:w-px [&:has([role=checkbox])]:pr-0",
+      className
+    )}
+    {...props}
+  />
+))
+TableHeadPlain.displayName = "TableHeadPlain"
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
@@ -116,5 +131,6 @@ export {
   TableFooter,
   TableHead,
   TableHeader,
+  TableHeadPlain,
   TableRow,
 }

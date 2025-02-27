@@ -2,8 +2,10 @@ import { NextResponse } from "next/server"
 import authConfig from "@/auth.config"
 import {
   API_AUTH_PREFIX,
+  API_ROUTES,
   AUTH_ROUTES,
   DEFAULT_LOGIN_REDIRECT,
+  ROLE_ROUTES_MAP,
   SCHOOL_SETUP_REDIRECT,
 } from "@/routes"
 import { ROLE } from "@prisma/client"
@@ -21,7 +23,9 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(API_AUTH_PREFIX)
   const isAuthPageRoute = AUTH_ROUTES.includes(nextUrl.pathname)
 
-  if (isApiAuthRoute) return
+  const isApiRoute = API_ROUTES.includes(nextUrl.pathname)
+
+  if (isApiAuthRoute || isApiRoute) return
 
   if (isAuthPageRoute) {
     if (isLoggedIn) {
@@ -32,6 +36,13 @@ export default auth((req) => {
   }
 
   if (isLoggedIn) {
+    const role = req.auth?.user.role
+    const allowedRoutesForRole = ROLE_ROUTES_MAP[role!]
+
+    if (!allowedRoutesForRole.some((r) => nextUrl.pathname.startsWith(r))) {
+      return NextResponse.redirect(new URL(allowedRoutesForRole[0], nextUrl))
+    }
+
     if (
       nextUrl.pathname !== SCHOOL_SETUP_REDIRECT &&
       !req.auth?.user.schoolId &&

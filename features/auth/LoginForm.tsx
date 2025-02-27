@@ -2,11 +2,13 @@
 
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { InfoIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { site } from "@/config/site"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   Form,
   FormControl,
@@ -22,7 +24,7 @@ import { SubmitButton } from "@/components/ui/submit-button"
 import { loginAdmin } from "./action"
 import { LoginFormInput, loginSchema } from "./schema"
 
-export function LoginForm() {
+export function LoginForm({ role }: { role?: string }) {
   const form = useForm<LoginFormInput>({
     defaultValues: {
       email: "",
@@ -38,6 +40,8 @@ export function LoginForm() {
     },
     onSuccess() {
       toast.success("Welcome!")
+
+      window.location.reload()
     },
   })
 
@@ -52,16 +56,27 @@ export function LoginForm() {
   return (
     <div className="container max-w-md space-y-2">
       <h1 className="text-xl font-semibold">Login to {site.title}</h1>
-      <p className="text-muted-foreground pb-5 text-sm">
-        {"Dont't have an account? "}
-        <Link
-          href="/sign-up"
-          className="font-medium text-blue-500 hover:underline"
-        >
-          Sign Up
-        </Link>
-        .
-      </p>
+      {role !== "admin" ? null : (
+        <p className="text-muted-foreground pb-5 text-sm">
+          {"Dont't have a School Admin account yet? "}
+          <Link
+            href="/sign-up"
+            className="font-medium text-blue-500 hover:underline"
+          >
+            Sign Up
+          </Link>
+          .
+        </p>
+      )}
+      {role === "teacher" ? (
+        <Alert className="bg-accent [&>svg]:text-blue-500">
+          <InfoIcon className="size-4" />
+          <AlertTitle>No account yet?</AlertTitle>
+          <AlertDescription>
+            Contact your school admin to send you a Sign Up link.
+          </AlertDescription>
+        </Alert>
+      ) : null}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit, onError)}>
           <fieldset className="space-y-2" disabled={action.isPending}>

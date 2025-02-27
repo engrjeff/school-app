@@ -49,4 +49,17 @@ export default {
       },
     }),
   ],
+  callbacks: {
+    session({ session, token }) {
+      if (token) {
+        session.user.id = token.id
+        session.user.name = token.name
+        session.user.email = token.email
+        session.user.image = token.picture
+        session.user.role = token.role
+        session.user.schoolId = token.schoolId
+      }
+      return session
+    },
+  },
 } satisfies NextAuthConfig

@@ -62,7 +62,7 @@ export function SignUpForm() {
     <div className="container max-w-md space-y-2">
       <h1 className="text-xl font-semibold">Create an {site.title} account</h1>
       <p className="text-muted-foreground pb-5 text-sm">
-        {"Already have an account? "}
+        {"Already have a School Admin account? "}
         <Link href="/" className="font-medium text-blue-500 hover:underline">
           Log in
         </Link>

@@ -3,7 +3,15 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Teacher } from "@prisma/client"
-import { GridIcon, LibraryIcon, MoreHorizontal, PencilIcon } from "lucide-react"
+import {
+  CircleCheckIcon,
+  CopyIcon,
+  GridIcon,
+  LibraryIcon,
+  MoreHorizontal,
+  PencilIcon,
+} from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +28,20 @@ type RowAction = "update"
 export function TeacherRowActions({ teacher }: { teacher: Teacher }) {
   const [action, setAction] = useState<RowAction>()
 
-  console.log(action)
+  function handleCopy() {
+    if (navigator.clipboard) {
+      if (!location) return
+
+      navigator.clipboard.writeText(
+        `${window.location.origin}/sign-up/teacher?teacherId=${teacher.id}`
+      )
+
+      toast("Sign up link copied!", {
+        position: "top-right",
+        icon: <CircleCheckIcon className="size-4 text-emerald-500" />,
+      })
+    }
+  }
 
   return (
     <>
@@ -38,6 +59,10 @@ export function TeacherRowActions({ teacher }: { teacher: Teacher }) {
           <DropdownMenuItem onClick={() => setAction("update")}>
             <PencilIcon className="size-3" /> Update
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleCopy}>
+            <CopyIcon className="size-3" /> Copy Sign Up Link
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href={`#`}>
               <GridIcon className="size-4" /> Classes

@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Sign In",
 }
 
-function SignInPage() {
-  return <LoginForm />
+function SignInPage({ searchParams }: { searchParams: { role?: string } }) {
+  return <LoginForm role={searchParams?.role} />
 }
 
 export default SignInPage

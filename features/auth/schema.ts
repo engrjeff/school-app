@@ -49,3 +49,28 @@ export const resetPasswordSchema = z
 export type LoginFormInput = z.infer<typeof loginSchema>
 
 export type RegisterFormInput = z.infer<typeof registerSchema>
+
+// teacher
+export const teacherSignUpSchema = z.object({
+  schoolId: z
+    .string({ required_error: "School is required." })
+    .nonempty({ message: "School is required." }),
+  teacherId: z
+    .string({ required_error: "Teacher id is required." })
+    .nonempty({ message: "Teacher id is required." }),
+  teacherEmployeeId: z
+    .string({ required_error: "Employee id is required." })
+    .nonempty({ message: "Employee id is required." }),
+  name: z
+    .string({ required_error: "Name is required." })
+    .min(1, { message: "Name is required." }),
+  email: z
+    .string({ required_error: "Email is required." })
+    .min(1, { message: "Email is required." })
+    .email({ message: "Enter a valid email." }),
+  password: z
+    .string({ required_error: "Password is required." })
+    .min(8, { message: "Must be a minimum of 8 characters." }),
+})
+
+export type TeacherSignUpInputs = z.infer<typeof teacherSignUpSchema>

@@ -41,7 +41,7 @@ async function StudentsPage({
           {/* Filter by course */}
           <CourseFilter key={searchParams.program} />
           <div className="ml-auto flex items-center space-x-3">
-            <StudentImportDialog />
+            <StudentImportDialog currentStudents={students} />
             <Button asChild size="sm">
               <Link href="/students/new">
                 <PlusIcon className="size-4" /> Add Student

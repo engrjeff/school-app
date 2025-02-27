@@ -16,6 +16,5 @@ export function useFaculties(programId?: string) {
   return useQuery({
     queryKey: ["faculties", programId],
     queryFn: () => getFaculties(programId!),
-    enabled: Boolean(programId),
   })
 }

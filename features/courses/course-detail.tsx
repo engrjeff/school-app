@@ -1,5 +1,5 @@
 import { Course, GradeYearLevel, Subject } from "@prisma/client"
-import { Pencil } from "lucide-react"
+import { PencilIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { SubjectEditFormDialog } from "../subjects/subject-edit-form"
+import { SubjectFormDialog } from "../subjects/subject-form"
 import { CourseUpdateFormDialog } from "./course-update-form"
 
 export function CourseDetail({
@@ -54,12 +56,12 @@ export function CourseDetail({
             </ul>
             <Button
               type="button"
-              size="iconXs"
-              variant="secondary"
-              aria-label="edit course levels"
-              className="absolute right-2 top-1"
+              size="iconXXs"
+              variant="ghost"
+              aria-label={`edit course levels`}
+              className="absolute right-2 top-1 hover:border"
             >
-              <Pencil />
+              <PencilIcon />
             </Button>
           </CardHeader>
         </Card>
@@ -72,26 +74,50 @@ export function CourseDetail({
           <CardDescription>
             Subjects that need to be taken for {course.code}
           </CardDescription>
+          <div className="absolute right-4 top-4">
+            <SubjectFormDialog courseName={course.code} courseId={course.id} />
+          </div>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[460px]">
-            <ul className="space-y-4">
-              {course.subjects.map((subject) => (
-                <li key={subject.id} className="bg-accent rounded p-4">
-                  <p className="font-medium group-hover:underline">
-                    {subject.title}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {subject.code === "--" || !subject.code
-                      ? "No Description"
-                      : subject.code}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </ScrollArea>
+          {course.subjects.length === 0 ? (
+            <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed">
+              <p className="text-center text-base">No subjects yet.</p>
+              <p className="text-muted-foreground mb-4 text-center">
+                Add a subject now.
+              </p>
+            </div>
+          ) : (
+            <ScrollArea className="h-[460px]">
+              <ul className="space-y-4">
+                {course.subjects.map((subject) => (
+                  <li key={subject.id}>
+                    <SubjectItem subject={subject} />
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          )}
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+function SubjectItem({ subject }: { subject: Subject }) {
+  return (
+    <Card className="relative">
+      <CardHeader>
+        <CardTitle className="line-clamp-1">{subject.title}</CardTitle>
+        <CardDescription>Code: {subject.code}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground text-xs">
+          {subject.code === "--" || !subject.code
+            ? "No Description"
+            : subject.code}
+        </p>
+      </CardContent>
+      <SubjectEditFormDialog subject={subject} />
+    </Card>
   )
 }

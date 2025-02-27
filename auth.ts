@@ -1,12 +1,12 @@
 import authConfig from "@/auth.config"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { ROLE } from "@prisma/client"
 import NextAuth from "next-auth"
 import type { Adapter } from "next-auth/adapters"
 
 import prisma from "./lib/db"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma) as Adapter,
   session: { strategy: "jwt" },
   callbacks: {
@@ -22,8 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (dbUser) {
         token.id = dbUser.id
         token.role = dbUser.role
-        token.schoolId =
-          dbUser.role !== ROLE.SCHOOLADMIN ? null : dbUser.schoolId
+        token.schoolId = dbUser.schoolId
       }
       return token
     },
@@ -39,5 +38,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
-  ...authConfig,
 })

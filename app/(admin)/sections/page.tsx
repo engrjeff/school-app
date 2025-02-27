@@ -125,9 +125,7 @@ async function SectionsPage({
               <div className="space-y-3 rounded-md border p-6 text-center">
                 <p>No courses listed yet.</p>
                 <Button size="sm" asChild>
-                  <Link
-                    href={`/program-offerings/${activeProgram?.id}/courses/new`}
-                  >
+                  <Link href={`/courses/new?program=${activeProgram?.id}`}>
                     <PlusIcon />
                     Add Course
                   </Link>

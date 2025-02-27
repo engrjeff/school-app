@@ -87,3 +87,14 @@ export async function getTeachers(args: GetTeachersArgs) {
 
   return { teachers, pageInfo }
 }
+
+export async function getTeacherById(id: string) {
+  if (!id) return null
+
+  const teacher = await prisma.teacher.findUnique({
+    where: { id },
+    include: { school: true },
+  })
+
+  return teacher
+}
