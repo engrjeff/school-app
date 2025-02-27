@@ -108,10 +108,10 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Link href={`#`} className="w-min inline-block">
+            <Link href={`#`} className="inline-block w-min">
               <p>
                 {row.original._count.students}{" "}
-                <span className="text-xs text-muted-foreground">students</span>
+                <span className="text-muted-foreground text-xs">students</span>
               </p>
             </Link>
           </TooltipTrigger>
@@ -272,7 +272,7 @@ export function TeacherClassesTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No students to display. Select a course and grade level first.
+                  No classes to display.
                 </TableCell>
               </TableRow>
             )}

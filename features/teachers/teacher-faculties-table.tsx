@@ -198,7 +198,7 @@ export function TeacherFacultiesTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No students to display. Select a course and grade level first.
+                  No faculties to display.
                 </TableCell>
               </TableRow>
             )}
