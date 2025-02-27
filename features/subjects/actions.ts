@@ -59,6 +59,29 @@ export const createSubject = adminActionClient
   .metadata({ actionName: "createSubject" })
   .schema(subjectSchema)
   .action(async ({ parsedInput, ctx: { user } }) => {
+    const existingCode = await prisma.subject.findFirst({
+      where: {
+        OR: [
+          {
+            code: parsedInput.code,
+            courseId: parsedInput.courseId,
+          },
+          {
+            title: {
+              equals: parsedInput.title,
+              mode: "insensitive",
+            },
+            courseId: parsedInput.courseId,
+          },
+        ],
+      },
+    })
+
+    if (existingCode)
+      throw new Error(
+        `The given code/title is already in use by another subject in this course.`
+      )
+
     const subject = await prisma.subject.create({
       data: {
         schoolId: user.schoolId!,
