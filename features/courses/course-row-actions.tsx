@@ -5,9 +5,9 @@ import Link from "next/link"
 import { Course } from "@prisma/client"
 import {
   BookCheck,
+  LibraryIcon,
   MoreHorizontal,
   Pencil,
-  SquarePlus,
   UserCheck,
 } from "lucide-react"
 
@@ -52,8 +52,13 @@ export function CourseRowActions({ course }: { course: Course }) {
               Actions
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <SquarePlus /> Add Subject
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/classes?program=${course.programOfferingId}&course=${course.id}`}
+              >
+                <LibraryIcon />
+                Classes
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href={`/students?course=${course.id}`}>

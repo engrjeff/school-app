@@ -98,11 +98,11 @@ function FilterComponent({
           variant="outline"
           size="sm"
           className={cn(
-            "h-10 justify-start rounded-lg px-2 md:h-8",
+            "h-10 justify-start rounded-lg px-2 disabled:cursor-not-allowed md:h-8",
             selected.length === 0 ? "border-dashed" : ""
           )}
           type="button"
-          disabled={false}
+          disabled={options.length === 0}
         >
           <PlusIcon className="size-4" />
           {title}

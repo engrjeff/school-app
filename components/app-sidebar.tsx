@@ -11,6 +11,7 @@ import {
   GridIcon,
   LayoutGridIcon,
   LayoutPanelTopIcon,
+  LibraryIcon,
   SchoolIcon,
   SquareStackIcon,
   TablePropertiesIcon,
@@ -107,6 +108,11 @@ const data = {
         name: "School Years",
         url: "/school-years",
         icon: CalendarIcon,
+      },
+      {
+        name: "Classes",
+        url: "/classes",
+        icon: LibraryIcon,
       },
       {
         name: "School Profile",

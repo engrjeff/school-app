@@ -24,6 +24,7 @@ export function CourseFilter() {
       filterKey="course"
       title="Course"
       selectedLabelKey="label"
+      singleSelection
       options={
         filteredCourses?.map((c) => ({
           label: c.code,
