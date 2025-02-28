@@ -38,3 +38,11 @@ export const importStudentSchema = studentSchema
       })
     }
   })
+
+export const requireStudentIdSchema = z.object({
+  id: z
+    .string({ required_error: "Student ID is required." })
+    .nonempty({ message: "Student ID is required." }),
+})
+
+export const updateStudentSchema = studentSchema.merge(requireStudentIdSchema)

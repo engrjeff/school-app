@@ -6,7 +6,11 @@ import { chunk } from "remeda"
 import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
 
-import { importStudentSchema, studentSchema } from "./schema"
+import {
+  importStudentSchema,
+  studentSchema,
+  updateStudentSchema,
+} from "./schema"
 
 export const createStudent = adminActionClient
   .metadata({ actionName: "createStudent" })
@@ -47,5 +51,24 @@ export const importStudents = adminActionClient
 
     return {
       students,
+    }
+  })
+
+export const updateStudent = adminActionClient
+  .metadata({ actionName: "updateStudent" })
+  .schema(updateStudentSchema)
+  .action(async ({ parsedInput }) => {
+    const student = await prisma.student.update({
+      where: { id: parsedInput.id },
+      data: {
+        ...parsedInput,
+        birthdate: new Date(parsedInput.birthdate),
+      },
+    })
+
+    revalidatePath(`/students/${student.id}`)
+
+    return {
+      student,
     }
   })

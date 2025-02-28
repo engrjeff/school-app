@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Student } from "@prisma/client"
 import {
@@ -8,7 +7,6 @@ import {
   LibraryIcon,
   MoreHorizontal,
   PencilIcon,
-  RotateCwSquareIcon,
   SigmaIcon,
 } from "lucide-react"
 
@@ -22,13 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type RowAction = "update" | "update-status"
-
 export function StudentRowActions({ student }: { student: Student }) {
-  const [action, setAction] = useState<RowAction>()
-
-  console.log(action)
-
   return (
     <>
       <DropdownMenu modal={false}>
@@ -42,11 +34,10 @@ export function StudentRowActions({ student }: { student: Student }) {
             Actions
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setAction("update")}>
-            <PencilIcon className="size-3" /> Update
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setAction("update-status")}>
-            <RotateCwSquareIcon className="size-3" /> Update Status
+          <DropdownMenuItem asChild>
+            <Link href={`/students/${student.id}/edit`}>
+              <PencilIcon className="size-3" /> Update
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`#`}>
