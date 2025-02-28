@@ -66,7 +66,7 @@ async function TeacherDetailPage({ params }: PageProps) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbLink asChild>
-              <Link className="font-semibold" href="/students">
+              <Link className="font-semibold" href="/teachers">
                 Teachers
               </Link>
             </BreadcrumbLink>
@@ -74,7 +74,7 @@ async function TeacherDetailPage({ params }: PageProps) {
               <SlashIcon />
             </BreadcrumbSeparator>
             <BreadcrumbItem className="text-foreground font-semibold">
-              {teacher.teacherId} - {getFullName(teacher)}
+              {getFullName(teacher)} - #{teacher.teacherId}
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

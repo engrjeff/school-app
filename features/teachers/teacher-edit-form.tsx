@@ -3,14 +3,12 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Gender } from "@prisma/client"
+import { Gender, Teacher } from "@prisma/client"
 import { ArrowLeftIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import { useFaculties } from "@/hooks/use-faculties"
-import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -23,43 +21,36 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { SubmitButton } from "@/components/ui/submit-button"
 import { Textarea } from "@/components/ui/textarea"
 
-import { createTeacher } from "./actions"
+import { updateTeacher } from "./actions"
 import { TeacherInputs, teacherSchema } from "./schema"
 
-export function TeacherForm() {
+export function TeacherEditForm({ teacher }: { teacher: Teacher }) {
   const form = useForm<TeacherInputs>({
-    resolver: zodResolver(teacherSchema),
+    resolver: zodResolver(
+      teacherSchema.omit({ programOfferingId: true, facultyId: true })
+    ),
     defaultValues: {
-      teacherId: "",
-      firstName: "",
-      lastName: "",
-      middleName: "",
-      suffix: "",
-      designation: "",
-      address: "",
-      phone: "",
-      email: "",
-      gender: Gender.MALE,
-      programOfferingId: "",
-      facultyId: "",
+      teacherId: teacher.teacherId,
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
+      middleName: teacher.middleName ?? "",
+      suffix: teacher.suffix ?? "",
+      designation: teacher.designation,
+      address: teacher.address,
+      phone: teacher.phone,
+      email: teacher.email,
+      gender: teacher.gender,
     },
   })
 
-  const programs = useProgramOfferings()
+  // const programs = useProgramOfferings()
 
-  const faculties = useFaculties(form.watch("programOfferingId") ?? undefined)
+  // const faculties = useFaculties(form.watch("programOfferingId") ?? undefined)
 
-  const action = useAction(createTeacher, {
+  const action = useAction(updateTeacher, {
     onError: ({ error }) => {
       if (error.serverError) {
         if (
@@ -78,18 +69,18 @@ export function TeacherForm() {
   const router = useRouter()
 
   const onError: SubmitErrorHandler<TeacherInputs> = (errors) => {
-    console.log(`Add Teacher Errors: `, errors)
+    console.log(`Edit Teacher Errors: `, errors)
   }
 
   const onSubmit: SubmitHandler<TeacherInputs> = async (values) => {
-    const result = await action.executeAsync(values)
+    const result = await action.executeAsync({ id: teacher.id, ...values })
 
     if (result?.data?.teacher) {
       toast.success("Teacher saved!")
 
       form.reset()
 
-      router.replace("/teachers")
+      router.replace(`/teachers/${teacher.id}`)
     }
   }
 
@@ -105,28 +96,30 @@ export function TeacherForm() {
             size="iconXs"
             variant="ghost"
             aria-label="go back"
-            asChild
+            onClick={router.back}
           >
-            <Link href={`/teachers`}>
-              <ArrowLeftIcon />
-            </Link>
+            <ArrowLeftIcon />
           </Button>
           <div>
-            <h2 className="text-lg font-bold tracking-tight">Add Teacher</h2>
+            <h2 className="text-lg font-bold tracking-tight">Edit Teacher</h2>
             <p className="text-muted-foreground text-sm">
-              Fill in the details below.
+              Make sure to save your changes.
             </p>
           </div>
           <div className="ml-auto flex items-center space-x-3">
             <Button size="sm" variant="secondary" asChild>
               <Link href={`/teachers`}>Discard</Link>
             </Button>
-            <SubmitButton size="sm" loading={action.isPending}>
-              Save Teacher
+            <SubmitButton
+              size="sm"
+              disabled={!form.formState.isDirty}
+              loading={action.isPending}
+            >
+              Save Changes
             </SubmitButton>
           </div>
         </div>
-        <div className="grid grid-cols-3 items-start gap-6">
+        <div>
           <fieldset
             disabled={action.isPending}
             className="bg-accent/40 col-span-2 space-y-3 rounded-lg border p-6 disabled:cursor-wait disabled:opacity-90"
@@ -334,79 +327,6 @@ export function TeacherForm() {
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
-          <fieldset
-            disabled={action.isPending}
-            className="bg-accent/40 space-y-3 rounded-lg border p-6 disabled:cursor-wait disabled:opacity-90"
-          >
-            <p className="text-muted-foreground text-xs uppercase">Program</p>
-
-            <FormField
-              control={form.control}
-              name="programOfferingId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Program</FormLabel>
-                  <Select
-                    onValueChange={(e) => {
-                      field.onChange(e)
-                      form.setValue("facultyId", "")
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a program" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {programs.data?.map((program) => (
-                        <SelectItem key={program.id} value={program.id}>
-                          {program.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    The program in which the teacher belongs.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="facultyId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Faculty</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={!form.watch("programOfferingId")}
-                    key={form.watch("programOfferingId")}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select faculty" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {faculties.data?.map((f) => (
-                        <SelectItem key={f.id} value={f.id}>
-                          {f.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    The faculty/department in which the teacher belongs.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

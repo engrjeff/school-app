@@ -5,7 +5,11 @@ import { chunk } from "remeda"
 import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
 
-import { importTeacherSchema, teacherSchema } from "./schema"
+import {
+  importTeacherSchema,
+  teacherSchema,
+  updateTeacherSchema,
+} from "./schema"
 
 export const createTeacher = adminActionClient
   .metadata({ actionName: "createTeacher" })
@@ -79,5 +83,31 @@ export const importTeachers = adminActionClient
 
     return {
       teachers: teachers.flat(),
+    }
+  })
+
+export const updateTeacher = adminActionClient
+  .metadata({ actionName: "updateTeacher" })
+  .schema(updateTeacherSchema)
+  .action(async ({ parsedInput }) => {
+    const teacher = await prisma.teacher.update({
+      where: {
+        id: parsedInput.id,
+      },
+      data: {
+        teacherId: parsedInput.teacherId,
+        firstName: parsedInput.firstName,
+        lastName: parsedInput.lastName,
+        middleName: parsedInput.middleName,
+        suffix: parsedInput.suffix,
+        address: parsedInput.address,
+        phone: parsedInput.phone,
+        email: parsedInput.email,
+        gender: parsedInput.gender,
+      },
+    })
+
+    return {
+      teacher,
     }
   })

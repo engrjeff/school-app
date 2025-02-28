@@ -56,3 +56,13 @@ export const importTeacherSchema = z.object({
 })
 
 export type ImportTeacherInputs = z.infer<typeof importTeacherSchema>
+
+export const requireTeacherIdSchema = z.object({
+  id: z
+    .string({ required_error: "Teacher ID is required." })
+    .nonempty({ message: "Teacher ID is required." }),
+})
+
+export const updateTeacherSchema = teacherSchema
+  .omit({ programOfferingId: true, facultyId: true })
+  .merge(requireTeacherIdSchema)

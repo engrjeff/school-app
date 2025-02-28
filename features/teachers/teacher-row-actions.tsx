@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Teacher } from "@prisma/client"
 import {
@@ -23,11 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type RowAction = "update"
-
 export function TeacherRowActions({ teacher }: { teacher: Teacher }) {
-  const [action, setAction] = useState<RowAction>()
-
   function handleCopy() {
     if (navigator.clipboard) {
       if (!location) return
@@ -56,8 +51,10 @@ export function TeacherRowActions({ teacher }: { teacher: Teacher }) {
             Actions
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setAction("update")}>
-            <PencilIcon className="size-3" /> Update
+          <DropdownMenuItem asChild>
+            <Link href={`/teachers/${teacher.id}/edit`}>
+              <PencilIcon className="size-3" /> Update
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleCopy}>
             <CopyIcon className="size-3" /> Copy Sign Up Link
