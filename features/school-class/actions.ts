@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { StudentStatus } from "@prisma/client"
 
 import prisma from "@/lib/db"
 import { adminActionClient } from "@/lib/safe-action"
@@ -43,6 +44,7 @@ export const createSchoolClass = adminActionClient
         },
         data: {
           currentSectionId: schoolClass.sectionId,
+          status: StudentStatus.ENROLLED,
         },
       })
     }
