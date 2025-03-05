@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { useParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogClose } from "@radix-ui/react-dialog"
@@ -171,37 +172,46 @@ function GradeComponentSelector({
       <FormDescription>
         Total Percentage: {totalPercentage * 100}%
       </FormDescription>
-      {gradeComponents.data?.map((gc) => (
-        <div
-          key={gc.id}
-          className="border-input hover:bg-muted/20 has-[[data-state=checked]]:border-ring relative flex w-full items-start gap-2 rounded-lg border p-4 shadow-sm shadow-black/5 "
-        >
-          <Checkbox
-            id={gc.id}
-            className="order-1 after:absolute after:inset-0"
-            aria-describedby={`${gc.id}-description`}
-            checked={value.includes(gc.id)}
-            onCheckedChange={(checked) => {
-              if (checked === true) {
-                onValueChange([...value, gc.id])
-              } else {
-                onValueChange(value.filter((v) => v! !== gc.id))
-              }
-            }}
-          />
-          <div className="grid grow gap-2">
-            <Label htmlFor={gc.id}>
-              {gc.label} - {gc.percentage * 100}%
-            </Label>
-            <p
-              id={`${gc.id}-description`}
-              className="text-muted-foreground text-xs"
-            >
-              {gc.title}
-            </p>
+      {gradeComponents.data?.length ? (
+        gradeComponents.data?.map((gc) => (
+          <div
+            key={gc.id}
+            className="border-input hover:bg-muted/20 has-[[data-state=checked]]:border-ring relative flex w-full items-start gap-2 rounded-lg border p-4 shadow-sm shadow-black/5 "
+          >
+            <Checkbox
+              id={gc.id}
+              className="order-1 after:absolute after:inset-0"
+              aria-describedby={`${gc.id}-description`}
+              checked={value.includes(gc.id)}
+              onCheckedChange={(checked) => {
+                if (checked === true) {
+                  onValueChange([...value, gc.id])
+                } else {
+                  onValueChange(value.filter((v) => v! !== gc.id))
+                }
+              }}
+            />
+            <div className="grid grow gap-2">
+              <Label htmlFor={gc.id}>
+                {gc.label} - {gc.percentage * 100}%
+              </Label>
+              <p
+                id={`${gc.id}-description`}
+                className="text-muted-foreground text-xs"
+              >
+                {gc.title}
+              </p>
+            </div>
           </div>
+        ))
+      ) : (
+        <div className="h-[210px] w-full gap-2 flex flex-col items-center justify-center">
+          <p className="text-center">No grade components yet.</p>
+          <Button type="button" size="sm" asChild>
+            <Link href="/grading">Add Grade Component</Link>
+          </Button>
         </div>
-      ))}
+      )}
     </div>
   )
 }
