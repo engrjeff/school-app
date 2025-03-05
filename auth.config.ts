@@ -24,6 +24,9 @@ export default {
 
           include: {
             school: true,
+            teacherProfile: {
+              select: { id: true },
+            },
           },
         })
 
@@ -36,7 +39,15 @@ export default {
 
         if (!passwordsMatch) throw new AccessDenied("Invalid credentials.")
 
-        const { name, email: userEmail, id, image, role, school } = foundUser
+        const {
+          name,
+          email: userEmail,
+          id,
+          image,
+          role,
+          school,
+          teacherProfile,
+        } = foundUser
 
         return {
           name,
@@ -45,6 +56,7 @@ export default {
           image,
           role,
           schoolId: school?.id ? school.id : null,
+          teacherProfileId: teacherProfile?.id,
         }
       },
     }),
@@ -58,6 +70,7 @@ export default {
         session.user.image = token.picture
         session.user.role = token.role
         session.user.schoolId = token.schoolId
+        session.user.teacherProfileId = token.teacherProfileId
       }
       return session
     },

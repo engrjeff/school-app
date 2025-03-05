@@ -13,6 +13,7 @@ import {
   LayoutPanelTopIcon,
   LibraryIcon,
   SchoolIcon,
+  SquareSigmaIcon,
   SquareStackIcon,
   TablePropertiesIcon,
   UserCheckIcon,
@@ -138,15 +139,20 @@ const teacherMenu = {
         icon: UsersIcon,
       },
       {
-        name: "Classes",
+        name: "My Classes",
         url: "/classes",
-        icon: SquareStackIcon,
+        icon: LibraryIcon,
       },
     ],
   },
   settings: {
     heading: "Settings",
     items: [
+      {
+        name: "Grading",
+        url: "/grading",
+        icon: SquareSigmaIcon,
+      },
       {
         name: "School Profile",
         url: "/school-profile",
@@ -163,7 +169,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function AppSidebar({ school, session, ...props }: AppSidebarProps) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" className="z-50" {...props}>
       <SidebarHeader>
         <SchoolHeading school={school} />
       </SidebarHeader>

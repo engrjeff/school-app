@@ -24,13 +24,13 @@ export function ProgramOfferingsTable({
     <Table className="table-auto">
       <TableHeader>
         <TableRow className="hover:bg-transparent">
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Title" sortValue="title" />
           </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Code" sortValue="code" />
           </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Description" sortValue="description" />
           </TableHead>
           <TableHead className="text-center">Actions</TableHead>

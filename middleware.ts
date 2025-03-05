@@ -23,7 +23,7 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(API_AUTH_PREFIX)
   const isAuthPageRoute = AUTH_ROUTES.includes(nextUrl.pathname)
 
-  const isApiRoute = API_ROUTES.includes(nextUrl.pathname)
+  const isApiRoute = API_ROUTES.some((a) => nextUrl.pathname.startsWith(a))
 
   if (isApiAuthRoute || isApiRoute) return
 

@@ -9,6 +9,7 @@ declare module "next-auth/jwt" {
     role: ROLE
     email: string
     schoolId: string | null
+    teacherProfileId: string | undefined
   }
 }
 
@@ -18,6 +19,7 @@ declare module "next-auth" {
       id: string
       role: ROLE
       schoolId: string | null
+      teacherProfileId: string | undefined
     } & DefaultSession["user"]
   }
 
@@ -25,5 +27,6 @@ declare module "next-auth" {
     id: string
     role: ROLE
     schoolId: string | null
+    teacherProfileId: string | undefined
   }
 }

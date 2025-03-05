@@ -44,7 +44,9 @@ async function ClassesPage({ searchParams }: { searchParams: GetClassesArgs }) {
           </div>
         ) : (
           <>
-            {searchParams.view === "grid" ? (
+            {searchParams.view === "list" ? (
+              <ClassesTable classes={data?.classes ?? []} />
+            ) : (
               <ul className="grid flex-1 grid-cols-4 gap-4">
                 {data?.classes?.map((schoolClass) => (
                   <li key={schoolClass.id}>
@@ -54,8 +56,6 @@ async function ClassesPage({ searchParams }: { searchParams: GetClassesArgs }) {
                   </li>
                 ))}
               </ul>
-            ) : (
-              <ClassesTable classes={data?.classes ?? []} />
             )}
           </>
         )}

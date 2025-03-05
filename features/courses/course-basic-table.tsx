@@ -24,15 +24,13 @@ export function CourseBasicTable({
     <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
       <TableHeader>
         <TableRow className="hover:bg-transparent">
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Title" sortValue="title" />
           </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Code" sortValue="code" />
           </TableHead>
-          <TableHead>
-            <SortLink title="Description" sortValue="description" />
-          </TableHead>
+          <TableHead>Description</TableHead>
           <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>

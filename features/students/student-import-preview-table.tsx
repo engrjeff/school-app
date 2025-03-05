@@ -19,7 +19,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  CircleCheck,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -145,7 +144,7 @@ export function StudentImportPreviewTable({
 
   return (
     <div className="space-y-4 overflow-hidden">
-      <div className="bg-accent rounded border border-l-2 border-l-emerald-500 px-4 py-3">
+      {/* <div className="bg-accent rounded border border-l-2 border-l-emerald-500 px-4 py-3">
         <p className="text-sm">
           <CircleCheck
             className="-mt-0.5 me-3 inline-flex text-emerald-500"
@@ -155,8 +154,8 @@ export function StudentImportPreviewTable({
           />
           Parsed {studentPreviewData.length} rows.
         </p>
-      </div>
-      <div className="max-h-[400px] w-full max-w-full overflow-auto ">
+      </div> */}
+      <div className="max-h-[350px] w-full max-w-full overflow-auto ">
         <Table className="[&_td]:border-border [&_th]:border-border table-auto border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
           <TableHeader className="sticky top-0 z-10 backdrop-blur-sm">
             {table.getHeaderGroups().map((headerGroup) => (

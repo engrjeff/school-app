@@ -49,7 +49,6 @@ export function TeacherSignUpForm({
       password: "",
     },
     resolver: zodResolver(registerSchema),
-    mode: "onBlur",
   })
 
   const action = useAction(registerSchoolTeacher, {
@@ -112,7 +111,7 @@ export function TeacherSignUpForm({
                 placeholder="School"
                 id="school"
                 className="dark:bg-muted/30 h-12"
-                readOnly
+                disabled
                 defaultValue={teacher.school.name}
               />
               <FormMessage />
@@ -128,7 +127,7 @@ export function TeacherSignUpForm({
                       placeholder="Employee ID"
                       id="teacherEmployeeId"
                       className="dark:bg-muted/30 h-12"
-                      readOnly
+                      disabled
                       {...field}
                     />
                   </FormControl>
@@ -167,6 +166,7 @@ export function TeacherSignUpForm({
                       type="email"
                       placeholder="youremail@example.com"
                       id="email"
+                      disabled
                       className="dark:bg-muted/30 h-12"
                       {...field}
                     />

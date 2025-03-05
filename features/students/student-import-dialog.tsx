@@ -245,6 +245,7 @@ function ImportDialogContent({
       if (validatedData.success) {
         setView("preview")
         setStudentData(validatedData.data)
+        toast.success(`Parsed ${validatedData.data.length} rows.`)
       } else {
         setValidationErrors(validatedData.error)
         setView("error")
@@ -297,7 +298,7 @@ function ImportDialogContent({
         </div>
       )}
       {view === "row-error" && (
-        <div className="max-h-[400px] w-full max-w-full overflow-auto ">
+        <div className="max-h-[350px] w-full max-w-full overflow-auto ">
           <Table className="[&_td]:border-border [&_th]:border-border table-auto border-separate border-spacing-0 [&_tfoot_td]:border-t [&_th]:border-b [&_tr:not(:last-child)_td]:border-b [&_tr]:border-none">
             <TableHeader className="sticky top-0 z-10 backdrop-blur-sm">
               <TableRow className="hover:bg-transparent">

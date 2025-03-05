@@ -3,7 +3,6 @@ import { Faculty, ProgramOffering, Teacher } from "@prisma/client"
 import { InboxIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -25,20 +24,17 @@ export function TeachersTable({ teachers }: { teachers: TeacherEntries }) {
     <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
       <TableHeader>
         <TableRow className="hover:bg-transparent">
-          <TableHead>
-            <Checkbox />
-          </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Name" sortValue="lastName" />
           </TableHead>
-          <TableHead className="text-center">
+          <TableHead className="px-1 text-center">
             <SortLink title="Teacher ID" sortValue="teacherId" />
           </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Designation" sortValue="designation" />
           </TableHead>
           <TableHead>Faculties/Departments</TableHead>
-          <TableHead className="text-center">
+          <TableHead className="px-1 text-center">
             <SortLink title="Gender" sortValue="gender" />
           </TableHead>
           <TableHead>Phone</TableHead>
@@ -49,9 +45,6 @@ export function TeachersTable({ teachers }: { teachers: TeacherEntries }) {
         {teachers?.length ? (
           teachers.map((teacher) => (
             <TableRow key={teacher.id} className="hover:bg-accent/50">
-              <TableCell>
-                <Checkbox />
-              </TableCell>
               <TableCell>
                 <div>
                   <Link

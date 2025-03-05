@@ -56,9 +56,11 @@ export function TeacherRowActions({ teacher }: { teacher: Teacher }) {
               <PencilIcon className="size-3" /> Update
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleCopy}>
-            <CopyIcon className="size-3" /> Copy Sign Up Link
-          </DropdownMenuItem>
+          {teacher.userId ? null : (
+            <DropdownMenuItem onClick={handleCopy}>
+              <CopyIcon className="size-3" /> Copy Sign Up Link
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href={`#`}>

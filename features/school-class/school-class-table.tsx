@@ -49,7 +49,7 @@ export function SchoolClassTable({ schoolClass }: Props) {
       <Table className="table-auto">
         <TableHeader>
           <TableRow>
-            <TableHeadPlain scope="col">
+            <TableHeadPlain scope="col" colSpan={2}>
               <div className="flex items-center justify-between text-xs font-normal">
                 <p className="text-muted-foreground uppercase">
                   S.Y. {schoolClass.schoolYear.title}
@@ -93,6 +93,9 @@ export function SchoolClassTable({ schoolClass }: Props) {
             </TableHeadPlain>
           </TableRow>
           <TableRow className="border-t-0">
+            <TableHeadPlain className="w-10 whitespace-nowrap text-center">
+              #
+            </TableHeadPlain>
             <TableHeadPlain className="whitespace-nowrap">
               Learner&apos;s Name
             </TableHeadPlain>
@@ -101,7 +104,7 @@ export function SchoolClassTable({ schoolClass }: Props) {
             </TableHeadPlain>
             <TableHeadPlain>Email</TableHeadPlain>
             <TableHeadPlain>Birthdate</TableHeadPlain>
-            <TableHeadPlain>Status</TableHeadPlain>
+            <TableHeadPlain className="text-center">Status</TableHeadPlain>
             <TableHeadPlain>
               <span className="sr-only">Actions</span>
             </TableHeadPlain>
@@ -127,14 +130,17 @@ function StudentRows({
     <>
       <TableRow className="hover:bg-transparent">
         <TableHeadPlain
-          colSpan={6}
+          colSpan={7}
           className="bg-secondary/70 h-8 text-xs font-semibold uppercase"
         >
           {group}
         </TableHeadPlain>
       </TableRow>
-      {students.map((student) => (
+      {students.map((student, studentIndex) => (
         <TableRow key={`row-${group.toLowerCase()}-${student.id}`}>
+          <TableCell className="size-10 whitespace-nowrap border-r-2 text-center first:border-l last:border-r">
+            {studentIndex + 1}
+          </TableCell>
           <TableCell className="whitespace-nowrap border-r-2 first:border-l last:border-r">
             <p>
               {student.lastName}, {student.firstName} {student.middleName}{" "}
@@ -152,8 +158,10 @@ function StudentRows({
               ? format(new Date(student.birthdate), "MMM dd, yyyy")
               : "--"}
           </TableCell>
-          <TableCell className="border-r-2 first:border-l last:border-r">
-            <Badge className="capitalize">{student.status.toLowerCase()}</Badge>
+          <TableCell className="border-r-2 text-center first:border-l last:border-r">
+            <Badge variant={student.status}>
+              {student.status.toLowerCase()}
+            </Badge>
           </TableCell>
           <TableCell className="border-r-2 first:border-l last:border-r"></TableCell>
         </TableRow>

@@ -1,7 +1,9 @@
 "use client"
 
+import Link from "next/link"
 import { SignOutDialog } from "@/features/auth/SignOutDialog"
-import { BadgeCheck, ChevronsUpDown, Logs } from "lucide-react"
+import { ROLE } from "@prisma/client"
+import { BadgeCheckIcon, ChevronsUpDown, LibraryIcon } from "lucide-react"
 import { useSession } from "next-auth/react"
 
 import { getInitials } from "@/lib/utils"
@@ -84,12 +86,16 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuGroup>
+              {user.role === ROLE.TEACHER ? (
+                <DropdownMenuItem asChild>
+                  <Link href="/classes">
+                    <LibraryIcon />
+                    Classes
+                  </Link>
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuItem>
-                <Logs />
-                Classes
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BadgeCheck />
+                <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
             </DropdownMenuGroup>

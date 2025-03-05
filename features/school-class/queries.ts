@@ -7,6 +7,7 @@ import {
   GradeYearLevel,
   Prisma,
   ProgramOffering,
+  ROLE,
   SchoolYear,
   Section,
   Semester,
@@ -40,6 +41,7 @@ export type GetClassesArgs = {
   program?: string
   schoolYear?: string
   semester?: string
+  teacher?: string
   view?: "grid" | "list"
 }
 
@@ -110,12 +112,24 @@ export async function getClasses(args: GetClassesArgs) {
   const schoolYearFilter = args?.schoolYear ?? undefined
   const semesterFilter = args?.semester ?? undefined
 
+  let teacherFilter = args.teacher ? args.teacher : undefined
+
+  if (session.user?.role === ROLE.TEACHER) {
+    // get the teacherProfileId of user
+    const userTeacher = await prisma.teacher.findUnique({
+      where: { userId: session.user.id },
+    })
+
+    teacherFilter = userTeacher?.id
+  }
+
   const whereInput: Prisma.ClassWhereInput = {
     schoolId: session?.user.schoolId,
     programOfferingId: programFilter,
     courseId: courseFilter,
     schoolYearId: schoolYearFilter,
     semesterId: semesterFilter,
+    teacherId: teacherFilter,
   }
 
   const totalFiltered = await prisma.class.count({
@@ -170,6 +184,22 @@ export async function getSchoolClassById(classId: string) {
       schoolYear: true,
       semester: true,
       students: true,
+      gradingPeriods: {
+        include: {
+          gradeComponents: {
+            include: {
+              parts: {
+                orderBy: {
+                  order: "asc",
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
+        },
+      },
     },
   })
 

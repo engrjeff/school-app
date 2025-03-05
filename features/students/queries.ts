@@ -110,3 +110,89 @@ export async function getStudentById(studentId: string) {
 
   return { student }
 }
+
+export async function getStudentsOfTeacher(args: GetStudentsArgs) {
+  const session = await auth()
+
+  if (!session?.user.schoolId) return { students: [] }
+
+  const sortKey = args?.sort ?? "lastName"
+  const sortOrder = (args?.order ?? "asc") as "asc" | "desc"
+
+  const programFilter = args?.program ? args.program : undefined
+  const courseFilter = args?.course ? args.course.split(",") : undefined
+
+  const userTeacher = await prisma.teacher.findUnique({
+    where: { userId: session.user.id },
+    include: { classes: true },
+  })
+
+  const whereInput: Prisma.StudentWhereInput = {
+    schoolId: session?.user.schoolId,
+    classes: {
+      some: {
+        id: {
+          in: userTeacher?.classes.map((c) => c.id),
+        },
+      },
+    },
+    OR: args.q
+      ? [
+          {
+            firstName: {
+              contains: args.q,
+              mode: "insensitive",
+            },
+          },
+          {
+            lastName: {
+              contains: args.q,
+              mode: "insensitive",
+            },
+          },
+          {
+            studentId: {
+              contains: args.q,
+              mode: "insensitive",
+            },
+          },
+        ]
+      : undefined,
+    currentCourse: {
+      id: {
+        in: courseFilter,
+      },
+      programOfferingId: programFilter,
+    },
+  }
+
+  const totalFiltered = await prisma.student.count({
+    where: whereInput,
+  })
+
+  const students = await prisma.student.findMany({
+    where: whereInput,
+    include: {
+      currentCourse: true,
+      currentGradeYearLevel: true,
+    },
+    orderBy: {
+      [sortKey]: sortOrder,
+    },
+    take: args?.pageSize ?? DEFAULT_PAGE_SIZE,
+    skip: getSkip({ limit: DEFAULT_PAGE_SIZE, page: args?.page }),
+  })
+
+  const pageInfo = {
+    total: totalFiltered,
+    page: !isNaN(args.page!) ? Number(args?.page) : DEFAULT_PAGE,
+    pageSize: DEFAULT_PAGE_SIZE,
+    itemCount: students.length,
+    totalPages: Math.ceil(totalFiltered / DEFAULT_PAGE_SIZE),
+  }
+
+  return {
+    students,
+    pageInfo,
+  }
+}

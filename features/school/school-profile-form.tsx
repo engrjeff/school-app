@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { School } from "@prisma/client"
+import { ROLE, School } from "@prisma/client"
 import { ArrowLeftIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
@@ -28,7 +28,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { updateSchool } from "./action"
 import { SchoolInputs, schoolSchema } from "./schema"
 
-export function SchoolProfileForm({ school }: { school: School }) {
+export function SchoolProfileForm({
+  school,
+  role,
+}: {
+  school: School
+  role?: ROLE
+}) {
   const form = useForm<SchoolInputs>({
     resolver: zodResolver(schoolSchema),
     defaultValues: {
@@ -108,7 +114,7 @@ export function SchoolProfileForm({ school }: { school: School }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit, onError)}
-        className="container max-w-screen-lg py-6"
+        className="container max-w-screen-lg py-2"
       >
         <div className="mb-4 flex items-start gap-4">
           <Button
@@ -128,28 +134,30 @@ export function SchoolProfileForm({ school }: { school: School }) {
               Manage your school&apos;s details.
             </p>
           </div>
-          <div className="ml-auto flex items-center space-x-3">
-            <Button
-              size="sm"
-              variant="secondary"
-              type="button"
-              onClick={router.back}
-            >
-              Discard
-            </Button>
-            <SubmitButton
-              size="sm"
-              disabled={!form.formState.isDirty}
-              loading={action.isPending}
-            >
-              Save Changes
-            </SubmitButton>
-          </div>
+          {role !== ROLE.SCHOOLADMIN ? null : (
+            <div className="ml-auto flex items-center space-x-3">
+              <Button
+                size="sm"
+                variant="secondary"
+                type="button"
+                onClick={router.back}
+              >
+                Discard
+              </Button>
+              <SubmitButton
+                size="sm"
+                disabled={!form.formState.isDirty}
+                loading={action.isPending}
+              >
+                Save Changes
+              </SubmitButton>
+            </div>
+          )}
         </div>
 
         <fieldset
-          disabled={action.isPending}
-          className="grid grid-cols-3 gap-10 disabled:cursor-wait disabled:opacity-90"
+          disabled={action.isPending || role !== ROLE.SCHOOLADMIN}
+          className="grid grid-cols-3 gap-10 disabled:cursor-not-allowed disabled:opacity-90"
         >
           <div>
             <h3 className="text-sm font-semibold tracking-tight">
@@ -476,23 +484,25 @@ export function SchoolProfileForm({ school }: { school: School }) {
             />
           </div>
         </fieldset>
-        <div className="ml-auto mt-8 flex items-center justify-end space-x-3">
-          <Button
-            size="sm"
-            variant="secondary"
-            type="button"
-            onClick={router.back}
-          >
-            Discard
-          </Button>
-          <SubmitButton
-            size="sm"
-            disabled={!form.formState.isDirty}
-            loading={action.isPending}
-          >
-            Save Changes
-          </SubmitButton>
-        </div>
+        {role !== ROLE.SCHOOLADMIN ? null : (
+          <div className="ml-auto mt-8 flex items-center justify-end space-x-3">
+            <Button
+              size="sm"
+              variant="secondary"
+              type="button"
+              onClick={router.back}
+            >
+              Discard
+            </Button>
+            <SubmitButton
+              size="sm"
+              disabled={!form.formState.isDirty}
+              loading={action.isPending}
+            >
+              Save Changes
+            </SubmitButton>
+          </div>
+        )}
       </form>
     </Form>
   )

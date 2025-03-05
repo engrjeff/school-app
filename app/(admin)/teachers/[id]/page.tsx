@@ -4,14 +4,17 @@ import { notFound } from "next/navigation"
 import { getTeacherById } from "@/features/teachers/queries"
 import { TeacherClassesTable } from "@/features/teachers/teacher-classes-table"
 import { TeacherFacultiesTable } from "@/features/teachers/teacher-faculties-table"
+import { TeacherSignUpLinkCopy } from "@/features/teachers/teacher-signup-link-copy"
 import { Teacher } from "@prisma/client"
 import {
   ArrowLeftIcon,
+  ContactRoundIcon,
   MailIcon,
   MapPinnedIcon,
   PencilIcon,
   PhoneIcon,
   PlusIcon,
+  ShieldCheckIcon,
   SlashIcon,
   UserIcon,
 } from "lucide-react"
@@ -157,6 +160,27 @@ async function TeacherDetailPage({ params }: PageProps) {
                 {teacher.email}
               </p>
             </div>
+          </div>
+          <Separator />
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold">User Account</h3>
+            <div className="flex items-center gap-2 text-sm">
+              {teacher.userId ? (
+                <ShieldCheckIcon className="size-4 text-green-500" />
+              ) : (
+                <ContactRoundIcon className="text-muted-foreground size-3" />
+              )}
+              {teacher.userId ? (
+                <p>Already registered.</p>
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  No user account yet.
+                </p>
+              )}
+            </div>
+            {teacher.userId ? null : (
+              <TeacherSignUpLinkCopy teacherId={teacher.id} />
+            )}
           </div>
         </div>
         <div className="flex-1 space-y-6 p-4">

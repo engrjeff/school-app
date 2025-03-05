@@ -90,3 +90,13 @@ export const adminActionClient = authActionClient.use(
     return next()
   }
 )
+
+export const teacherActionClient = authActionClient.use(
+  async ({ next, ctx: { user } }) => {
+    if (user.role !== ROLE.TEACHER) throw new Error("Unauthorized.")
+
+    if (!user.teacherProfileId) throw new Error("Unauthorized.")
+
+    return next()
+  }
+)

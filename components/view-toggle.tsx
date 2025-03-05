@@ -15,21 +15,21 @@ export function ViewToggle() {
     <div className="shadow-xs inline-flex -space-x-px rounded-md rtl:space-x-reverse">
       <Button
         className="rounded-none shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10"
-        variant={viewParam === "grid" ? "secondaryOutline" : "outline"}
+        variant={viewParam !== "list" ? "outline" : "secondaryOutline"}
         size="icon"
-        aria-label="List View"
+        aria-label="Grid view"
         onClick={() => setViewParam(null)}
       >
-        <ListIcon size={16} aria-hidden="true" />
+        <Grid2x2Icon size={16} aria-hidden="true" />
       </Button>
       <Button
         className="rounded-none shadow-none first:rounded-s-md last:rounded-e-md focus-visible:z-10"
-        variant={viewParam !== "grid" ? "secondaryOutline" : "outline"}
+        variant={viewParam === "list" ? "outline" : "secondaryOutline"}
         size="icon"
-        aria-label="Grid view"
-        onClick={() => setViewParam("grid")}
+        aria-label="List View"
+        onClick={() => setViewParam("list")}
       >
-        <Grid2x2Icon size={16} aria-hidden="true" />
+        <ListIcon size={16} aria-hidden="true" />
       </Button>
     </div>
   )

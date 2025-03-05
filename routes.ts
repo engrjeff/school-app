@@ -20,6 +20,9 @@ export const API_ROUTES = [
   "/api/subjects",
   "/api/teachers",
   "/api/students",
+  "/api/grade-components",
+  "/api/student-grades",
+  "/api/grade-summary",
 ]
 
 export const API_AUTH_PREFIX = "/api/auth"
@@ -53,6 +56,7 @@ export const TEACHER_ROUTES = [
   "/dashboard",
   "/my-students",
   "/classes",
+  "/grading",
   "/school-profile",
 ]
 

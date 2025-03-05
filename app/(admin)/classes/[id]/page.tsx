@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getSchoolClassById } from "@/features/school-class/queries"
 import { SchoolClassTable } from "@/features/school-class/school-class-table"
+import { ROLE } from "@prisma/client"
 import { SlashIcon } from "lucide-react"
 
 import {
@@ -12,8 +13,11 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+import { RoleAccess } from "@/components/role-access"
 
 interface PageProps {
   params: {
@@ -32,7 +36,7 @@ export const generateMetadata = async ({
   ].join("-")
 
   return {
-    title: pageTitle,
+    title: schoolClass ? pageTitle : "Class Not Found",
   }
 }
 
@@ -41,10 +45,7 @@ async function SchoolClassPage({ params }: PageProps) {
 
   if (!schoolClass) return notFound()
 
-  const pageTitle = [
-    `${schoolClass?.gradeYearLevel.displayName} ${schoolClass?.gradeYearLevel.level}`,
-    schoolClass?.section.name,
-  ].join("-")
+  const pageTitle = `${schoolClass?.gradeYearLevel.displayName} ${schoolClass?.gradeYearLevel.level}-${schoolClass?.section.name} ${schoolClass.subject.code}`
 
   return (
     <>
@@ -52,33 +53,8 @@ async function SchoolClassPage({ params }: PageProps) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbLink asChild>
-              <Link
-                href={`/school-years?program=${schoolClass.programOfferingId}`}
-                className="font-semibold"
-              >
-                {schoolClass.programOffering.code}
-              </Link>
-            </BreadcrumbLink>
-            <BreadcrumbSeparator>
-              <SlashIcon />
-            </BreadcrumbSeparator>
-            <BreadcrumbLink asChild>
-              <Link
-                href={`/school-years/${schoolClass.schoolYearId}?program=${schoolClass.programOfferingId}`}
-                className="font-semibold"
-              >
-                S.Y. {schoolClass.schoolYear.title}
-              </Link>
-            </BreadcrumbLink>
-            <BreadcrumbSeparator>
-              <SlashIcon />
-            </BreadcrumbSeparator>
-            <BreadcrumbLink asChild>
-              <Link
-                href={`/school-years/${schoolClass.schoolYearId}/semesters/${schoolClass.semesterId}`}
-                className="font-semibold"
-              >
-                {schoolClass.semester.title}
+              <Link href={`/classes`} className="font-semibold">
+                Classes
               </Link>
             </BreadcrumbLink>
             <BreadcrumbSeparator>
@@ -91,6 +67,28 @@ async function SchoolClassPage({ params }: PageProps) {
         </Breadcrumb>
       </AppHeader>
       <AppContent>
+        <RoleAccess
+          role={ROLE.TEACHER}
+          loadingUi={<Skeleton className="h-9 w-[372px]" />}
+        >
+          <Tabs defaultValue="details">
+            <TabsList>
+              <TabsTrigger value="details" asChild>
+                <Link href={`/classes/${schoolClass.id}`}>Class Details</Link>
+              </TabsTrigger>
+              <TabsTrigger value="grading">
+                <Link href={`/classes/${schoolClass.id}/grading`}>
+                  Grade Records
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger value="grade-summary">
+                <Link href={`/classes/${schoolClass.id}/grade-summary`}>
+                  Grade Summary
+                </Link>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </RoleAccess>
         <SchoolClassTable schoolClass={schoolClass} />
       </AppContent>
     </>

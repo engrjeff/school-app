@@ -4,7 +4,6 @@ import { format } from "date-fns"
 import { InboxIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Table,
   TableBody,
@@ -31,23 +30,20 @@ export function StudentsTable({
     <Table className="table-auto border-separate border-spacing-0 [&_tr:not(:last-child)_td]:border-b">
       <TableHeader>
         <TableRow className="hover:bg-transparent">
-          <TableHead>
-            <Checkbox />
-          </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Name" sortValue="lastName" />
           </TableHead>
-          <TableHead className="text-right">
+          <TableHead className="px-1 text-right">
             <SortLink title="Student ID (LRN)" sortValue="studentId" />
           </TableHead>
-          <TableHead className="text-center">
+          <TableHead className="px-1 text-center">
             <SortLink title="Gender" sortValue="gender" />
           </TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Birthdate" sortValue="birthdate" />
           </TableHead>
           <TableHead>Course</TableHead>
-          <TableHead>
+          <TableHead className="px-1">
             <SortLink title="Status" sortValue="status" />
           </TableHead>
           <TableHead className="text-center">Actions</TableHead>
@@ -57,9 +53,6 @@ export function StudentsTable({
         {students?.length ? (
           students.map((student) => (
             <TableRow key={student.id} className="hover:bg-accent/50">
-              <TableCell>
-                <Checkbox />
-              </TableCell>
               <TableCell>
                 <div>
                   <Link

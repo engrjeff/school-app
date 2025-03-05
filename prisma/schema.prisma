@@ -424,6 +424,12 @@ model Subject {
   @@index([courseId])
 }
 
+enum ClassStatus {
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
 model Class {
   id String @id @default(cuid())
 
@@ -458,6 +464,8 @@ model Class {
   studentFinalGrades StudentFinalGrade[]
   gradingPeriods     GradingPeriod[]
 
+  status ClassStatus @default(ONGOING)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -480,6 +488,7 @@ enum GradeRemarks {
 model GradeComponent {
   id String @id @default(cuid())
 
+  label      String
   title      String // e.g. Written Works, Performance Tasks
   percentage Float // e.g 0.2 for 20%, max of 1.0
 
@@ -489,24 +498,25 @@ model GradeComponent {
   parts  GradeComponentPart[]
   scores GradeComponentPartScore[]
 
-  gradingPeriod   GradingPeriod @relation(fields: [gradingPeriodId], references: [id])
-  gradingPeriodId String
+  gradingPeriods GradingPeriod[] // this GradeComponent is used in these GradingPeriod
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([teacherId])
-  @@index([gradingPeriodId])
 }
 
 model GradeComponentPart {
   id String @id @default(cuid())
 
+  order                Int
   title                String?
   highestPossibleScore Float
 
-  gradeComponent GradeComponent[]
-  scores         GradeComponentPartScore[]
+  gradeComponent   GradeComponent @relation(fields: [gradeComponentId], references: [id], onDelete: Cascade)
+  gradeComponentId String
+
+  scores GradeComponentPartScore[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -105,12 +105,12 @@ export function CourseDetail({
 
 function SubjectItem({ subject }: { subject: Subject }) {
   return (
-    <Card className="relative">
-      <CardHeader>
+    <Card className="bg-accent/40 group-hover:border-primary relative rounded-md">
+      <CardHeader className="p-4">
         <CardTitle className="line-clamp-1">{subject.title}</CardTitle>
         <CardDescription>Code: {subject.code}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <p className="text-muted-foreground text-xs">
           {subject.code === "--" || !subject.code
             ? "No Description"
