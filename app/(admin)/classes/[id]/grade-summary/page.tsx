@@ -102,11 +102,11 @@ async function SchoolClassGradeSummaryPage({ params }: PageProps) {
           </div>
         </RoleAccess>
 
-        <div className="relative overflow-hidden">
+        <div className="relative">
           {schoolClass.gradingPeriods.every(
             (gp) => gp.gradeComponents.length === 0
           ) ? (
-            <div className="bg-background/70 absolute inset-0 z-10 flex size-full flex-col items-center space-y-2 py-20 backdrop-blur-sm">
+            <div className="bg-background/70 absolute inset-0 z-10 flex flex-col items-center space-y-2 py-20 backdrop-blur-sm">
               <p className="text-lg font-semibold">
                 No grading components found.
               </p>
@@ -117,63 +117,65 @@ async function SchoolClassGradeSummaryPage({ params }: PageProps) {
               <GradeComponentPicker />
             </div>
           ) : null}
-          <div className="w-full max-w-full">
-            <Table className="table-auto">
-              <TableHeader>
-                <TableRow>
-                  <TableHeadPlain scope="col">
-                    <div className="flex items-center justify-between text-xs font-normal">
-                      <p className="text-muted-foreground uppercase">
-                        S.Y. {schoolClass.schoolYear.title}
-                      </p>
-                      <p className="font-semibold uppercase">
-                        {schoolClass.semester.title}
-                      </p>
-                    </div>
-                  </TableHeadPlain>
-                  <TableHeadPlain scope="col">
-                    <div className="flex items-center justify-between text-xs font-normal">
-                      <p className="text-muted-foreground uppercase">
-                        Grade & Section:
-                      </p>
-                      <p className="font-semibold uppercase">
-                        {schoolClass.gradeYearLevel.displayName}{" "}
-                        {schoolClass.gradeYearLevel.level}-
-                        {schoolClass.section.name}
-                      </p>
-                    </div>
-                  </TableHeadPlain>
-                  <TableHeadPlain scope="col">
-                    <div className="flex items-center justify-between text-xs font-normal">
-                      <p className="text-muted-foreground uppercase">
-                        Teacher:
-                      </p>
-                      <p className="font-semibold uppercase">
-                        {schoolClass.teacher.lastName},{" "}
-                        {schoolClass.teacher.firstName}{" "}
-                        {schoolClass.teacher.middleName}{" "}
-                        {schoolClass.teacher.suffix}
-                      </p>
-                    </div>
-                  </TableHeadPlain>
-                  <TableHeadPlain scope="col">
-                    <div className="flex items-center justify-between text-xs font-normal">
-                      <p className="text-muted-foreground uppercase">
-                        Subject:
-                      </p>
-                      <p className="font-semibold uppercase">
-                        {!schoolClass.subject.code ||
-                        schoolClass.subject.code === "--"
-                          ? schoolClass.subject.title
-                          : schoolClass.subject.code}
-                      </p>
-                    </div>
-                  </TableHeadPlain>
-                </TableRow>
-              </TableHeader>
-            </Table>
+          <div className="relative overflow-hidden">
+            <div className="w-full max-w-full">
+              <Table className="table-auto">
+                <TableHeader>
+                  <TableRow>
+                    <TableHeadPlain scope="col">
+                      <div className="flex items-center justify-between text-xs font-normal">
+                        <p className="text-muted-foreground uppercase">
+                          S.Y. {schoolClass.schoolYear.title}
+                        </p>
+                        <p className="font-semibold uppercase">
+                          {schoolClass.semester.title}
+                        </p>
+                      </div>
+                    </TableHeadPlain>
+                    <TableHeadPlain scope="col">
+                      <div className="flex items-center justify-between text-xs font-normal">
+                        <p className="text-muted-foreground uppercase">
+                          Grade & Section:
+                        </p>
+                        <p className="font-semibold uppercase">
+                          {schoolClass.gradeYearLevel.displayName}{" "}
+                          {schoolClass.gradeYearLevel.level}-
+                          {schoolClass.section.name}
+                        </p>
+                      </div>
+                    </TableHeadPlain>
+                    <TableHeadPlain scope="col">
+                      <div className="flex items-center justify-between text-xs font-normal">
+                        <p className="text-muted-foreground uppercase">
+                          Teacher:
+                        </p>
+                        <p className="font-semibold uppercase">
+                          {schoolClass.teacher.lastName},{" "}
+                          {schoolClass.teacher.firstName}{" "}
+                          {schoolClass.teacher.middleName}{" "}
+                          {schoolClass.teacher.suffix}
+                        </p>
+                      </div>
+                    </TableHeadPlain>
+                    <TableHeadPlain scope="col">
+                      <div className="flex items-center justify-between text-xs font-normal">
+                        <p className="text-muted-foreground uppercase">
+                          Subject:
+                        </p>
+                        <p className="font-semibold uppercase">
+                          {!schoolClass.subject.code ||
+                          schoolClass.subject.code === "--"
+                            ? schoolClass.subject.title
+                            : schoolClass.subject.code}
+                        </p>
+                      </div>
+                    </TableHeadPlain>
+                  </TableRow>
+                </TableHeader>
+              </Table>
+            </div>
+            <StudentGradeSummaryTable />
           </div>
-          <StudentGradeSummaryTable />
         </div>
       </AppContent>
     </>
