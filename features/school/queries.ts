@@ -1,11 +1,11 @@
 "use server"
 
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 
 import prisma from "@/lib/db"
 
 export async function checkIfUserHasSchool() {
-  const session = await auth()
+  const session = await getSession()
 
   if (session?.user.schoolId) return true
 
@@ -23,7 +23,7 @@ export async function checkIfUserHasSchool() {
 }
 
 export async function getSchoolOfUser() {
-  const session = await auth()
+  const session = await getSession()
 
   const userInDb = await prisma.user.findUnique({
     where: { id: session?.user.id },

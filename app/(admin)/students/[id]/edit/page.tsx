@@ -1,9 +1,10 @@
 import { type Metadata } from "next"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
+import { getSession } from "@/auth"
 import { getStudentById } from "@/features/students/queries"
 import { StudentEditForm } from "@/features/students/student-edit-form"
-import { Student } from "@prisma/client"
+import { ROLE, Student } from "@prisma/client"
 import { SlashIcon } from "lucide-react"
 
 import {
@@ -42,6 +43,10 @@ export const generateMetadata = async ({
 }
 
 async function StudentEditPage({ params }: PageProps) {
+  const session = await getSession()
+
+  if (session?.user.role !== ROLE.SCHOOLADMIN) return redirect("/students")
+
   const { student } = await getStudentById(params.id)
 
   if (!student) return notFound()

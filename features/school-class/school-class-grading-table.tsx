@@ -9,6 +9,7 @@ import {
   GradeComponentPart,
   GradeYearLevel,
   GradingPeriod,
+  ROLE,
   SchoolYear,
   Section,
   Semester,
@@ -25,6 +26,7 @@ import {
   TableHeadPlain,
   TableRow,
 } from "@/components/ui/table"
+import { RoleAccess } from "@/components/role-access"
 
 import { StudentGradeRows } from "../grading/student-grade-rows"
 
@@ -68,9 +70,11 @@ export function SchoolClassGradingTable({
           <p className="text-lg font-semibold">No grading components found.</p>
           <p className="text-muted-foreground">
             It looks like you have not defined the grading components for this
-            class yet. Defined them first.
+            class yet. Define them first.
           </p>
-          <GradeComponentPicker />
+          <RoleAccess role={ROLE.TEACHER}>
+            <GradeComponentPicker />
+          </RoleAccess>
         </div>
       ) : null}
       <div className="w-full max-w-full">
@@ -141,7 +145,12 @@ export function SchoolClassGradingTable({
                 {gc.title} ({gc.percentage * 100}%)
               </TableHeadPlain>
             ))}
-            <TableHeadPlain className="whitespace-nowrap">Grade</TableHeadPlain>
+            <TableHeadPlain rowSpan={3} className="whitespace-nowrap">
+              Grade
+            </TableHeadPlain>
+            <TableHeadPlain rowSpan={3} className="whitespace-nowrap">
+              Rank
+            </TableHeadPlain>
           </TableRow>
           {/* subcomponents */}
           <TableRow>
@@ -176,10 +185,14 @@ export function SchoolClassGradingTable({
                 </TableHeadPlain>
               </Fragment>
             ))}
-            <TableHeadPlain
+            {/* <TableHeadPlain
               className="h-9 p-1 text-center text-xs"
               title="Grade"
             ></TableHeadPlain>
+            <TableHeadPlain
+              className="h-9 p-1 text-center text-xs"
+              title="Rank"
+            ></TableHeadPlain> */}
           </TableRow>
           {/* Highest possible scores */}
           <TableRow>
@@ -219,10 +232,14 @@ export function SchoolClassGradingTable({
                 </TableHeadPlain>
               </Fragment>
             ))}
-            <TableHeadPlain
+            {/* <TableHeadPlain
               className="size-10 p-1 text-center text-xs"
               title="Grade"
             ></TableHeadPlain>
+            <TableHeadPlain
+              className="size-10 p-1 text-center text-xs"
+              title="Rank"
+            ></TableHeadPlain> */}
           </TableRow>
         </TableHeader>
 

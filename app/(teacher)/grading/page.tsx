@@ -18,7 +18,7 @@ async function GradingDefinitionsPage() {
     <>
       <AppHeader pageTitle="Grading Settings" />
       <AppContent>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="font-medium">
               View, define, and manage grade components.
@@ -39,7 +39,7 @@ async function GradingDefinitionsPage() {
             <GradeComponentFormDialog />
           </div>
         ) : (
-          <ul className="grid grid-cols-4 gap-6">
+          <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {gradingComponents.map((gc) => (
               <li key={gc.id}>
                 <GradeComponentCard gradeComponent={gc} />

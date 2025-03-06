@@ -1,7 +1,9 @@
 import { ROLE } from "@prisma/client"
 
+export const PUBLIC_ROUTES = ["/"]
+
 export const AUTH_ROUTES = [
-  "/",
+  "/entry",
   "/sign-in",
   "/sign-up",
   "/sign-up/teacher",
@@ -23,6 +25,7 @@ export const API_ROUTES = [
   "/api/grade-components",
   "/api/student-grades",
   "/api/grade-summary",
+  "/api/dashboard/courses-by-program",
 ]
 
 export const API_AUTH_PREFIX = "/api/auth"
@@ -54,7 +57,7 @@ export const SCHOOL_ADMIN_ROUTES = [
 
 export const TEACHER_ROUTES = [
   "/dashboard",
-  "/my-students",
+  "/students",
   "/classes",
   "/grading",
   "/school-profile",

@@ -112,9 +112,11 @@ async function SchoolClassGradeSummaryPage({ params }: PageProps) {
               </p>
               <p className="text-muted-foreground">
                 It looks like you have not defined the grading components for
-                this class yet. Defined them first.
+                this class yet. Define them first.
               </p>
-              <GradeComponentPicker />
+              <RoleAccess role={ROLE.TEACHER}>
+                <GradeComponentPicker />
+              </RoleAccess>
             </div>
           ) : null}
           <div className="relative overflow-hidden">

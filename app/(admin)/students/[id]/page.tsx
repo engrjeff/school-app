@@ -3,7 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getStudentById } from "@/features/students/queries"
 import { StudentClassesTable } from "@/features/students/student-classes-table"
-import { Student } from "@prisma/client"
+import { ROLE, Student } from "@prisma/client"
 import { format } from "date-fns"
 import {
   ArrowLeftIcon,
@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
+import { RoleAccess } from "@/components/role-access"
 
 interface PageProps {
   params: { id: string }
@@ -112,17 +113,19 @@ async function StudentDetalPage({ params }: PageProps) {
                 <span className="font-mono">{student.studentId}</span>
               </p>
             </div>
-            <Button
-              asChild
-              type="button"
-              size="iconXXs"
-              variant="secondaryOutline"
-              aria-label="Edit details"
-            >
-              <Link href={`/students/${student.id}/edit`}>
-                <PencilIcon />
-              </Link>
-            </Button>
+            <RoleAccess role={ROLE.SCHOOLADMIN}>
+              <Button
+                asChild
+                type="button"
+                size="iconXXs"
+                variant="secondaryOutline"
+                aria-label="Edit details"
+              >
+                <Link href={`/students/${student.id}/edit`}>
+                  <PencilIcon />
+                </Link>
+              </Button>
+            </RoleAccess>
           </div>
           <div className="space-y-2">
             <h3 className="text-sm font-semibold">Personal Info</h3>

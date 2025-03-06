@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
 
     const gradeLevels = await prisma.gradeYearLevel.findMany({
       where: { courseId },
+      include: { sections: { orderBy: { order: "asc" } } },
       orderBy: { createdAt: "asc" },
     })
 

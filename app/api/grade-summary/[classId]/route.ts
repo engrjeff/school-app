@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 
 import prisma from "@/lib/db"
 
@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: { classId: string } }
 ) {
   try {
-    const session = await auth()
+    const session = await getSession()
 
     if (!session?.user?.schoolId) return NextResponse.json(undefined)
 

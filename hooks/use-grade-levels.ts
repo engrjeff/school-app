@@ -1,12 +1,14 @@
 "use client"
 
-import { GradeYearLevel } from "@prisma/client"
+import { GradeYearLevel, Section } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
 
 import { apiClient } from "@/lib/api-client"
 
 async function getGradeLevels(courseId: string) {
-  const response = await apiClient.get<GradeYearLevel[]>("/grade-year-levels", {
+  const response = await apiClient.get<
+    Array<GradeYearLevel & { sections: Section[] }>
+  >("/grade-year-levels", {
     params: { courseId },
   })
   return response.data

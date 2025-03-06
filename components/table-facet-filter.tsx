@@ -95,11 +95,11 @@ function FilterComponent({
     >
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="secondaryOutline"
           size="sm"
           className={cn(
-            "h-10 justify-start rounded-lg px-2 disabled:cursor-not-allowed md:h-8",
-            selected.length === 0 ? "border-dashed" : ""
+            "dark:bg-secondary/40 hover:bg-secondary dark:hover:bg-secondary h-10 justify-start rounded-lg bg-transparent px-2 disabled:cursor-not-allowed md:h-8"
+            // selected.length === 0 ? "border-dashed" : ""
           )}
           type="button"
           disabled={options.length === 0}
@@ -128,38 +128,40 @@ function FilterComponent({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-popover-trigger-width min-w-[220px] rounded-lg p-2.5"
+        className="w-popover-trigger-width min-w-[220px] rounded-lg"
       >
-        <div className="mb-3 text-sm font-medium">Filter by {title}</div>
-        {options.map((option) => (
-          <div
-            key={title + "-option-" + option.value}
-            className="hover:bg-muted -ml-1 mb-0.5 flex items-center space-x-2 rounded-md px-1"
-          >
-            <Checkbox
-              id={option.value}
-              checked={selected.includes(option.value)}
-              onCheckedChange={(checked) => {
-                if (singleSelection) {
-                  setSelected([option.value])
-                  return
-                }
-
-                setSelected((old) =>
-                  checked
-                    ? [...old, option.value]
-                    : old.filter((i) => i !== option.value)
-                )
-              }}
-            />
-            <label
-              htmlFor={option.value}
-              className="flex-1 py-1.5 text-sm font-medium capitalize leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        <p className="mb-3 text-sm font-medium ">Filter by {title}</p>
+        <div className="max-h-[300px] overflow-y-auto px-1">
+          {options.map((option) => (
+            <div
+              key={title + "-option-" + option.value}
+              className="hover:bg-muted -ml-1 mb-0.5 flex items-center space-x-2 rounded-md px-1"
             >
-              {option.label}
-            </label>
-          </div>
-        ))}
+              <Checkbox
+                id={option.value}
+                checked={selected.includes(option.value)}
+                onCheckedChange={(checked) => {
+                  if (singleSelection) {
+                    setSelected([option.value])
+                    return
+                  }
+
+                  setSelected((old) =>
+                    checked
+                      ? [...old, option.value]
+                      : old.filter((i) => i !== option.value)
+                  )
+                }}
+              />
+              <label
+                htmlFor={option.value}
+                className="flex-1 py-1.5 text-sm font-medium capitalize leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {option.label}
+              </label>
+            </div>
+          ))}
+        </div>
 
         <div className="mt-4 space-y-2">
           <Button

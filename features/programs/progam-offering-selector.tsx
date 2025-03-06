@@ -1,6 +1,7 @@
 "use client"
 
-import { parseAsString, useQueryState } from "nuqs"
+import { useEffect } from "react"
+import { parseAsString, useQueryState, useQueryStates } from "nuqs"
 
 import { useProgramOfferings } from "@/hooks/use-program-offerings"
 import {
@@ -12,7 +13,11 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export function ProgramOfferingSelector() {
+export function ProgramOfferingSelector({
+  hasInitial,
+}: {
+  hasInitial?: boolean
+}) {
   const programs = useProgramOfferings()
 
   const [programParam, setProgramParam] = useQueryState(
@@ -20,12 +25,32 @@ export function ProgramOfferingSelector() {
     parseAsString.withOptions({ shallow: false })
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setOthers] = useQueryStates({
+    schoolYear: parseAsString,
+    semester: parseAsString,
+  })
+
+  useEffect(() => {
+    if (programParam) return
+
+    if (!hasInitial) return
+
+    if (!programs.data?.length) return
+
+    setProgramParam(programs.data[0]?.id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasInitial, programParam, programs.data])
+
   if (programs.isLoading) return <Skeleton className="h-9 w-36 px-4 py-2" />
 
   return (
     <Select
       defaultValue={programParam ?? ""}
-      onValueChange={(value) => setProgramParam(value)}
+      onValueChange={(value) => {
+        setProgramParam(value)
+        setOthers(null)
+      }}
     >
       <SelectTrigger className="gap-4 border-none font-semibold">
         <SelectValue placeholder="Programs" />

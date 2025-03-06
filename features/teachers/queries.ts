@@ -1,6 +1,6 @@
 "use server"
 
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 import { Prisma } from "@prisma/client"
 
 import prisma from "@/lib/db"
@@ -17,7 +17,7 @@ export type GetTeachersArgs = {
 }
 
 export async function getTeachers(args: GetTeachersArgs) {
-  const session = await auth()
+  const session = await getSession()
 
   if (!session?.user.schoolId) return { teachers: [] }
 
@@ -63,19 +63,32 @@ export async function getTeachers(args: GetTeachersArgs) {
       : undefined,
   }
 
-  const totalFiltered = await prisma.teacher.count({
+  const totalFilteredPromise = prisma.teacher.count({
     where: whereInput,
   })
 
-  const teachers = await prisma.teacher.findMany({
+  const teachersPromise = prisma.teacher.findMany({
     where: whereInput,
-    include: { programs: true, faculties: true },
+    include: {
+      programs: true,
+      faculties: true,
+      classes: {
+        include: {
+          subject: true,
+        },
+      },
+    },
     orderBy: {
       [sortKey]: sortOrder,
     },
     take: args?.pageSize ?? DEFAULT_PAGE_SIZE,
     skip: getSkip({ limit: DEFAULT_PAGE_SIZE, page: args?.page }),
   })
+
+  const [totalFiltered, teachers] = await Promise.all([
+    totalFilteredPromise,
+    teachersPromise,
+  ])
 
   const pageInfo = {
     total: totalFiltered,

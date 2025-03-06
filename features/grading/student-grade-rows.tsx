@@ -36,7 +36,7 @@ export function StudentGradeRows({
     gradingPeriod.gradeComponents.reduce(
       (t, i) => (t += i.parts.length + 2),
       0
-    ) + 3
+    ) + 4
 
   if (studentGrades.isLoading)
     return (
@@ -49,6 +49,11 @@ export function StudentGradeRows({
         </TableCell>
       </TableRow>
     )
+
+  const rankedGrade = getRowGradeAndRank(
+    studentGrades.data ?? [],
+    gradingPeriod.gradeComponents
+  )
 
   return (
     <>
@@ -114,7 +119,17 @@ export function StudentGradeRows({
             className="size-9 border-r p-1 text-center text-xs font-semibold text-emerald-500 first:border-l last:border-r"
             title="Grade"
           >
-            {getRowGrade(sg, gradingPeriod.gradeComponents)}
+            {rankedGrade.get(sg.studentId)?.grade
+              ? rankedGrade.get(sg.studentId)?.grade.toFixed(1)
+              : ""}
+          </TableCell>
+          <TableCell
+            className="size-9 border-r p-1 text-center text-xs font-semibold text-emerald-500 first:border-l last:border-r"
+            title="Rank"
+          >
+            {rankedGrade.get(sg.studentId)?.grade
+              ? rankedGrade.get(sg.studentId)?.rank
+              : ""}
           </TableCell>
         </TableRow>
       ))}
@@ -175,24 +190,79 @@ function getColumnsToAdd(
   )
 }
 
-function getRowGrade(
-  studentGrade: StudentGrade & { scores: GradeComponentPartScore[] },
+// function getRowGrade(
+//   studentGrade: StudentGrade & { scores: GradeComponentPartScore[] },
+//   gradeComponents: Array<GradeComponent & { parts: GradeComponentPart[] }>
+// ) {
+//   const grade = gradeComponents.reduce((grade, gc) => {
+//     const maxTotal = gc.parts.reduce(
+//       (sum, part) => (sum += part.highestPossibleScore),
+//       0
+//     )
+
+//     const scoreTotal = studentGrade.scores
+//       .filter((s) => s.parentGradeComponentId === gc.id)
+//       .reduce((sum, score) => (sum += score.score), 0)
+
+//     const ws = (scoreTotal / maxTotal) * gc.percentage * 100
+
+//     return grade + ws
+//   }, 0)
+
+//   return grade === 0 ? "" : grade.toFixed(1)
+// }
+
+function getRowGradeAndRank(
+  studentGrades: Array<StudentGrade & { scores: GradeComponentPartScore[] }>,
   gradeComponents: Array<GradeComponent & { parts: GradeComponentPart[] }>
 ) {
-  const grade = gradeComponents.reduce((grade, gc) => {
-    const maxTotal = gc.parts.reduce(
-      (sum, part) => (sum += part.highestPossibleScore),
-      0
-    )
+  const gradeRankMap = new Map<string, { grade: number; rank: number }>()
 
-    const scoreTotal = studentGrade.scores
-      .filter((s) => s.parentGradeComponentId === gc.id)
-      .reduce((sum, score) => (sum += score.score), 0)
+  const studentWithGrades = studentGrades.map((sg, index) => {
+    return {
+      ...getGrade(sg),
+      rank: index,
+    }
+  })
 
-    const ws = (scoreTotal / maxTotal) * gc.percentage * 100
+  studentWithGrades.sort((a, b) => b.grade - a.grade)
 
-    return grade + ws
-  }, 0)
+  let currentRank = 1
+  for (let i = 0; i < studentWithGrades.length; i++) {
+    if (
+      i > 0 &&
+      studentWithGrades[i].grade !== studentWithGrades[i - 1].grade
+    ) {
+      // If the current grade is different from the previous one, update the rank
+      currentRank = i
+    }
+    studentWithGrades[i].rank = currentRank
+  }
 
-  return grade === 0 ? "" : grade.toFixed(1)
+  studentWithGrades.forEach((sgg) => {
+    gradeRankMap.set(sgg.studentId, sgg)
+  })
+
+  function getGrade(
+    studentGrade: StudentGrade & { scores: GradeComponentPartScore[] }
+  ) {
+    const grade = gradeComponents.reduce((grade, gc) => {
+      const maxTotal = gc.parts.reduce(
+        (sum, part) => (sum += part.highestPossibleScore),
+        0
+      )
+
+      const scoreTotal = studentGrade.scores
+        .filter((s) => s.parentGradeComponentId === gc.id)
+        .reduce((sum, score) => (sum += score.score), 0)
+
+      const ws = (scoreTotal / maxTotal) * gc.percentage * 100
+
+      return grade + ws
+    }, 0)
+
+    return { studentId: studentGrade.studentId, grade }
+  }
+
+  return gradeRankMap
 }

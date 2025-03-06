@@ -1,11 +1,11 @@
 "use server"
 
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 
 import prisma from "@/lib/db"
 
 export async function getGradingComponents() {
-  const session = await auth()
+  const session = await getSession()
 
   const gradingComponents = await prisma.gradeComponent.findMany({
     where: {

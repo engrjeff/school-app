@@ -1,6 +1,7 @@
 "use server"
 
-import { auth } from "@/auth"
+import { cache } from "react"
+import { getSession } from "@/auth"
 import {
   Class,
   Course,
@@ -41,6 +42,8 @@ export type GetClassesArgs = {
   program?: string
   schoolYear?: string
   semester?: string
+  gradeYearLevel?: string
+  section?: string
   teacher?: string
   view?: "grid" | "list"
 }
@@ -99,8 +102,8 @@ function getSort(sort?: string, order?: "asc" | "desc") {
   }
 }
 
-export async function getClasses(args: GetClassesArgs) {
-  const session = await auth()
+async function getClassesCall(args: GetClassesArgs) {
+  const session = await getSession()
 
   if (!session?.user.schoolId) return { classes: [] as DetailedClass[] }
 
@@ -111,6 +114,8 @@ export async function getClasses(args: GetClassesArgs) {
   const courseFilter = args?.course ?? undefined
   const schoolYearFilter = args?.schoolYear ?? undefined
   const semesterFilter = args?.semester ?? undefined
+  const gradeYearLevelFilter = args?.gradeYearLevel ?? undefined
+  const sectionFilter = args?.section ?? undefined
 
   let teacherFilter = args.teacher ? args.teacher : undefined
 
@@ -130,13 +135,17 @@ export async function getClasses(args: GetClassesArgs) {
     schoolYearId: schoolYearFilter,
     semesterId: semesterFilter,
     teacherId: teacherFilter,
+    gradeYearLevelId: gradeYearLevelFilter,
+    sectionId: sectionFilter,
   }
 
-  const totalFiltered = await prisma.class.count({
+  const totalFilteredPromise = prisma.class.count({
     where: whereInput,
   })
 
-  const classes = (await prisma.class.findMany({
+  const pageSize = args.view === "list" ? DEFAULT_PAGE_SIZE : 16
+
+  const classesPromise = prisma.class.findMany({
     where: whereInput,
     include: {
       gradeYearLevel: true,
@@ -151,25 +160,32 @@ export async function getClasses(args: GetClassesArgs) {
     },
     // @ts-expect-error nah
     orderBy: getSort(sortKey, sortOrder),
-    take: args?.pageSize ?? DEFAULT_PAGE_SIZE,
-    skip: getSkip({ limit: DEFAULT_PAGE_SIZE, page: args?.page }),
-  })) as DetailedClass[]
+    take: args?.pageSize ?? pageSize,
+    skip: getSkip({ limit: pageSize, page: args?.page }),
+  })
+
+  const [totalFiltered, classes] = await Promise.all([
+    totalFilteredPromise,
+    classesPromise,
+  ])
 
   const pageInfo = {
     total: totalFiltered,
     page: !isNaN(args.page!) ? Number(args?.page) : DEFAULT_PAGE,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize,
     itemCount: classes.length,
-    totalPages: Math.ceil(totalFiltered / DEFAULT_PAGE_SIZE),
+    totalPages: Math.ceil(totalFiltered / pageSize),
   }
 
   return {
-    classes,
+    classes: classes as DetailedClass[],
     pageInfo,
   }
 }
 
-export async function getSchoolClassById(classId: string) {
+export const getClasses = cache(getClassesCall)
+
+async function getSchoolClassByIdCall(classId: string) {
   const schoolClass = await prisma.class.findUnique({
     where: {
       id: classId,
@@ -205,3 +221,5 @@ export async function getSchoolClassById(classId: string) {
 
   return schoolClass
 }
+
+export const getSchoolClassById = cache(getSchoolClassByIdCall)

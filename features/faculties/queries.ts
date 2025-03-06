@@ -1,7 +1,7 @@
 "use server"
 
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 import { Prisma } from "@prisma/client"
 
 import prisma from "@/lib/db"
@@ -17,7 +17,7 @@ export type GetFacultiesArgs = {
 }
 
 export async function getFaculties(args: GetFacultiesArgs) {
-  const session = await auth()
+  const session = await getSession()
 
   if (!session?.user.schoolId) return { faculties: [] }
 

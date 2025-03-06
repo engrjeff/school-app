@@ -13,19 +13,29 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams
     const programId = searchParams.get("programId")
+    const schoolYearId = searchParams.get("schoolYearId")
 
-    const schoolYears = await prisma.schoolYear.findMany({
+    const courses = await prisma.course.findMany({
       where: {
         schoolId: session?.user.schoolId,
         programOfferingId: programId ?? undefined,
       },
-      include: { semesters: true },
+      include: {
+        gradeYearLevels: {
+          include: {
+            classes: {
+              where: { schoolYearId: schoolYearId ?? undefined },
+              include: { students: true },
+            },
+          },
+        },
+      },
       orderBy: { createdAt: "asc" },
     })
 
-    return NextResponse.json(schoolYears)
+    return NextResponse.json(courses)
   } catch (error) {
-    console.log("Get School Years Error: ", error)
+    console.log("Dashboard: Get Courses of Program Error: ", error)
 
     return NextResponse.json([])
   }

@@ -40,7 +40,7 @@ export function StudentRowActions({ student }: { student: Student }) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`#`}>
+            <Link href={`/students/${student.id}/classes`}>
               <GridIcon className="size-4" /> Enrollments
             </Link>
           </DropdownMenuItem>
@@ -50,7 +50,7 @@ export function StudentRowActions({ student }: { student: Student }) {
               <LibraryIcon className="size-4" /> View Course
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
+          <DropdownMenuItem asChild disabled>
             <Link href={`#`}>
               <SigmaIcon className="size-4" /> View Grades
             </Link>

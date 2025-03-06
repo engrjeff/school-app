@@ -1,6 +1,6 @@
 "use server"
 
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 
 import prisma from "@/lib/db"
 
@@ -14,7 +14,7 @@ export interface GetSectionsArgs {
  * @description returns sections grouped by grade/year level
  */
 export async function getSections(args: GetSectionsArgs) {
-  const session = await auth()
+  const session = await getSession()
 
   if (!session?.user.schoolId) return { sections: null }
 

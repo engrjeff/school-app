@@ -20,7 +20,7 @@ interface Props {
 export function SchoolClassCard({ schoolClass: c }: Props) {
   return (
     <Card
-      className="bg-accent/40 hover:border-primary relative"
+      className="bg-accent/40 hover:border-primary relative rounded-lg"
       title="View class record"
     >
       <CardHeader>

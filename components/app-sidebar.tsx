@@ -135,7 +135,7 @@ const teacherMenu = {
       },
       {
         name: "My Students",
-        url: "/my-students",
+        url: "/students",
         icon: UsersIcon,
       },
       {

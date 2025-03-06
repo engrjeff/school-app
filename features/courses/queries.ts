@@ -1,6 +1,6 @@
 "use server"
 
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 import { Prisma } from "@prisma/client"
 
 import prisma from "@/lib/db"
@@ -32,7 +32,7 @@ export type GetCoursesArgs = {
 }
 
 export async function getCoursesOfCurrentSchool(args: GetCoursesArgs) {
-  const session = await auth()
+  const session = await getSession()
 
   if (!session?.user.schoolId) return { courses: [] }
 

@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 import { getSchoolOfUser } from "@/features/school/queries"
 import { SchoolProfileForm } from "@/features/school/school-profile-form"
 
@@ -16,7 +16,7 @@ async function SchoolProfilePage() {
 
   if (!school) return notFound()
 
-  const session = await auth()
+  const session = await getSession()
 
   return (
     <>

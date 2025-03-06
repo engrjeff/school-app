@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
+import { getSession } from "@/auth"
 import { getSchoolOfUser } from "@/features/school/queries"
 import { SCHOOL_SETUP_REDIRECT } from "@/routes"
 
@@ -10,7 +10,7 @@ export async function AppSidebarServer() {
 
   if (!school) redirect(SCHOOL_SETUP_REDIRECT)
 
-  const session = await auth()
+  const session = await getSession()
 
   return <AppSidebar session={session} school={school} />
 }

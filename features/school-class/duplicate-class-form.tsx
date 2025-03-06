@@ -2,7 +2,14 @@
 
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ProgramOffering, SchoolYear, Semester } from "@prisma/client"
+import {
+  Class,
+  GradingPeriod,
+  ProgramOffering,
+  SchoolYear,
+  Semester,
+  Student,
+} from "@prisma/client"
 import { ArrowLeft, CircleAlertIcon, PlusIcon, TrashIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import {
@@ -44,52 +51,34 @@ import { createSchoolClass } from "./actions"
 import { SchoolClassInputs, schoolClassSchema } from "./schema"
 import { StudentsPicker } from "./students-picker"
 
-const gradingPeriodsMap = {
-  JHS: [
-    {
-      title: "Q1",
-    },
-    {
-      title: "Q2",
-    },
-    {
-      title: "Q3",
-    },
-    {
-      title: "Q4",
-    },
-  ],
-  SHS: [{ title: "1st Grading" }, { title: "2nd Grading" }],
-}
-
-const collegGradingPeriods = [
-  { title: "Prelim" },
-  { title: "Midterm" },
-  { title: "Finals" },
-]
-
-export function SchoolClassForm({
-  schoolYear,
-  semesterId,
+export function DuplicateSchoolClassForm({
+  schoolClass,
 }: {
-  schoolYear: SchoolYear & {
+  schoolClass: Class & {
+    schoolYear: SchoolYear
+    semester: Semester
     programOffering: ProgramOffering
-    semesters: Semester[]
+    students: Student[]
+    gradingPeriods: GradingPeriod[]
   }
-  semesterId: string
 }) {
+  // subject must be different
   const form = useForm<SchoolClassInputs>({
     resolver: zodResolver(schoolClassSchema),
     mode: "onChange",
     defaultValues: {
-      programOfferingId: schoolYear.programOfferingId,
-      schoolYearId: schoolYear.id,
-      semesterId: semesterId,
-      studentIds: [],
-      gradingPeriods:
-        gradingPeriodsMap[
-          schoolYear.programOffering.code as keyof typeof gradingPeriodsMap
-        ] ?? collegGradingPeriods,
+      programOfferingId: schoolClass.programOfferingId,
+      schoolYearId: schoolClass.schoolYearId,
+      semesterId: schoolClass.semesterId,
+      sectionId: schoolClass.sectionId,
+      courseId: schoolClass.courseId,
+      gradeYearLevelId: schoolClass.gradeYearLevelId,
+      teacherId: schoolClass.teacherId,
+      studentIds: schoolClass.students.map((s) => ({ studentId: s.id })),
+      gradingPeriods: schoolClass.gradingPeriods.map((g) => ({
+        title: g.title,
+        order: g.order,
+      })),
     },
   })
 
@@ -138,7 +127,7 @@ export function SchoolClassForm({
 
       form.reset()
 
-      window.location.href = `/school-years/${schoolYear.id}/semesters/${result.data.schoolClass.semesterId}`
+      window.location.href = `/classes`
     }
   }
 
@@ -153,31 +142,21 @@ export function SchoolClassForm({
             aria-label="go back"
             asChild
           >
-            <Link
-              href={{
-                pathname: `/school-years/${schoolYear.id}`,
-                query: { program: schoolYear.programOfferingId },
-              }}
-            >
+            <Link href="/classes">
               <ArrowLeft />
             </Link>
           </Button>
           <div>
-            <h2 className="text-lg font-bold tracking-tight">Add New Class</h2>
+            <h2 className="text-lg font-bold tracking-tight">
+              Duplicate Class
+            </h2>
             <p className="text-muted-foreground text-sm">
               Fill in the details below.
             </p>
           </div>
           <div className="ml-auto flex items-center space-x-3">
             <Button size="sm" variant="secondary" asChild>
-              <Link
-                href={{
-                  pathname: `/school-years/${schoolYear.id}`,
-                  query: { program: schoolYear.programOfferingId },
-                }}
-              >
-                Discard
-              </Link>
+              <Link href="/classes">Discard</Link>
             </Button>
             <SubmitButton size="sm" loading={action.isPending}>
               Save Class
@@ -208,8 +187,8 @@ export function SchoolClassForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={schoolYear.programOfferingId}>
-                        {schoolYear.programOffering.title}
+                      <SelectItem value={field.value}>
+                        {schoolClass.programOffering.title}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -237,8 +216,8 @@ export function SchoolClassForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={schoolYear.id}>
-                        S.Y. {schoolYear.title}
+                      <SelectItem value={field.value}>
+                        S.Y. {schoolClass.schoolYear.title}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -262,11 +241,9 @@ export function SchoolClassForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {schoolYear.semesters.map((sem) => (
-                        <SelectItem key={sem.id} value={sem.id}>
-                          {sem.title}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value={field.value}>
+                        {schoolClass.semester.title}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

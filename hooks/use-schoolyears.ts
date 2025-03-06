@@ -15,10 +15,10 @@ async function getSchoolYears(programId: string) {
   return response.data
 }
 
-export function useSchoolYears() {
+export function useSchoolYears(initialProgramId?: string) {
   const searchParams = useSearchParams()
 
-  const programId = searchParams.get("program")
+  const programId = initialProgramId ?? searchParams.get("program")
 
   return useQuery({
     queryKey: ["school-years", programId],
