@@ -1,5 +1,11 @@
 import Link from "next/link"
-import { Faculty, ProgramOffering, Teacher } from "@prisma/client"
+import {
+  Class,
+  Faculty,
+  ProgramOffering,
+  Subject,
+  Teacher,
+} from "@prisma/client"
 import { InboxIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -16,7 +22,15 @@ import { SortLink } from "@/components/sort-link"
 import { TeacherRowActions } from "./teacher-row-actions"
 
 type TeacherEntries = Array<
-  Teacher & { programs: ProgramOffering[]; faculties: Faculty[] }
+  Teacher & {
+    programs: ProgramOffering[]
+    faculties: Faculty[]
+    classes: Array<
+      Class & {
+        subject: Subject
+      }
+    >
+  }
 >
 
 export function TeachersTable({ teachers }: { teachers: TeacherEntries }) {
