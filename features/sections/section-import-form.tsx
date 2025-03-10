@@ -272,7 +272,7 @@ export function SectionImportForm({
           </div>
         )}
       </CardContent>
-      <CardFooter className="gap-2 px-0">
+      <CardFooter className="gap-2 p-0">
         {view === "upload" ? null : (
           <Button
             type="button"

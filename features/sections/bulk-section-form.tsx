@@ -95,7 +95,7 @@ export function BulkSectionForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onError)}>
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="flex-1">
         <fieldset
           className="space-y-2 disabled:pointer-events-none disabled:cursor-not-allowed"
           disabled={action.isPending}

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="relative flex h-full flex-col overflow-x-hidden">
-      <header className="container mx-auto flex max-w-screen-lg items-center py-6">
+      <header className="container mx-auto flex max-w-screen-lg items-center p-6">
         <Link
           href="/"
           className="mr-20 inline-flex items-center text-lg font-bold"
@@ -21,7 +21,7 @@ export default function Home() {
           <Tally3Icon className="text-primary size-5" strokeWidth={3} />{" "}
           {site.title}
         </Link>
-        <nav className="flex items-center gap-6 font-medium">
+        <nav className="hidden items-center gap-6 font-medium lg:flex">
           <Link href="/">Home</Link>
           <Link href="/features">Features</Link>
           <Link href="/contact">Contact Us</Link>
@@ -36,8 +36,8 @@ export default function Home() {
           </Button>
         </div>
       </header>
-      <section className="container mx-auto grid min-h-screen max-w-screen-lg grid-cols-1 lg:grid-cols-2">
-        <div className="space-y-4 pt-32">
+      <section className="container relative mx-auto grid min-h-screen max-w-screen-lg grid-cols-1 items-start px-6 lg:grid-cols-2">
+        <div className="space-y-4 pt-10 lg:pt-32">
           <p className="text-primary font-semibold">{site.title}</p>
           <h1 className="text-5xl font-bold">
             Your modern online school grading and monitoring system.
@@ -51,7 +51,7 @@ export default function Home() {
         </div>
 
         <div className="h-full">
-          <div className="absolute -right-1/4 top-1/2 -translate-y-1/2 rounded-lg border p-4 shadow">
+          <div className="rounded-lg border p-4 shadow lg:absolute lg:-right-2/3 lg:top-20 xl:-right-2/3">
             <Image
               src="/images/hero.png"
               alt={site.title}
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
       </section>
       <footer className="mt-32 border-t">
-        <div className="container mx-auto max-w-screen-lg p-4 md:py-8">
+        <div className="container mx-auto max-w-screen-lg p-6 md:py-8">
           <div className="sm:flex sm:items-center sm:justify-between">
             <Link
               href="https://flowbite.com/"

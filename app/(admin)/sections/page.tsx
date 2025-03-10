@@ -1,18 +1,20 @@
 import { type Metadata } from "next"
 import Link from "next/link"
+import { ProgramOfferingSelector } from "@/features/programs/progam-offering-selector"
 import { getSections, GetSectionsArgs } from "@/features/sections/queries"
 import { SectionList } from "@/features/sections/section-list"
-import { PlusIcon } from "lucide-react"
+import { PlusIcon, SlashIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Button } from "@/components/ui/button"
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
@@ -38,45 +40,24 @@ async function SectionsPage({
 
   return (
     <>
-      <AppHeader pageTitle="Sections" />
+      <AppHeader>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem className="text-foreground font-semibold">
+              Dashboard
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <SlashIcon />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <ProgramOfferingSelector hasInitial />
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </AppHeader>
       <AppContent>
-        <ScrollArea className="w-full whitespace-nowrap border-b pb-3">
-          <div className="flex gap-4">
-            {data?.map((program) => (
-              <Link
-                key={program.id}
-                href={`/sections?program=${program.id}`}
-                className="group shrink-0 basis-56"
-              >
-                <Card
-                  className={cn(
-                    "bg-accent/40 group-hover:border-primary rounded-md",
-                    activeProgram?.id === program.id
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : ""
-                  )}
-                >
-                  <CardHeader className="p-3">
-                    <CardTitle>{program.code}</CardTitle>
-                    <CardDescription
-                      className={cn(
-                        "line-clamp-1",
-                        activeProgram?.id === program.id
-                          ? "text-primary-foreground"
-                          : ""
-                      )}
-                    >
-                      {program.title}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            ))}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-        <div className="grid grid-cols-[300px_auto] gap-6">
-          <ScrollArea className="h-[70dvh] border-r pr-3">
+        <div className="grid grid-cols-[300px_auto] gap-3">
+          <ScrollArea className="h-[75dvh] border-r pr-3">
             <p className="text-muted-foreground mb-3 text-xs font-medium uppercase">
               Courses under {activeProgram?.code}
             </p>
@@ -93,11 +74,11 @@ async function SectionsPage({
                         },
                       }}
                     >
-                      <Card
+                      <div
                         className={cn(
-                          "bg-accent/40 group-hover:border-primary rounded-md",
+                          "bg-accent/40 group-hover:border-primary hover:bg-secondary rounded-md border",
                           activeCourse?.id === course.id
-                            ? "bg-primary text-primary-foreground border-primary"
+                            ? "text-primary-foreground border-l-primary border-l-2"
                             : ""
                         )}
                       >
@@ -116,7 +97,7 @@ async function SectionsPage({
                             {course.title}
                           </CardDescription>
                         </CardHeader>
-                      </Card>
+                      </div>
                     </Link>
                   </li>
                 ))}

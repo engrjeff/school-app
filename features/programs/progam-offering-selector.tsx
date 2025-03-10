@@ -46,7 +46,7 @@ export function ProgramOfferingSelector({
 
   return (
     <Select
-      defaultValue={programParam ?? ""}
+      value={programParam ?? undefined}
       onValueChange={(value) => {
         setProgramParam(value)
         setOthers(null)

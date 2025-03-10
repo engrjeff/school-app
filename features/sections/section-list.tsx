@@ -74,38 +74,45 @@ export function SectionList({ gradeYearLevelId, currentSections }: Props) {
           Sections
         </p>
         <div className="w-1/2 space-y-3">
-          <div className="rounded-md border p-4">
+          <div className="space-y-4 rounded-md border p-6">
             <p className="text-muted-foreground text-center text-sm">
               No sections listed yet.
             </p>
+            <div className="flex items-center justify-center gap-3">
+              <SectionForms
+                gradeYearLevelId={gradeYearLevelId}
+                currentSections={currentSections}
+              />
+            </div>
           </div>
-          <SectionForms
-            gradeYearLevelId={gradeYearLevelId}
-            currentSections={currentSections}
-          />
         </div>
       </div>
     )
 
   return (
     <div className="grid grid-cols-2 items-start gap-6">
-      <ScrollArea className="h-[60dvh] pr-4">
-        <div className="mb-2 flex items-center justify-between">
-          <p className="text-muted-foreground text-xs font-medium uppercase">
-            Sections ({currentSections.length})
-          </p>
+      <ScrollArea className="h-[75dvh] pr-4">
+        <p className="text-muted-foreground mb-3 text-xs font-medium uppercase">
+          Sections ({currentSections.length})
+        </p>
+        <div className="mb-3 flex items-center gap-3 px-0.5">
+          <SectionForms
+            gradeYearLevelId={gradeYearLevelId}
+            currentSections={currentSections}
+          />
           {orderChanged ? (
             <SubmitButton
               type="button"
               size="sm"
-              className="mr-1"
+              className="ml-auto"
               onClick={handleReorderSave}
               loading={reorderAction.isPending}
             >
-              Save
+              Save Order
             </SubmitButton>
           ) : null}
         </div>
+
         <Reorder.Group
           as="ul"
           values={orderedSections}
@@ -117,10 +124,6 @@ export function SectionList({ gradeYearLevelId, currentSections }: Props) {
           ))}
         </Reorder.Group>
       </ScrollArea>
-      <SectionForms
-        gradeYearLevelId={gradeYearLevelId}
-        currentSections={currentSections}
-      />
     </div>
   )
 }
@@ -147,7 +150,7 @@ function SectionForms({ gradeYearLevelId, currentSections }: Props) {
     )
 
   return (
-    <div className="space-y-2">
+    <>
       <Button
         type="button"
         size="sm"
@@ -158,13 +161,7 @@ function SectionForms({ gradeYearLevelId, currentSections }: Props) {
         <PlusCircleIcon /> Add Section
       </Button>
 
-      <Button
-        type="button"
-        size="sm"
-        variant="secondaryOutline"
-        className="w-full"
-        onClick={() => setActiveForm("bulk")}
-      >
+      <Button type="button" size="sm" onClick={() => setActiveForm("bulk")}>
         <PlusIcon /> Add Sections
       </Button>
 
@@ -232,6 +229,6 @@ function SectionForms({ gradeYearLevelId, currentSections }: Props) {
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }

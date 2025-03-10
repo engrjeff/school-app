@@ -46,12 +46,12 @@ const data = {
         icon: LayoutGridIcon,
       },
       {
-        name: "Teachers",
+        name: "Teacher",
         url: "/teachers",
         icon: UserCheckIcon,
       },
       {
-        name: "Students",
+        name: "Student",
         url: "/students",
         icon: UsersIcon,
       },
@@ -61,22 +61,22 @@ const data = {
     heading: "Curriculum",
     items: [
       {
-        name: "Program Offerings",
+        name: "Program Offering",
         url: "/program-offerings",
         icon: BookIcon,
       },
       {
-        name: "Courses",
+        name: "Course",
         url: "/courses",
         icon: SquareStackIcon,
       },
       {
-        name: "Faculties",
+        name: "Faculty",
         url: "/faculties",
         icon: LayoutPanelTopIcon,
       },
       {
-        name: "Sections",
+        name: "Section",
         url: "/sections",
         icon: GridIcon,
       },
@@ -86,17 +86,17 @@ const data = {
     heading: "School Reports",
     items: [
       {
-        name: "Enrollments",
+        name: "Enrollment",
         url: "#",
         icon: TablePropertiesIcon,
       },
       {
-        name: "Rankings",
+        name: "Ranking",
         url: "#",
         icon: ChartColumnBigIcon,
       },
       {
-        name: "Awardees",
+        name: "Awards",
         url: "#",
         icon: AwardIcon,
       },
@@ -106,12 +106,12 @@ const data = {
     heading: "School",
     items: [
       {
-        name: "School Years",
+        name: "School Year",
         url: "/school-years",
         icon: CalendarIcon,
       },
       {
-        name: "Classes",
+        name: "Class",
         url: "/classes",
         icon: LibraryIcon,
       },

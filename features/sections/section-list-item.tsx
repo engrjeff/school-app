@@ -31,7 +31,7 @@ export function SectionListItem({ section }: { section: Section }) {
       dragControls={controls}
       as="li"
     >
-      <div className="bg-secondary/20 text-secondary-foreground hover:bg-secondary/80 flex h-9 items-center justify-between gap-2 rounded-md border p-2 pl-1.5 pr-3 text-sm shadow-sm">
+      <div className="bg-secondary/20 text-secondary-foreground flex h-9 items-center justify-between gap-2 rounded-md border p-2 px-1 text-sm shadow-sm">
         <button
           type="button"
           onPointerDown={(e) => controls.start(e)}
