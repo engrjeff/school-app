@@ -100,7 +100,7 @@ export function StudentsTable({
                 )}
               </TableCell>
               <TableCell>
-                <Badge className="capitalize">
+                <Badge variant={student.status}>
                   {student.status.toLowerCase()}
                 </Badge>
               </TableCell>

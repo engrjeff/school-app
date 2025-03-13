@@ -227,7 +227,6 @@ function ImportDialogContent({
           "middleName",
           "suffix",
           "designation",
-          "birthdate",
           "gender",
           "address",
           "email",

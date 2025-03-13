@@ -59,7 +59,7 @@ export function CourseDetail({
               size="iconXXs"
               variant="ghost"
               aria-label={`edit course levels`}
-              className="absolute right-2 top-1 hover:border"
+              className="absolute right-2 top-1 hidden hover:border"
             >
               <PencilIcon />
             </Button>

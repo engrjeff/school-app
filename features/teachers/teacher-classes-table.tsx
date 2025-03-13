@@ -2,7 +2,15 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Class, SchoolYear, Semester, Subject } from "@prisma/client"
+import {
+  ClassSubject,
+  Course,
+  GradeYearLevel,
+  SchoolYear,
+  Section,
+  Semester,
+  Subject,
+} from "@prisma/client"
 import {
   ColumnDef,
   flexRender,
@@ -59,35 +67,37 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-interface DetailedSchoolClass extends Class {
+interface DetailedClassSubject extends ClassSubject {
   subject: Subject
-  schoolYear: SchoolYear
-  semester: Semester
-  _count: {
-    students: number
+  enrollmentClass: {
+    schoolYear: SchoolYear
+    section: Section
+    course: Course
+    gradeYearLevel: GradeYearLevel
+    semester: Semester
+    _count: {
+      students: number
+    }
   }
 }
 
-const columns: ColumnDef<DetailedSchoolClass>[] = [
+const columns: ColumnDef<DetailedClassSubject>[] = [
   {
     header: "Semester",
-    accessorKey: "semester.title",
+    accessorKey: "enrollmentClass.semester.title",
     cell: ({ row }) => (
-      <Link
-        href={`/school-years/${row.original.schoolYearId}/semesters/${row.original.semesterId}`}
-        className="group"
-      >
+      <div>
         <p className="line-clamp-1 group-hover:underline">
-          {row.original.semester.title}
+          {row.original.enrollmentClass.semester.title}
         </p>
         <p className="text-muted-foreground text-xs">
-          S.Y. {row.original.schoolYear.title}
+          S.Y. {row.original.enrollmentClass.schoolYear.title}
         </p>
-      </Link>
+      </div>
     ),
   },
   {
-    header: "Subject Title",
+    header: "Subject",
     accessorKey: "subject.title",
     cell: ({ row }) => (
       <>
@@ -101,8 +111,19 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
     ),
   },
   {
-    header: "Student Count",
-    accessorKey: "_count.students",
+    header: "Grade & Section",
+    accessorKey: "enrollmentClass.gradeYearLevel.level",
+    cell: ({ row }) => (
+      <p className="line-clamp-1">
+        {row.original.enrollmentClass.gradeYearLevel.displayName}{" "}
+        {row.original.enrollmentClass.gradeYearLevel.level} -{" "}
+        {row.original.enrollmentClass.section.name}
+      </p>
+    ),
+  },
+  {
+    header: "# Students",
+    accessorKey: "enrollmentClass._count.students",
     id: "student_count",
     cell: ({ row }) => (
       <TooltipProvider>
@@ -110,7 +131,7 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
           <TooltipTrigger asChild>
             <Link href={`#`} className="inline-block w-min">
               <p>
-                {row.original._count.students}{" "}
+                {row.original.enrollmentClass._count.students}{" "}
                 <span className="text-muted-foreground text-xs">students</span>
               </p>
             </Link>
@@ -146,9 +167,9 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
 ]
 
 export function TeacherClassesTable({
-  teacherClasses,
+  classSubjects,
 }: {
-  teacherClasses: DetailedSchoolClass[]
+  classSubjects: DetailedClassSubject[]
 }) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -163,7 +184,7 @@ export function TeacherClassesTable({
   ])
 
   const table = useReactTable({
-    data: teacherClasses,
+    data: classSubjects,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -267,7 +288,7 @@ export function TeacherClassesTable({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
@@ -281,7 +302,7 @@ export function TeacherClassesTable({
       </div>
 
       {/* Pagination */}
-      {pagination.pageSize > teacherClasses.length ? null : (
+      {pagination.pageSize > classSubjects.length ? null : (
         <div className="flex items-center justify-between gap-8">
           {/* Results per page */}
           <div className="flex items-center gap-3">

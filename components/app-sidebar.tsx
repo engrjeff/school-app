@@ -15,6 +15,7 @@ import {
   SchoolIcon,
   SquareSigmaIcon,
   SquareStackIcon,
+  Table2Icon,
   TablePropertiesIcon,
   UserCheckIcon,
   UsersIcon,
@@ -111,9 +112,14 @@ const data = {
         icon: CalendarIcon,
       },
       {
+        name: "Enrollment",
+        url: "/enrollments",
+        icon: LibraryIcon,
+      },
+      {
         name: "Class",
         url: "/classes",
-        icon: LibraryIcon,
+        icon: Table2Icon,
       },
       {
         name: "School Profile",
@@ -141,7 +147,7 @@ const teacherMenu = {
       {
         name: "My Classes",
         url: "/classes",
-        icon: LibraryIcon,
+        icon: Table2Icon,
       },
     ],
   },

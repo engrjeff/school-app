@@ -3,9 +3,9 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTeacherById } from "@/features/teachers/queries"
 import { TeacherEditForm } from "@/features/teachers/teacher-edit-form"
-import { Teacher } from "@prisma/client"
 import { SlashIcon } from "lucide-react"
 
+import { getTeacherFullName } from "@/lib/utils"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,17 +18,6 @@ import { AppHeader } from "@/components/app-header"
 
 interface PageProps {
   params: { id: string }
-}
-
-function getFullName(teacher: Teacher) {
-  return [
-    teacher.firstName,
-    teacher.middleName,
-    teacher.lastName,
-    teacher.suffix,
-  ]
-    .filter(Boolean)
-    .join(" ")
 }
 
 export const generateMetadata = async ({
@@ -61,7 +50,7 @@ async function TeacherEditPage({ params }: PageProps) {
             </BreadcrumbSeparator>
             <BreadcrumbLink asChild>
               <Link className="font-semibold" href={`/teachers/${teacher.id}`}>
-                {getFullName(teacher)} - #{teacher.teacherId}
+                {getTeacherFullName(teacher)} - #{teacher.teacherId}
               </Link>
             </BreadcrumbLink>
             <BreadcrumbSeparator>

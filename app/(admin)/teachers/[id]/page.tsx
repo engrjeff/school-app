@@ -192,7 +192,7 @@ async function TeacherDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <TeacherClassesTable teacherClasses={teacher.classes} />
+          <TeacherClassesTable classSubjects={teacher.classSubjects} />
 
           <Separator />
 

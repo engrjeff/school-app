@@ -17,6 +17,8 @@ export function ProgramOfferingTabs() {
 
   if (programs.isLoading) return <Skeleton className="h-9 w-[230px]" />
 
+  if (programs.data?.length === 1) return null
+
   return (
     <Tabs value={programQuery ?? ""} onValueChange={setProgramQuery}>
       <TabsList>

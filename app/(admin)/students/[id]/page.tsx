@@ -14,7 +14,6 @@ import {
   MapPinnedIcon,
   PencilIcon,
   PhoneIcon,
-  PlusIcon,
   SlashIcon,
   SquareStackIcon,
   UserIcon,
@@ -31,6 +30,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
 import { RoleAccess } from "@/components/role-access"
@@ -113,7 +113,10 @@ async function StudentDetalPage({ params }: PageProps) {
                 <span className="font-mono">{student.studentId}</span>
               </p>
             </div>
-            <RoleAccess role={ROLE.SCHOOLADMIN}>
+            <RoleAccess
+              role={ROLE.SCHOOLADMIN}
+              loadingUi={<Skeleton className="size-7" />}
+            >
               <Button
                 asChild
                 type="button"
@@ -208,14 +211,11 @@ async function StudentDetalPage({ params }: PageProps) {
         <div className="flex-1 space-y-6 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-semibold tracking-tight">Classes</h1>
+              <h1 className="font-semibold tracking-tight">Enrollments</h1>
               <p className="text-muted-foreground text-xs">List of classes</p>
             </div>
-            <Button type="button" size="sm" variant="link">
-              <PlusIcon /> Add to Class
-            </Button>
           </div>
-          <StudentClassesTable studentClasses={student.classes} />
+          <StudentClassesTable enrollmentClasses={student.enrollmentClasses} />
         </div>
       </AppContent>
     </>

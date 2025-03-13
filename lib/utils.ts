@@ -1,4 +1,4 @@
-import { Gender } from "@prisma/client"
+import { Gender, Teacher } from "@prisma/client"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -95,4 +95,15 @@ export function validateItems(
         : null,
     }
   })
+}
+
+export function getTeacherFullName(teacher: Teacher) {
+  return [
+    teacher.firstName,
+    teacher.middleName,
+    teacher.lastName,
+    teacher.suffix,
+  ]
+    .filter(Boolean)
+    .join(" ")
 }

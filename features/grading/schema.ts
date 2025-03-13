@@ -1,16 +1,35 @@
 import * as z from "zod"
 
-export const gradeComponentPartSchema = z.object({
+export const gradeSubComponentSchema = z.object({
+  gradingPeriodId: z
+    .string({ required_error: "Grading period is required." })
+    .nonempty({ message: "Grading period is required." }),
+  parentGradeComponentId: z
+    .string({ required_error: "Grade component is required." })
+    .nonempty({ message: "Grade component is required." }),
+  classSubjectId: z
+    .string({ required_error: "Class subject is required." })
+    .nonempty({ message: "Class subject is required." }),
   order: z.number().int().positive(),
   title: z
     .string({ required_error: "Required." })
     .nonempty({ message: "Required." }),
   highestPossibleScore: z
-    .number()
+    .number({ invalid_type_error: "Invalid value." })
     .gt(0, { message: "Must be greater than zero." }),
 })
 
-export type GradeComponentPartInputs = z.infer<typeof gradeComponentPartSchema>
+export const gradeSubcomponentIdSchema = z.object({
+  id: z
+    .string({ required_error: "ID is required." })
+    .nonempty({ message: "ID is required." }),
+})
+
+export const updateGradeSubComponentSchema = gradeSubComponentSchema.merge(
+  gradeSubcomponentIdSchema
+)
+
+export type GradeSubComponentInputs = z.infer<typeof gradeSubComponentSchema>
 
 export const gradeComponentSchema = z.object({
   label: z
@@ -23,9 +42,9 @@ export const gradeComponentSchema = z.object({
     .number({ invalid_type_error: "Percentage is required." })
     .gt(0, { message: "Must be greater than zero." })
     .lte(1, { message: "Must NOT be less than or equal to 1.0" }),
-  parts: gradeComponentPartSchema
-    .array()
-    .min(1, { message: "Must have at least 1 grade sub-component." }),
+  // parts: gradeComponentPartSchema
+  //   .array()
+  //   .min(1, { message: "Must have at least 1 grade sub-component." }),
 })
 
 export type GradeComponentInputs = z.infer<typeof gradeComponentSchema>
@@ -36,9 +55,9 @@ export const gradeComponentIdSchema = z.object({
     .nonempty({ message: "Grade component ID is required." }),
 })
 
-export const updateGradeComponentSchema = gradeComponentSchema
-  .omit({ parts: true })
-  .merge(gradeComponentIdSchema)
+export const updateGradeComponentSchema = gradeComponentSchema.merge(
+  gradeComponentIdSchema
+)
 
 export const gradeComponentPickerSchema = z.object({
   gradeComponents: z
@@ -87,4 +106,31 @@ export const gradeComponentPartScoreSchema = z.object({
 
 export type GradeComponentPartScoreInputs = z.infer<
   typeof gradeComponentPartScoreSchema
+>
+
+//  revamped
+export const gradeSubComponentScoreSchema = z.object({
+  scoreId: z
+    .string({ required_error: "Score ID is required." })
+    .nonempty({ message: "Score ID is required." }),
+  subjectGradeId: z.string().optional(),
+  score: z.preprocess((arg) => {
+    if (isNaN(arg as number)) return undefined
+
+    if (typeof arg === "string" && arg === "") {
+      return undefined
+    } else {
+      return arg
+    }
+  }, z.number().optional()),
+  subjectGradeSubComponentId: z
+    .string({ required_error: "Grading subcomponent is required." })
+    .nonempty({ message: "Grading subcomponent is required." }),
+  subjectGradeComponentId: z
+    .string({ required_error: "Grading component is required." })
+    .nonempty({ message: "Grading component is required." }),
+})
+
+export type GradeSubComponentScoreInputs = z.infer<
+  typeof gradeSubComponentScoreSchema
 >

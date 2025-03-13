@@ -226,12 +226,15 @@ export const SHS_TRACKS = [
   },
 ]
 
+const querterlyGradingPeriod = ["Q1", "Q2", "Q3", "Q4"]
+
 export const COMMON_PROGRAM_OFFERINGS = [
   {
     id: 1,
     title: "Pre-school",
     description: "Nursery & Kindergarten",
     code: "PRE-SCHOOL",
+    gradingPeriod: querterlyGradingPeriod,
     courses: [
       { title: "Nursery", code: "Nursery", subjects: [] },
       { title: "Kindergarten", code: "Kindergarten", subjects: [] },
@@ -243,6 +246,7 @@ export const COMMON_PROGRAM_OFFERINGS = [
     title: "Primary School",
     description: "Elementary, Grade 1-6",
     code: "ELEM",
+    gradingPeriod: querterlyGradingPeriod,
     courses: [
       {
         title: "Elementary Education",
@@ -250,15 +254,19 @@ export const COMMON_PROGRAM_OFFERINGS = [
         subjects: [
           {
             title: "Filipino",
+            code: "FIL",
           },
           {
             title: "English",
+            code: "ENG",
           },
           {
             title: "Mathematics",
+            code: "MATH",
           },
           {
             title: "Science",
+            code: "SCI",
           },
           {
             title: "Araling Panlipunan",
@@ -270,15 +278,19 @@ export const COMMON_PROGRAM_OFFERINGS = [
           },
           {
             title: "Music",
+            code: "MUSIC",
           },
           {
             title: "Arts",
+            code: "ARTS",
           },
           {
             title: "Physical Education",
+            code: "PE",
           },
           {
             title: "Health",
+            code: "HEALTH",
           },
           {
             title: "Edukasyong Pantahanan at Pangkabuhayan",
@@ -301,6 +313,7 @@ export const COMMON_PROGRAM_OFFERINGS = [
     title: "Junior High School",
     description: "Grade 7-10",
     code: "JHS",
+    gradingPeriod: querterlyGradingPeriod,
     courses: [
       {
         title: "Junior High School",
@@ -367,6 +380,7 @@ export const COMMON_PROGRAM_OFFERINGS = [
     title: "Senior High School",
     description: "Grade 11-12",
     code: "SHS",
+    gradingPeriod: querterlyGradingPeriod,
     courses: [],
     gradeYearLevels: [11, 12].map((g) => ({
       displayName: "Grade",

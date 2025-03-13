@@ -11,14 +11,12 @@ export async function GET() {
 
     if (!session?.user?.schoolId) return NextResponse.json([])
 
-    if (!session?.user?.teacherProfileId) return NextResponse.json([])
-
-    const gradeComponents = await prisma.gradeComponent.findMany({
+    const gradeComponents = await prisma.subjectGradeComponent.findMany({
       where: {
-        teacherId: session?.user.teacherProfileId,
+        createdById: session?.user.id,
       },
       include: {
-        parts: { orderBy: { order: "asc" } },
+        subcomponents: { orderBy: { order: "asc" } },
       },
       orderBy: { createdAt: "asc" },
     })

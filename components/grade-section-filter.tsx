@@ -1,13 +1,19 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
+import { parseAsString, useQueryStates } from "nuqs"
 
 import { useGradeYearLevels } from "@/hooks/use-grade-levels"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TableFacetFilter } from "@/components/table-facet-filter"
 
-export function GradeSectionFilter() {
+export function GradeSectionFilter({ hideSection }: { hideSection?: boolean }) {
   const searchParams = useSearchParams()
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setOthers] = useQueryStates({
+    section: parseAsString,
+  })
 
   const courseId = searchParams.get("course") ?? undefined
 
@@ -24,9 +30,10 @@ export function GradeSectionFilter() {
     <>
       <TableFacetFilter
         filterKey="gradeYearLevel"
-        title="Grade/Year Level"
+        title="Grade/Year"
         selectedLabelKey="label"
         singleSelection
+        onChangeCallback={() => setOthers(null)}
         options={
           gradeLevels.data?.map((g) => ({
             label: `${g.displayName} ${g.level}`,
@@ -34,7 +41,7 @@ export function GradeSectionFilter() {
           })) ?? []
         }
       />
-      {currentGradeLevel?.sections?.length ? (
+      {currentGradeLevel?.sections?.length && !hideSection ? (
         <TableFacetFilter
           filterKey="section"
           title="Section"

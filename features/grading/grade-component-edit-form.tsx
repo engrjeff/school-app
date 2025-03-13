@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { GradeComponent } from "@prisma/client"
+import { SubjectGradeComponent } from "@prisma/client"
 import { Edit2Icon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
@@ -38,7 +38,7 @@ import { GradeComponentInputs, gradeComponentSchema } from "./schema"
 export function GradeComponentEditFormDialog({
   gradeComponent,
 }: {
-  gradeComponent: GradeComponent
+  gradeComponent: SubjectGradeComponent
 }) {
   const [open, setOpen] = useState(false)
 
@@ -73,10 +73,10 @@ export function GradeComponentEditForm({
   gradeComponent,
 }: {
   onAfterSave: VoidFunction
-  gradeComponent: GradeComponent
+  gradeComponent: SubjectGradeComponent
 }) {
   const form = useForm<GradeComponentInputs>({
-    resolver: zodResolver(gradeComponentSchema.omit({ parts: true })),
+    resolver: zodResolver(gradeComponentSchema),
     mode: "onChange",
     defaultValues: {
       label: gradeComponent.label,
@@ -169,7 +169,7 @@ export function GradeComponentEditForm({
           />
         </fieldset>
 
-        <DialogFooter>
+        <DialogFooter className="pt-6">
           <DialogClose asChild>
             <Button type="button" variant="secondaryOutline">
               Cancel

@@ -2,7 +2,17 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Class, SchoolYear, Semester, Subject, Teacher } from "@prisma/client"
+import {
+  ClassSubject,
+  Course,
+  EnrollmentClass,
+  GradeYearLevel,
+  SchoolYear,
+  Section,
+  Semester,
+  Subject,
+  Teacher,
+} from "@prisma/client"
 import {
   ColumnDef,
   flexRender,
@@ -53,22 +63,21 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-interface DetailedSchoolClass extends Class {
-  subject: Subject
-  teacher: Teacher
+interface DetailedEnrollementClass extends EnrollmentClass {
+  subjects: Array<ClassSubject & { subject: Subject; teacher: Teacher }>
   schoolYear: SchoolYear
   semester: Semester
+  gradeYearLevel: GradeYearLevel
+  course: Course
+  section: Section
 }
 
-const columns: ColumnDef<DetailedSchoolClass>[] = [
+const columns: ColumnDef<DetailedEnrollementClass>[] = [
   {
     header: "Semester",
     accessorKey: "semester.title",
     cell: ({ row }) => (
-      <Link
-        href={`/school-years/${row.original.schoolYearId}/semesters/${row.original.semesterId}`}
-        className="group"
-      >
+      <Link href={`#`} className="group">
         <p className="line-clamp-1 group-hover:underline">
           {row.original.semester.title}
         </p>
@@ -79,41 +88,19 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
     ),
   },
   {
-    header: "Subject Title",
-    accessorKey: "subject.title",
-    cell: ({ row }) => (
-      <>
-        <p className="line-clamp-1">{row.original.subject.title}</p>
-        <p className="text-muted-foreground text-xs">
-          {row.original.subject.code === "--"
-            ? "No Subject Code"
-            : row.original.subject.code}
-        </p>
-      </>
-    ),
+    header: "Course",
+    cell: ({ row }) => <p>{row.original.course.code}</p>,
   },
   {
-    header: "Teacher",
-    accessorKey: "teacher.lastName",
+    header: "Grade & Section",
     cell: ({ row }) => (
-      <Link
-        href={`/teachers/${row.original.teacher.id}`}
-        className="hover:underline"
-        prefetch
-      >
-        <p className="line-clamp-1 max-w-full">
-          {[
-            row.original.teacher.firstName,
-            row.original.teacher.middleName,
-            row.original.teacher.lastName,
-            row.original.teacher.suffix,
-          ]
-            .filter(Boolean)
-            .join(" ")}{" "}
-        </p>
-      </Link>
+      <p>
+        {row.original.gradeYearLevel.displayName}{" "}
+        {row.original.gradeYearLevel.level} - {row.original.section.name}
+      </p>
     ),
   },
+
   {
     header: "",
     id: "action",
@@ -127,7 +114,7 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/classes/${row.original.id}`} prefetch>
+            <Link href={`/enrollments/${row.original.id}`} prefetch>
               View
             </Link>
           </DropdownMenuItem>
@@ -138,24 +125,19 @@ const columns: ColumnDef<DetailedSchoolClass>[] = [
 ]
 
 export function StudentClassesTable({
-  studentClasses,
+  enrollmentClasses,
 }: {
-  studentClasses: DetailedSchoolClass[]
+  enrollmentClasses: DetailedEnrollementClass[]
 }) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   })
 
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: "lastName",
-      desc: false,
-    },
-  ])
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
-    data: studentClasses,
+    data: enrollmentClasses,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -262,7 +244,7 @@ export function StudentClassesTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No classes to display.
+                  No enrollments to display.
                 </TableCell>
               </TableRow>
             )}
@@ -271,7 +253,7 @@ export function StudentClassesTable({
       </div>
 
       {/* Pagination */}
-      {pagination.pageSize > studentClasses.length ? null : (
+      {pagination.pageSize > enrollmentClasses.length ? null : (
         <div className="flex items-center justify-between gap-8">
           {/* Results per page */}
           <div className="flex items-center gap-3">

@@ -15,16 +15,20 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
-        MALE: "bg-blue-400/10 border-blue-400/20 text-blue-400 capitalize",
-        FEMALE: "bg-rose-400/10 border-rose-400/20 text-rose-400 capitalize",
-        Male: "bg-blue-400/10 border-blue-400/20 text-blue-400 capitalize",
-        Female: "bg-rose-400/10 border-rose-400/20 text-rose-400 capitalize",
+        MALE: "bg-blue-800/30 border-none text-blue-500 capitalize",
+        FEMALE: "bg-rose-800/30 border-none text-rose-400 capitalize",
+        Male: "bg-blue-800/30 border-none text-blue-500 capitalize",
+        Female: "bg-rose-800/30 border-none text-rose-400 capitalize",
         code: "border-secondary bg-secondary/30 px-0.5 font-mono",
-        REGISTERED: "border-secondary bg-secondary/30 px-0.5 capitalize",
+        success:
+          "border-none bg-emerald-800/30 px-1.5 text-emerald-500 capitalize",
+        warn: "border-none bg-yellow-800/30 px-1.5 text-yellow-500 capitalize",
+        REGISTERED:
+          "border-none bg-blue-800/30 text-blue-500 px-1.5 capitalize",
         ENROLLED:
-          "border-none bg-emerald-500/30 px-1 text-emerald-500 capitalize",
-        TRANSFERRED: "border-none bg-black/30 px-1 text-white capitalize",
-        DROPPED: "border-none bg-red-500/30 px-1 text-red-500 capitalize",
+          "border-none bg-emerald-800/30 px-1.5 text-emerald-500 capitalize",
+        TRANSFERRED: "border-none bg-black/30 px-1.5 text-white capitalize",
+        DROPPED: "border-none bg-red-800/30 px-1.5 text-red-500 capitalize",
       },
     },
     defaultVariants: {

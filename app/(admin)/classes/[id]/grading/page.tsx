@@ -1,9 +1,8 @@
 import { type Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { getSchoolClassById } from "@/features/school-class/queries"
-import { SchoolClassGradingTable } from "@/features/school-class/school-class-grading-table"
-import { ROLE } from "@prisma/client"
+import { ClassSubjectGradingTable } from "@/features/enrollments/class-subject-grading-table"
+import { getClassSubjectById } from "@/features/enrollments/queries"
 import { SlashIcon } from "lucide-react"
 
 import {
@@ -13,11 +12,9 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
-import { RoleAccess } from "@/components/role-access"
 
 interface PageProps {
   params: {
@@ -30,28 +27,39 @@ interface PageProps {
 
 export const generateMetadata = async ({
   params,
+  searchParams,
 }: PageProps): Promise<Metadata> => {
-  const schoolClass = await getSchoolClassById(params.id)
+  const classSubject = await getClassSubjectById(
+    params.id,
+    searchParams?.period
+  )
 
-  if (!schoolClass) return notFound()
+  if (!classSubject) return notFound()
+
+  const e = classSubject.enrollmentClass
 
   const pageTitle = [
     "Grading",
-    `${schoolClass?.gradeYearLevel.displayName} ${schoolClass?.gradeYearLevel.level}`,
-    schoolClass?.section.name,
+    `${e?.gradeYearLevel.displayName} ${e?.gradeYearLevel.level}`,
+    e?.section.name,
   ].join("-")
 
   return {
-    title: schoolClass ? pageTitle : "Class Not Found",
+    title: pageTitle,
   }
 }
 
 async function SchoolClassGradingPage({ params, searchParams }: PageProps) {
-  const schoolClass = await getSchoolClassById(params.id)
+  const classSubject = await getClassSubjectById(
+    params.id,
+    searchParams?.period
+  )
 
-  if (!schoolClass) return notFound()
+  if (!classSubject) return notFound()
 
-  const pageTitle = `${schoolClass?.gradeYearLevel.displayName} ${schoolClass?.gradeYearLevel.level}-${schoolClass?.section.name} ${schoolClass.subject.code}`
+  const e = classSubject.enrollmentClass
+
+  const pageTitle = `${e?.gradeYearLevel.displayName} ${e?.gradeYearLevel.level}-${e?.section.name} ${classSubject.subject.code}`
 
   return (
     <>
@@ -73,49 +81,46 @@ async function SchoolClassGradingPage({ params, searchParams }: PageProps) {
         </Breadcrumb>
       </AppHeader>
       <AppContent className="max-w-[calc(100vw-var(--sidebar-width)-30px)] overflow-x-hidden">
-        <RoleAccess
-          role={ROLE.TEACHER}
-          loadingUi={<Skeleton className="h-9 w-[372px]" />}
-        >
-          <div className="flex justify-between">
-            <Tabs defaultValue="grading">
-              <TabsList>
-                <TabsTrigger value="details" asChild>
-                  <Link href={`/classes/${schoolClass.id}`}>Class Details</Link>
-                </TabsTrigger>
-                <TabsTrigger value="grading">
-                  <Link href={`/classes/${schoolClass.id}/grading`}>
-                    Grade Records
+        <div className="flex justify-between">
+          <Tabs defaultValue="grading">
+            <TabsList>
+              <TabsTrigger value="details" asChild>
+                <Link href={`/classes/${classSubject.id}`}>Class Details</Link>
+              </TabsTrigger>
+              <TabsTrigger value="grading">
+                <Link href={`/classes/${classSubject.id}/grading`}>
+                  Grade Records
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger value="grade-summary">
+                <Link href={`/classes/${classSubject.id}/grade-summary`}>
+                  Grade Summary
+                </Link>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Tabs
+            defaultValue={searchParams?.period ?? e.gradingPeriods.at(0)?.id}
+          >
+            <TabsList>
+              {e.gradingPeriods.map((gp) => (
+                <TabsTrigger key={gp.id} value={gp.id} asChild>
+                  <Link
+                    href={{
+                      pathname: `/classes/${classSubject.id}/grading`,
+                      query: { period: gp.id },
+                    }}
+                  >
+                    {gp.title}
                   </Link>
                 </TabsTrigger>
-                <TabsTrigger value="grade-summary">
-                  <Link href={`/classes/${schoolClass.id}/grade-summary`}>
-                    Grade Summary
-                  </Link>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <Tabs defaultValue={schoolClass.gradingPeriods.at(0)?.id}>
-              <TabsList>
-                {schoolClass.gradingPeriods.map((gp) => (
-                  <TabsTrigger key={gp.id} value={gp.id} asChild>
-                    <Link
-                      href={{
-                        pathname: `/classes/${schoolClass.id}/grading`,
-                        query: { period: gp.id },
-                      }}
-                    >
-                      {gp.title}
-                    </Link>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-        </RoleAccess>
-        <SchoolClassGradingTable
-          schoolClass={schoolClass}
-          gradingPeriodId={searchParams?.period}
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+        <ClassSubjectGradingTable
+          gradingPeriod={searchParams?.period}
+          classSubject={classSubject}
         />
       </AppContent>
     </>

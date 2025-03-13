@@ -42,11 +42,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  school   School? @relation(fields: [schoolId], references: [id])
+  school   School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
   schoolId String?
 
-  studentProfile Student? // student profile associated with this user
-  teacherProfile Teacher? // teacher profile associated with this user
+  studentProfileId              Student? // student profile associated with this user
+  teacherProfile                Teacher? // teacher profile associated with this user
+  createdSubjectGradeComponents SubjectGradeComponent[]
 
   @@index([schoolId])
   @@index([role])
@@ -150,6 +151,7 @@ model School {
   sections         Section[]
   faculties        Faculty[]
   classes          Class[]
+  enrolledClasses  EnrollmentClass[]
 }
 
 enum StudentStatus {
@@ -196,6 +198,9 @@ model Student {
   grades      StudentGrade[]
   finalGrades StudentFinalGrade[]
 
+  enrollmentClasses EnrollmentClass[]
+  subjectGrades     SubjectGrade[]
+
   @@unique([schoolId, studentId])
   @@index([schoolId])
   @@index([currentGradeYearLevelId])
@@ -233,6 +238,7 @@ model Teacher {
   updatedAt DateTime @updatedAt
 
   createdGradeComponents GradeComponent[]
+  classSubjects          ClassSubject[]
 
   @@unique([schoolId, teacherId])
   @@index([schoolId])
@@ -245,7 +251,7 @@ model Faculty {
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
 
-  programOffering   ProgramOffering @relation(fields: [programOfferingId], references: [id])
+  programOffering   ProgramOffering @relation(fields: [programOfferingId], references: [id], onDelete: Cascade)
   programOfferingId String
 
   title       String
@@ -277,6 +283,9 @@ model ProgramOffering {
   classes     Class[]
   schoolYears SchoolYear[]
 
+  enrolledClasses         EnrollmentClass[]
+  enrollmentGradingPeriod EnrollmentGradingPeriod[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -301,6 +310,8 @@ model SchoolYear {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  enrolledClasses EnrollmentClass[]
+
   @@index([schoolId])
 }
 
@@ -312,6 +323,8 @@ model Semester {
 
   schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id], onDelete: Cascade)
   schoolYearId String
+
+  enrolledClasses EnrollmentClass[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -346,8 +359,8 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  programOffering   ProgramOffering? @relation(fields: [programOfferingId], references: [id])
-  programOfferingId String?
+  programOffering   ProgramOffering @relation(fields: [programOfferingId], references: [id], onDelete: Cascade)
+  programOfferingId String
 
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
@@ -356,6 +369,7 @@ model Course {
   gradeYearLevels GradeYearLevel[]
   students        Student[]
   classes         Class[]
+  enrolledClasses EnrollmentClass[]
 
   @@unique([schoolId, code])
   @@index([programOfferingId])
@@ -378,6 +392,8 @@ model GradeYearLevel {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  enrolledClasses EnrollmentClass[]
 }
 
 model Section {
@@ -393,9 +409,10 @@ model Section {
   school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId String
 
-  order    Int
-  classes  Class[]
-  students Student[]
+  order           Int
+  classes         Class[]
+  students        Student[]
+  enrolledClasses EnrollmentClass[]
 
   @@unique([name, gradeYearLevelId])
   @@index([gradeYearLevelId])
@@ -415,10 +432,11 @@ model Subject {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String
 
-  classes Class[]
+  classes       Class[]
+  classSubjects ClassSubject[]
 
   @@index([schoolId])
   @@index([courseId])
@@ -434,31 +452,31 @@ model Class {
   id String @id @default(cuid())
 
   schoolId String
-  school   School @relation(fields: [schoolId], references: [id])
+  school   School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
-  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id], onDelete: Cascade)
   schoolYearId String
 
   semesterId String
-  semester   Semester @relation(fields: [semesterId], references: [id])
+  semester   Semester @relation(fields: [semesterId], references: [id], onDelete: Cascade)
 
   programOfferingId String
-  programOffering   ProgramOffering @relation(fields: [programOfferingId], references: [id])
+  programOffering   ProgramOffering @relation(fields: [programOfferingId], references: [id], onDelete: Cascade)
 
   courseId String
-  course   Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   gradeYearLevel   GradeYearLevel @relation(fields: [gradeYearLevelId], references: [id], onDelete: Cascade)
   gradeYearLevelId String
 
   sectionId String
-  section   Section @relation(fields: [sectionId], references: [id])
+  section   Section @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 
   teacherId String
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
 
   students           Student[]
   studentFinalGrades StudentFinalGrade[]
@@ -492,7 +510,7 @@ model GradeComponent {
   title      String // e.g. Written Works, Performance Tasks
   percentage Float // e.g 0.2 for 20%, max of 1.0
 
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   teacherId String
 
   parts  GradeComponentPart[]
@@ -528,12 +546,12 @@ model GradeComponentPartScore {
   score Float
 
   gradeComponentPartId String
-  gradeComponentPart   GradeComponentPart @relation(fields: [gradeComponentPartId], references: [id])
+  gradeComponentPart   GradeComponentPart @relation(fields: [gradeComponentPartId], references: [id], onDelete: Cascade)
 
   parentGradeComponentId String
-  parentGradeComponent   GradeComponent @relation(fields: [parentGradeComponentId], references: [id])
+  parentGradeComponent   GradeComponent @relation(fields: [parentGradeComponentId], references: [id], onDelete: Cascade)
 
-  studentGrade   StudentGrade @relation(fields: [studentGradeId], references: [id])
+  studentGrade   StudentGrade @relation(fields: [studentGradeId], references: [id], onDelete: Cascade)
   studentGradeId String
 
   createdAt DateTime @default(now())
@@ -547,11 +565,11 @@ model GradeComponentPartScore {
 model StudentGrade {
   id String @id @default(cuid())
 
-  gradingPeriod   GradingPeriod @relation(fields: [gradingPeriodId], references: [id])
+  gradingPeriod   GradingPeriod @relation(fields: [gradingPeriodId], references: [id], onDelete: Cascade)
   gradingPeriodId String
 
   studentId String
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   scores GradeComponentPartScore[]
 
@@ -566,12 +584,12 @@ model StudentFinalGrade {
   id String @id @default(cuid())
 
   classId String
-  class   Class  @relation(fields: [classId], references: [id])
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   studentId String
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
-  gradingPeriod   GradingPeriod @relation(fields: [gradingPeriodId], references: [id])
+  gradingPeriod   GradingPeriod @relation(fields: [gradingPeriodId], references: [id], onDelete: Cascade)
   gradingPeriodId String
 
   value   Float // snapshot value of the grade in this semester under this subject and teacher
@@ -583,4 +601,186 @@ model StudentFinalGrade {
   @@index([classId])
   @@index([studentId])
   @@index([gradingPeriodId])
+}
+
+// revamped
+model EnrollmentClass {
+  id String @id @default(cuid())
+
+  status ClassStatus @default(ONGOING)
+
+  schoolId String
+  school   School @relation(references: [id], fields: [schoolId], onDelete: Cascade)
+
+  schoolYearId String
+  schoolYear   SchoolYear @relation(references: [id], fields: [schoolYearId], onDelete: Cascade)
+
+  semesterId String
+  semester   Semester @relation(references: [id], fields: [semesterId], onDelete: Cascade)
+
+  programOfferingId String
+  programOffering   ProgramOffering @relation(references: [id], fields: [programOfferingId], onDelete: Cascade)
+
+  courseId String
+  course   Course @relation(references: [id], fields: [courseId], onDelete: Cascade)
+
+  gradeYearLevelId String
+  gradeYearLevel   GradeYearLevel @relation(references: [id], fields: [gradeYearLevelId], onDelete: Cascade)
+
+  sectionId String
+  section   Section @relation(references: [id], fields: [sectionId], onDelete: Cascade)
+
+  gradingPeriods EnrollmentGradingPeriod[]
+
+  students Student[]
+
+  subjects ClassSubject[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, schoolYearId, semesterId, programOfferingId, courseId, gradeYearLevelId, sectionId])
+  @@index([schoolYearId])
+  @@index([semesterId])
+  @@index([programOfferingId])
+  @@index([courseId])
+  @@index([gradeYearLevelId])
+  @@index([sectionId])
+  @@index([schoolId])
+  @@index([status])
+}
+
+model EnrollmentGradingPeriod {
+  id    String @id @default(cuid())
+  title String // e.g. Prelim, Midterm, Finals, Q1, Q2, Q3
+  order Int
+
+  programOfferingId String
+  programOffering   ProgramOffering @relation(references: [id], fields: [programOfferingId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enrolledClasses EnrollmentClass[]
+
+  subjectGrades             SubjectGrade[]
+  subjectGradeSubComponents SubjectGradeSubComponent[]
+
+  @@index([programOfferingId])
+}
+
+model SubjectGradeComponent {
+  id String @id @default(cuid())
+
+  label      String
+  title      String // e.g. Written Works, Performance Tasks
+  percentage Float // e.g 0.2 for 20%, max of 1.0
+
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subcomponents SubjectGradeSubComponent[]
+
+  subjectGrades SubjectGrade[]
+  subjectScores SubjectGradeSubComponentScore[]
+
+  @@index([createdById])
+}
+
+model SubjectGradeSubComponent {
+  id String @id @default(cuid())
+
+  order                Int
+  title                String
+  highestPossibleScore Float
+
+  gradingPeriodId String
+  gradingPeriod   EnrollmentGradingPeriod @relation(references: [id], fields: [gradingPeriodId], onDelete: Cascade)
+
+  classSubjectId String
+  classSubject   ClassSubject @relation(references: [id], fields: [classSubjectId], onDelete: Cascade)
+
+  gradeComponent   SubjectGradeComponent @relation(fields: [gradeComponentId], references: [id], onDelete: Cascade)
+  gradeComponentId String
+
+  scores SubjectGradeSubComponentScore[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gradeComponentId])
+  @@index([classSubjectId])
+  @@index([gradingPeriodId])
+}
+
+model SubjectGradeSubComponentScore {
+  id String @id @default(cuid())
+
+  score Float?
+
+  subjectGradeId String
+  subjectGrade   SubjectGrade @relation(references: [id], fields: [subjectGradeId], onDelete: Cascade)
+
+  subjectGradeComponentId String
+  subjectGradeComponent   SubjectGradeComponent @relation(fields: [subjectGradeComponentId], references: [id], onDelete: Cascade)
+
+  subjectGradeSubComponentId String
+  subjectGradeSubComponent   SubjectGradeSubComponent @relation(fields: [subjectGradeSubComponentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([subjectGradeSubComponentId])
+  @@index([subjectGradeComponentId])
+  @@index([subjectGradeId])
+}
+
+model ClassSubject {
+  id String @id @default(cuid())
+
+  teacherId String
+  teacher   Teacher @relation(references: [id], fields: [teacherId], onDelete: Cascade)
+
+  subjectId String
+  subject   Subject @relation(references: [id], fields: [subjectId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  enrollmentClass   EnrollmentClass @relation(fields: [enrollmentClassId], references: [id], onDelete: Cascade)
+  enrollmentClassId String
+
+  periodicGrades            SubjectGrade[]
+  subjectGradeSubComponents SubjectGradeSubComponent[]
+
+  @@unique([enrollmentClassId, teacherId, subjectId])
+  @@index([teacherId])
+  @@index([subjectId])
+  @@index([enrollmentClassId])
+}
+
+model SubjectGrade {
+  id String @id @default(cuid())
+
+  studentId String
+  student   Student @relation(references: [id], fields: [studentId], onDelete: Cascade)
+
+  subjectId String
+  subject   ClassSubject @relation(references: [id], fields: [subjectId], onDelete: Cascade)
+
+  gradingPeriodId String
+  gradingPeriod   EnrollmentGradingPeriod @relation(references: [id], fields: [gradingPeriodId], onDelete: Cascade)
+
+  gradeComponents SubjectGradeComponent[]
+  scores          SubjectGradeSubComponentScore[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gradingPeriodId])
+  @@index([subjectId])
+  @@index([studentId])
 }

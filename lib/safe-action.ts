@@ -44,6 +44,13 @@ export const actionClient = createSafeActionClient({
       ) {
         return "A class with the selected details already exists."
       }
+      if (
+        e.message.includes(
+          "Unique constraint failed on the fields: (`schoolId`,`schoolYearId`,`semesterId`,`programOfferingId`,`courseId`,`gradeYearLevelId`,`sectionId`)"
+        )
+      ) {
+        return "An enrollment class with the provided details already exists."
+      }
     }
 
     if (e instanceof AuthError) {

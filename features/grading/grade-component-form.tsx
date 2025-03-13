@@ -2,18 +2,22 @@
 
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CirclePlusIcon, PlusIcon, XIcon } from "lucide-react"
+import { CirclePlusIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
-import {
-  SubmitErrorHandler,
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-} from "react-hook-form"
+import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -24,25 +28,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { NumberInput } from "@/components/ui/number-input"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import { SubmitButton } from "@/components/ui/submit-button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 import { createGradeComponent } from "./action"
 import { GradeComponentInputs, gradeComponentSchema } from "./schema"
@@ -51,24 +38,20 @@ export function GradeComponentFormDialog() {
   const [open, setOpen] = useState(false)
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button size="sm">
           <CirclePlusIcon /> Add Grade Component
         </Button>
-      </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="bg-background inset-y-2 right-2 flex h-auto w-[95%] flex-col gap-0 overflow-y-hidden rounded-lg border p-0 focus-visible:outline-none sm:max-w-lg"
-        onInteractOutside={(e) => e.preventDefault()}
-      >
-        <SheetHeader className="space-y-1 border-b p-4 text-left">
-          <SheetTitle>Add Grade Component</SheetTitle>
-          <SheetDescription>Fill in the form below.</SheetDescription>
-        </SheetHeader>
+      </DialogTrigger>
+      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Add Grade Component</DialogTitle>
+          <DialogDescription>Fill in the form below.</DialogDescription>
+        </DialogHeader>
         <GradeComponentForm onAfterSave={() => setOpen(false)} />
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -84,17 +67,15 @@ export function GradeComponentForm({
       label: "",
       title: "",
       percentage: 0,
-      parts: [
-        {
-          title: "",
-          order: 1,
-          highestPossibleScore: 10,
-        },
-      ],
+      // parts: [
+      //   {
+      //     title: "",
+      //     order: 1,
+      //     highestPossibleScore: 10,
+      //   },
+      // ],
     },
   })
-
-  const partsFields = useFieldArray({ control: form.control, name: "parts" })
 
   const action = useAction(createGradeComponent, {
     onError: ({ error }) =>
@@ -117,31 +98,28 @@ export function GradeComponentForm({
     }
   }
 
-  function generateSubComponents() {
-    form.clearErrors("parts")
+  // function generateSubComponents() {
+  //   form.clearErrors("parts")
 
-    if (!form.getValues("title")) return
+  //   if (!form.getValues("title")) return
 
-    const generatedParts = Array.from(Array(10).keys()).map((n) => ({
-      order: n + 1,
-      title:
-        form
-          .getValues("title")
-          .split(" ")
-          .map((c) => c.charAt(0).toUpperCase())
-          .join("") + (n + 1).toString(),
-      highestPossibleScore: 10,
-    }))
+  //   const generatedParts = Array.from(Array(10).keys()).map((n) => ({
+  //     order: n + 1,
+  //     title:
+  //       form
+  //         .getValues("title")
+  //         .split(" ")
+  //         .map((c) => c.charAt(0).toUpperCase())
+  //         .join("") + (n + 1).toString(),
+  //     highestPossibleScore: 10,
+  //   }))
 
-    form.setValue("parts", generatedParts)
-  }
+  //   form.setValue("parts", generatedParts)
+  // }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit, onError)}
-        className="max-h-full overflow-y-auto px-6 py-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit, onError)}>
         <fieldset
           disabled={action.isPending}
           className="space-y-3 disabled:cursor-not-allowed disabled:opacity-90"
@@ -161,44 +139,42 @@ export function GradeComponentForm({
             )}
           />
 
-          <div className="flex gap-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Title" {...field} />
-                  </FormControl>
-                  <FormDescription>e.g. Written Works</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="percentage"
-              render={() => (
-                <FormItem className="w-1/4">
-                  <FormLabel>Percentage (%)</FormLabel>
-                  <FormControl>
-                    <NumberInput
-                      placeholder="0.0"
-                      min={0}
-                      max={1}
-                      step="any"
-                      {...form.register("percentage", { valueAsNumber: true })}
-                    />
-                  </FormControl>
-                  <FormDescription>e.g. 0.2 for 20%</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Title" {...field} />
+                </FormControl>
+                <FormDescription>e.g. Written Works</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="percentage"
+            render={() => (
+              <FormItem className="w-1/4">
+                <FormLabel>Percentage (%)</FormLabel>
+                <FormControl>
+                  <NumberInput
+                    placeholder="0.0"
+                    min={0}
+                    max={1}
+                    step="any"
+                    {...form.register("percentage", { valueAsNumber: true })}
+                  />
+                </FormControl>
+                <FormDescription>e.g. 0.2 for 20%</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <Label>Subcomponents</Label>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -331,19 +307,17 @@ export function GradeComponentForm({
                 </TableRow>
               </TableBody>
             </Table>
-          </div>
+          </div> */}
         </fieldset>
 
-        <div className="flex items-center justify-end gap-3 border-t pt-4">
-          <Button
-            type="button"
-            variant="secondaryOutline"
-            onClick={onAfterSave}
-          >
-            Cancel
-          </Button>
+        <DialogFooter className="pt-6">
+          <DialogClose asChild>
+            <Button type="button" variant="secondaryOutline">
+              Cancel
+            </Button>
+          </DialogClose>
           <SubmitButton loading={action.isPending}>Save</SubmitButton>
-        </div>
+        </DialogFooter>
       </form>
     </Form>
   )

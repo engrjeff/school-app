@@ -26,6 +26,7 @@ export const API_ROUTES = [
   "/api/student-grades",
   "/api/grade-summary",
   "/api/dashboard/courses-by-program",
+  "/api/periodic-grades",
 ]
 
 export const API_AUTH_PREFIX = "/api/auth"
@@ -53,6 +54,7 @@ export const SCHOOL_ADMIN_ROUTES = [
   "/setup-school",
   "/setup-curriculum",
   "/classes",
+  "/enrollments",
 ]
 
 export const TEACHER_ROUTES = [

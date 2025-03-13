@@ -72,7 +72,7 @@ function SchoolYearForm({ onAfterSave }: { onAfterSave: () => void }) {
     defaultValues: {
       title: "",
       programOfferingId: searchParams.get("program") ?? "",
-      semesters: [{ title: "1st Semester" }],
+      semesters: [{ title: "1st Semester" }, { title: "2nd Semester" }],
     },
   })
 

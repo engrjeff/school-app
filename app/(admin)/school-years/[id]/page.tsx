@@ -4,7 +4,6 @@ import { notFound } from "next/navigation"
 import { ProgramOfferingSelector } from "@/features/programs/progam-offering-selector"
 import { getSchoolYearById } from "@/features/school-years/queries"
 import { SchoolYearsSelector } from "@/features/school-years/school-years-selector"
-import { SemesterSelector } from "@/features/school-years/semester-selector"
 import { CalendarPlusIcon, SlashIcon } from "lucide-react"
 
 import {
@@ -46,12 +45,6 @@ async function SchoolYearItemPage({ params }: { params: { id: string } }) {
             <BreadcrumbItem>
               <SchoolYearsSelector />
             </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <SlashIcon />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <SemesterSelector schoolYearId={params.id} />
-            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </AppHeader>
@@ -69,7 +62,7 @@ async function SchoolYearItemPage({ params }: { params: { id: string } }) {
           {schoolYear.semesters.map((semester) => (
             <li key={semester.id}>
               <Link
-                href={`/school-years/${schoolYear.id}/semesters/${semester.id}`}
+                href={`/classes?program=${schoolYear.programOfferingId}&schoolYear=${schoolYear.id}&semester=${semester.id}`}
               >
                 <Card className="bg-accent/40 hover:border-primary">
                   <CardHeader>

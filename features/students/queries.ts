@@ -27,6 +27,8 @@ export type GetStudentsArgs = {
   order?: string
   course?: string
   program?: string
+  gradeYearLevel?: string
+  section?: string
 }
 
 export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
@@ -39,6 +41,10 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
 
   const programFilter = args?.program ? args.program : undefined
   const courseFilter = args?.course ? args.course.split(",") : undefined
+  const gradeYearLevelFilter = args?.gradeYearLevel
+    ? args.gradeYearLevel
+    : undefined
+  const sectionFilter = args?.section ? args.section : undefined
 
   const whereInput: Prisma.StudentWhereInput = {
     schoolId: session?.user.schoolId,
@@ -70,6 +76,8 @@ export async function getStudentsOfCurrentSchool(args: GetStudentsArgs) {
       },
       programOfferingId: programFilter,
     },
+    currentGradeYearLevelId: gradeYearLevelFilter,
+    currentSectionId: sectionFilter,
   }
 
   const totalFilteredPromise = prisma.student.count({
@@ -116,12 +124,17 @@ export async function getStudentById(studentId: string) {
       currentCourse: true,
       currentGradeYearLevel: true,
       currentSection: true,
-      classes: {
+      enrollmentClasses: {
+        orderBy: { createdAt: "asc" },
         include: {
-          subject: true,
-          teacher: true,
+          subjects: {
+            include: { subject: true, teacher: true },
+          },
           schoolYear: true,
           semester: true,
+          gradeYearLevel: true,
+          section: true,
+          course: true,
         },
       },
     },
@@ -148,10 +161,12 @@ export async function getStudentsOfTeacher(args: GetStudentsArgs) {
 
   const whereInput: Prisma.StudentWhereInput = {
     schoolId: session?.user.schoolId,
-    classes: {
+    enrollmentClasses: {
       some: {
-        id: {
-          in: userTeacher?.classes.map((c) => c.id),
+        subjects: {
+          some: {
+            teacherId: userTeacher?.id,
+          },
         },
       },
     },

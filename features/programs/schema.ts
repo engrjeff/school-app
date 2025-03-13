@@ -7,6 +7,7 @@ export const commonProgramsSchema = z.object({
       title: z.string(),
       description: z.string(),
       code: z.string(),
+      gradingPeriod: z.string().array(),
       courses: z
         .object({
           title: z.string(),

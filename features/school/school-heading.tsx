@@ -4,9 +4,9 @@ import Link from "next/link"
 import { School } from "@prisma/client"
 import {
   ChevronsUpDown,
+  CirclePlusIcon,
   ExternalLink,
   SchoolIcon,
-  UserPlus,
 } from "lucide-react"
 
 import {
@@ -54,9 +54,11 @@ export function SchoolHeading({ school }: { school: School }) {
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Quick Actions
             </DropdownMenuLabel>
-            <DropdownMenuItem className="gap-2 p-2">
-              <UserPlus className="size-4 shrink-0" />
-              Enroll Students
+            <DropdownMenuItem className="gap-2 p-2" asChild>
+              <Link href="/enrollments/new">
+                <CirclePlusIcon className="size-4 shrink-0" />
+                Create Enrollment
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="gap-2 p-2" asChild>
               <Link href={`#`}>

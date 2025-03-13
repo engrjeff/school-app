@@ -205,7 +205,7 @@ function GradeComponentSelector({
           </div>
         ))
       ) : (
-        <div className="h-[210px] w-full gap-2 flex flex-col items-center justify-center">
+        <div className="flex h-[210px] w-full flex-col items-center justify-center gap-2">
           <p className="text-center">No grade components yet.</p>
           <Button type="button" size="sm" asChild>
             <Link href="/grading">Add Grade Component</Link>

@@ -25,6 +25,14 @@ export const createCurriculumPrograms = adminActionClient
             code: program.code,
             description: program.description,
             schoolId: user.schoolId!,
+            enrollmentGradingPeriod: {
+              createMany: {
+                data: program.gradingPeriod.map((gp, gpIdx) => ({
+                  title: gp,
+                  order: gpIdx + 1,
+                })),
+              },
+            },
           },
         })
       })

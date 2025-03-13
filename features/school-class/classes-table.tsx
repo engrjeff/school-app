@@ -72,7 +72,9 @@ export function ClassesTable({ classes }: Props) {
             <TableHead className="px-1">
               <SortLink title="Student Count" sortValue="student_count" />
             </TableHead>
-            <TableHead></TableHead>
+            <TableHead>
+              <span className="sr-only">Actions</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

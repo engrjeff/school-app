@@ -95,7 +95,7 @@ export function StudentForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit, onError)}
-        className="container max-w-screen-lg py-6"
+        className="container max-w-screen-lg py-2"
       >
         <div className="mb-4 flex items-start gap-4">
           <Button

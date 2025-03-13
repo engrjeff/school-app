@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
 import { CourseFilter } from "@/components/course-filter"
+import { GradeSectionFilter } from "@/components/grade-section-filter"
 import { Pagination } from "@/components/pagination"
 import { ProgramOfferingFilter } from "@/components/program-offering-filter"
 import { SearchField } from "@/components/search-field"
@@ -48,6 +49,8 @@ async function StudentsPage({
           <ProgramOfferingFilter />
           {/* Filter by course */}
           <CourseFilter key={searchParams.program} />
+          {/* Filter by grade & section */}
+          <GradeSectionFilter hideSection />
           {session?.user.role === ROLE.SCHOOLADMIN ? (
             <div className="ml-auto flex items-center space-x-3">
               <StudentImportDialog currentStudents={students} />

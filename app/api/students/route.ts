@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSession } from "@/auth"
+import { StudentStatus } from "@prisma/client"
 
 import prisma from "@/lib/db"
 
@@ -15,6 +16,7 @@ export async function GET(request: NextRequest) {
     const courseId = searchParams.get("courseId")
     const gradeYearLevelId = searchParams.get("gradeYearLevelId")
     const sectionId = searchParams.get("sectionId")
+    const unenrolledOnly = searchParams.get("unenrolledOnly")
 
     const students = await prisma.student.findMany({
       where: {
@@ -29,6 +31,7 @@ export async function GET(request: NextRequest) {
             currentSectionId: sectionId,
           },
         ],
+        status: unenrolledOnly ? StudentStatus.REGISTERED : undefined,
       },
       orderBy: { lastName: "asc" },
     })

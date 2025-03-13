@@ -113,15 +113,19 @@ export async function getTeacherById(id: string) {
           programOffering: true,
         },
       },
-      classes: {
+      classSubjects: {
         include: {
           subject: true,
-          section: true,
-          semester: true,
-          schoolYear: true,
-          _count: {
-            select: {
-              students: true,
+          enrollmentClass: {
+            include: {
+              schoolYear: true,
+              section: true,
+              course: true,
+              gradeYearLevel: true,
+              semester: true,
+              _count: {
+                select: { students: true },
+              },
             },
           },
         },

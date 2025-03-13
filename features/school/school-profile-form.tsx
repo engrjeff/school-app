@@ -172,11 +172,11 @@ export function SchoolProfileForm({
             control={form.control}
             name="logo"
             render={({ field }) => (
-              <FormItem className="bg-accent/40 col-span-2 rounded-lg border p-4">
+              <FormItem className="col-span-2 rounded-lg border p-4">
                 <FormLabel>{"Upload your school's logo"} </FormLabel>
                 <FormControl>
                   <Input
-                    className="p-0 pe-3 file:me-3 file:border-0 file:border-e"
+                    className="bg-muted/30 p-0 pe-3 file:me-3 file:border-0 file:border-e"
                     type="file"
                     accept="image/*"
                     {...field}
@@ -195,7 +195,7 @@ export function SchoolProfileForm({
               Basic information about your school.
             </p>
           </div>
-          <div className="bg-accent/40 col-span-2 space-y-3 rounded-lg border p-4">
+          <div className="col-span-2 space-y-3 rounded-lg border p-4">
             <FormField
               control={form.control}
               name="name"
@@ -206,6 +206,7 @@ export function SchoolProfileForm({
                     <Input
                       placeholder="Enter school name"
                       id="name"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>
@@ -224,6 +225,7 @@ export function SchoolProfileForm({
                     <Input
                       placeholder="Enter school short name"
                       id="name"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>
@@ -243,6 +245,7 @@ export function SchoolProfileForm({
                     <Input
                       placeholder="Enter school ID"
                       id="schoolId"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>
@@ -270,6 +273,7 @@ export function SchoolProfileForm({
                     <Textarea
                       placeholder="Enter school slogan"
                       id="slogan"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>
@@ -288,7 +292,7 @@ export function SchoolProfileForm({
               The physical location of your school.
             </p>
           </div>
-          <div className="bg-accent/40 col-span-2 space-y-3 rounded-lg border p-4">
+          <div className="col-span-2 space-y-3 rounded-lg border p-4">
             <FormField
               control={form.control}
               name="address"
@@ -299,6 +303,7 @@ export function SchoolProfileForm({
                     <Textarea
                       placeholder="Enter school street address"
                       id="address"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>
@@ -318,7 +323,7 @@ export function SchoolProfileForm({
                       label="Region"
                       inputPlaceholder="Search region..."
                       value={field.value}
-                      className="h-9 bg-transparent"
+                      className="bg-muted/30 h-9"
                       onValueChange={(value) => {
                         field.onChange(value)
                         form.setValue("province", "")
@@ -345,7 +350,7 @@ export function SchoolProfileForm({
                       label="Province"
                       inputPlaceholder="Search province..."
                       value={field.value}
-                      className="h-9 bg-transparent"
+                      className="bg-muted/30 h-9"
                       onValueChange={(value) => {
                         field.onChange(value)
                         form.setValue("town", "")
@@ -373,7 +378,7 @@ export function SchoolProfileForm({
                       label="City/Town"
                       inputPlaceholder="Search town or city..."
                       value={field.value}
-                      className="h-9 bg-transparent"
+                      className="bg-muted/30 h-9"
                       onValueChange={(value) => {
                         field.onChange(value)
                       }}
@@ -402,6 +407,7 @@ export function SchoolProfileForm({
                       <Input
                         placeholder="Zip Code"
                         autoComplete="new-zipcode"
+                        className="bg-muted/30"
                         {...field}
                       />
                     </FormControl>
@@ -420,7 +426,7 @@ export function SchoolProfileForm({
               Ways for your school to be reached.
             </p>
           </div>
-          <div className="bg-accent/40 col-span-2 space-y-3 rounded-lg border p-4">
+          <div className="col-span-2 space-y-3 rounded-lg border p-4">
             <FormField
               control={form.control}
               name="phone"
@@ -432,6 +438,7 @@ export function SchoolProfileForm({
                       placeholder="Enter phone number"
                       id="phone"
                       inputMode="tel"
+                      className="bg-muted/30"
                       type="tel"
                       {...field}
                     />
@@ -451,6 +458,7 @@ export function SchoolProfileForm({
                       placeholder="Enter email address"
                       id="phone"
                       type="email"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>
@@ -475,6 +483,7 @@ export function SchoolProfileForm({
                       id="website"
                       type="url"
                       inputMode="url"
+                      className="bg-muted/30"
                       {...field}
                     />
                   </FormControl>

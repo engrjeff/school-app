@@ -7,12 +7,12 @@ import prisma from "@/lib/db"
 export async function getGradingComponents() {
   const session = await getSession()
 
-  const gradingComponents = await prisma.gradeComponent.findMany({
+  const gradingComponents = await prisma.subjectGradeComponent.findMany({
     where: {
-      teacherId: session?.user.teacherProfileId,
+      createdById: session?.user.id,
     },
     include: {
-      parts: {
+      subcomponents: {
         orderBy: {
           order: "asc",
         },

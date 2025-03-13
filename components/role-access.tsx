@@ -8,12 +8,17 @@ export function RoleAccess({
   role,
   children,
   loadingUi,
-}: React.PropsWithChildren<{ role: ROLE; loadingUi?: React.ReactNode }>) {
+  fallback,
+}: React.PropsWithChildren<{
+  role: ROLE
+  loadingUi?: React.ReactNode
+  fallback?: React.ReactNode
+}>) {
   const session = useSession()
 
   if (session.status === "loading") return loadingUi ? loadingUi : null
 
-  if (session.data?.user?.role !== role) return null
+  if (session.data?.user?.role !== role) return fallback ? fallback : null
 
   return <>{children}</>
 }

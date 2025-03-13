@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Student } from "@prisma/client"
 import {
-  GridIcon,
   LibraryIcon,
   MoreHorizontal,
   PencilIcon,
@@ -37,11 +36,6 @@ export function StudentRowActions({ student }: { student: Student }) {
           <DropdownMenuItem asChild>
             <Link href={`/students/${student.id}/edit`}>
               <PencilIcon className="size-3" /> Update
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={`/students/${student.id}/classes`}>
-              <GridIcon className="size-4" /> Enrollments
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
