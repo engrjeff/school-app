@@ -1,6 +1,3 @@
-import { GradeComponentPicker } from "@/features/grading/grade-component-picker"
-import { ROLE } from "@prisma/client"
-
 import { getTeacherFullName } from "@/lib/utils"
 import {
   Table,
@@ -9,7 +6,6 @@ import {
   TableHeadPlain,
   TableRow,
 } from "@/components/ui/table"
-import { RoleAccess } from "@/components/role-access"
 
 import { DetailedClassSubject } from "./queries"
 
@@ -18,25 +14,11 @@ export function ClassSubjectGradingSummaryTable({
 }: {
   classSubject: DetailedClassSubject
 }) {
-  const { enrollmentClass, subject, teacher, periodicGrades } = classSubject
+  const { enrollmentClass, subject, teacher } = classSubject
 
   return (
     <>
       <div className="relative w-full max-w-full">
-        {periodicGrades.length === 0 ? (
-          <div className="bg-background/70 absolute inset-0 z-10 flex size-full flex-col items-center space-y-2 py-20 backdrop-blur-sm">
-            <p className="text-lg font-semibold">
-              No grading components found.
-            </p>
-            <p className="text-muted-foreground">
-              It looks like you have not set up the grading components for this
-              class yet. Set them up first.
-            </p>
-            <RoleAccess role={ROLE.TEACHER}>
-              <GradeComponentPicker />
-            </RoleAccess>
-          </div>
-        ) : null}
         <Table className="table-auto">
           <TableHeader>
             <TableRow>
