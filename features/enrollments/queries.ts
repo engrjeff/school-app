@@ -164,7 +164,10 @@ export async function getClassSubjectById(
           gradeComponents: {
             include: {
               subcomponents: {
-                where: { gradingPeriodId: gradingPeriodFilter },
+                where: {
+                  gradingPeriodId: gradingPeriodFilter,
+                  classSubjectId: id,
+                },
                 orderBy: { order: "asc" },
               },
             },

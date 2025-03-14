@@ -28,6 +28,10 @@ export async function GET(request: NextRequest) {
             title: true,
             percentage: true,
             subcomponents: {
+              where: {
+                classSubjectId: classSubjectId!,
+                gradingPeriodId: gradingPeriodId ?? undefined,
+              },
               select: {
                 id: true,
                 gradeComponentId: true,
@@ -35,7 +39,6 @@ export async function GET(request: NextRequest) {
                 title: true,
                 order: true,
               },
-              where: { gradingPeriodId: gradingPeriodId ?? undefined },
               orderBy: { order: "asc" },
             },
           },
