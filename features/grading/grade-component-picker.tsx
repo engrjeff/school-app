@@ -39,7 +39,11 @@ import {
   gradeComponentPickerSchema,
 } from "./schema"
 
-export function GradeComponentPicker() {
+export function GradeComponentPicker({
+  gradingPeriodId,
+}: {
+  gradingPeriodId: string
+}) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -56,18 +60,23 @@ export function GradeComponentPicker() {
             The total percentage should sum up to a maximum of 100%.
           </DialogDescription>
         </DialogHeader>
-        <GradeComponentPickerForm onAfterSave={() => setOpen(false)} />
+        <GradeComponentPickerForm
+          gradingPeriodId={gradingPeriodId}
+          onAfterSave={() => setOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   )
 }
 
 function GradeComponentPickerForm({
+  gradingPeriodId,
   onAfterSave,
 }: {
+  gradingPeriodId: string
   onAfterSave: VoidFunction
 }) {
-  const { id: classId } = useParams<{ id: string }>()
+  const { id: classSubjectId } = useParams<{ id: string }>()
 
   const form = useForm<GradeComponentPickerInputs>({
     resolver: zodResolver(gradeComponentPickerSchema),
@@ -90,7 +99,11 @@ function GradeComponentPickerForm({
   const onSubmit: SubmitHandler<GradeComponentPickerInputs> = async (
     values
   ) => {
-    const result = await action.executeAsync({ classId, ...values })
+    const result = await action.executeAsync({
+      gradingPeriodId,
+      classSubjectId,
+      gradeComponents: values.gradeComponents,
+    })
 
     if (result?.data?.success) {
       toast.success("Grade components were successfully assigned to the class!")

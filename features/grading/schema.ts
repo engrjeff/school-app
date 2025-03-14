@@ -74,7 +74,10 @@ export type GradeComponentPickerInputs = z.infer<
 
 export const assignGradeComponentsSchema = z
   .object({
-    classId: z.string({ required_error: "Class ID is required." }),
+    classSubjectId: z.string({ required_error: "Class Subject is required." }),
+    gradingPeriodId: z.string({
+      required_error: "Grading Period is required.",
+    }),
   })
   .merge(gradeComponentPickerSchema)
 

@@ -50,7 +50,7 @@ export function ClassSubjectGradingTable({
               class yet. Set them up first.
             </p>
             <RoleAccess role={ROLE.TEACHER}>
-              <GradeComponentPicker />
+              <GradeComponentPicker gradingPeriodId={currentGradingPeriodId!} />
             </RoleAccess>
           </div>
         ) : null}

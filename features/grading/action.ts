@@ -66,19 +66,22 @@ export const assignGradeComponents = teacherActionClient
   .metadata({ actionName: "assignGradeComponents" })
   .schema(assignGradeComponentsSchema)
   .action(
-    async ({ parsedInput: { classId, gradeComponents }, ctx: { user } }) => {
+    async ({
+      parsedInput: { classSubjectId, gradingPeriodId, gradeComponents },
+      ctx: { user },
+    }) => {
       if (!user.teacherProfileId)
         throw new Error(
           "Unauthorized: You have no permission to perform the action."
         )
 
+      console.time("assignGradeComponents")
       // find the class subject
       const foundClassSubject = await prisma.classSubject.findUnique({
-        where: { id: classId },
+        where: { id: classSubjectId },
         include: {
           enrollmentClass: {
             include: {
-              gradingPeriods: true,
               students: { select: { id: true } },
             },
           },
@@ -87,50 +90,8 @@ export const assignGradeComponents = teacherActionClient
 
       if (!foundClassSubject) throw new Error("Class subject not found.")
 
-      // // for each grading period of the class, assign the grade components
-      // await prisma.$transaction(
-      //   foundClass.gradingPeriods.map((gp) => {
-      //     return prisma.gradingPeriod.update({
-      //       where: { id: gp.id },
-      //       data: {
-      //         gradeComponents: {
-      //           connect: gradeComponents,
-      //         },
-      //       },
-      //     })
-      //   })
-      // )
-
-      // // generate blank student grades
-      // await prisma.$transaction(
-      //   foundClass.gradingPeriods.map((gp) => {
-      //     return prisma.studentGrade.createMany({
-      //       data: foundClass.students.map((s) => ({
-      //         studentId: s.id,
-      //         gradingPeriodId: gp.id,
-      //       })),
-      //     })
-      //   })
-      // )
-
       // for each grading period of the enrollment class, generate `periodicGrades` for each student
-      const { gradingPeriods, students } = foundClassSubject.enrollmentClass
-
-      const arrayOfPeriodicGrades = await prisma.$transaction(
-        gradingPeriods.map((gp) => {
-          return prisma.subjectGrade.createManyAndReturn({
-            data: students.map((student) => ({
-              studentId: student.id,
-              subjectId: foundClassSubject.id,
-              gradingPeriodId: gp.id,
-            })),
-          })
-        })
-      )
-
-      console.log(
-        `Created ${arrayOfPeriodicGrades.flat().length} periodic grades for ${gradingPeriods.length} periods for ${students.length} students.`
-      )
+      const { students } = foundClassSubject.enrollmentClass
 
       // get the grade components
       const gradeComponentsToAssign =
@@ -140,29 +101,16 @@ export const assignGradeComponents = teacherActionClient
           },
         })
 
-      // generate 2 subcomponents for each grade component
-      // these can be edited later by the teacher
-
-      const gcAndgpArray = gradingPeriods
-        .map((gp) =>
-          gradeComponentsToAssign.map((gc) => ({
-            gradingPeriodId: gp.id,
-            gcTitle: gc.title,
-            gradeComponentId: gc.id,
-          }))
-        )
-        .flat()
-
       const gradeSubcomponents = await prisma.$transaction(
-        gcAndgpArray.map((gcgp) => {
+        gradeComponentsToAssign.map((gc) => {
           return prisma.subjectGradeSubComponent.createManyAndReturn({
             data: [1, 2].map((n) => ({
-              gradingPeriodId: gcgp.gradingPeriodId,
+              gradingPeriodId,
               classSubjectId: foundClassSubject.id,
-              gradeComponentId: gcgp.gradeComponentId,
+              gradeComponentId: gc.id,
               order: n,
               title:
-                gcgp.gcTitle
+                gc.title
                   .split(" ")
                   .map((c) => c.charAt(0).toUpperCase())
                   .join("") + n.toString(),
@@ -173,13 +121,23 @@ export const assignGradeComponents = teacherActionClient
       )
 
       console.log(
-        `Generated ${gradeSubcomponents.flat().length} grade subcomponents`
+        `Created ${gradeSubcomponents.flat().length} grade subcomponents`
       )
 
-      // for each periodGrade in arrayOfPeriodicGrades, assign the grade components
-      const periodicGrades = arrayOfPeriodicGrades.flat()
+      // for each subjectGrade in periodicGrades, assign the grade components
+      const periodicGrades = await prisma.subjectGrade.createManyAndReturn({
+        data: students.map((student) => ({
+          studentId: student.id,
+          subjectId: foundClassSubject.id,
+          gradingPeriodId,
+        })),
+      })
 
-      await prisma.$transaction(
+      console.log(
+        `Created ${periodicGrades.length} periodic grades for ${students.length} students.`
+      )
+
+      const result = await prisma.$transaction(
         periodicGrades.map((p) => {
           return prisma.subjectGrade.update({
             where: {
@@ -201,11 +159,18 @@ export const assignGradeComponents = teacherActionClient
                 },
               },
             },
+            select: { id: true, _count: { select: { scores: true } } },
           })
         })
       )
 
-      revalidatePath(`/classes/${classId}/grading`)
+      console.log(
+        `Created ${result.reduce((s, i) => (s += i._count.scores), 0)} blank subject scores.`
+      )
+
+      console.timeEnd("assignGradeComponents")
+
+      revalidatePath(`/classes/${classSubjectId}/grading`)
 
       return { success: true }
     }
