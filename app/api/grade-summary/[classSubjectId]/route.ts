@@ -7,47 +7,51 @@ export const dynamic = "force-dynamic"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { classId: string } }
+  { params }: { params: { classSubjectId: string } }
 ) {
   try {
     const session = await getSession()
 
     if (!session?.user?.schoolId) return NextResponse.json(undefined)
 
-    const gradingPeriods = await prisma.gradingPeriod.findMany({
-      where: {
-        classId: params.classId,
-      },
+    const classSubject = await prisma.classSubject.findUnique({
+      where: { id: params.classSubjectId },
       include: {
-        class: { include: { programOffering: { select: { code: true } } } },
-        gradeComponents: {
-          include: { parts: true },
-        },
-        studentGrades: {
+        enrollmentClass: {
           include: {
-            scores: {
+            programOffering: true,
+            gradingPeriods: {
               include: {
-                gradeComponentPart: true,
-                parentGradeComponent: true,
+                subjectGrades: {
+                  include: {
+                    gradeComponents: { include: { subcomponents: true } },
+                    student: true,
+                    scores: { include: { subjectGradeComponent: true } },
+                  },
+                  orderBy: {
+                    student: {
+                      lastName: "asc",
+                    },
+                  },
+                },
+              },
+              orderBy: {
+                order: "asc",
               },
             },
-            student: true,
           },
         },
-      },
-      orderBy: {
-        order: "asc",
       },
     })
 
     const studentGradeMap = new Map()
 
-    gradingPeriods.forEach((period) => {
-      period.studentGrades.forEach((sg) => {
+    classSubject?.enrollmentClass.gradingPeriods.forEach((period) => {
+      period.subjectGrades.forEach((sg) => {
         const maxTotalScoreMap = new Map<string, number>()
 
-        period.gradeComponents.forEach((gc) => {
-          const maxTotal = gc.parts.reduce(
+        sg.gradeComponents.forEach((gc) => {
+          const maxTotal = gc.subcomponents.reduce(
             (sum, part) => (sum += part.highestPossibleScore),
             0
           )
@@ -56,10 +60,12 @@ export async function GET(
         })
 
         const grade = sg.scores.reduce((ws, score) => {
+          if (!score.score) return ws
+
           return (ws +=
             (score.score /
-              maxTotalScoreMap.get(score.parentGradeComponentId)!) *
-            score.parentGradeComponent.percentage)
+              maxTotalScoreMap.get(score.subjectGradeComponentId)!) *
+            score.subjectGradeComponent.percentage)
         }, 0)
 
         if (studentGradeMap.has(sg.studentId)) {
@@ -85,8 +91,11 @@ export async function GET(
     })
 
     return NextResponse.json({
-      program: gradingPeriods.at(0)?.class.programOffering.code,
-      heading: gradingPeriods.map((p) => ({ id: p.id, title: p.title })),
+      program: classSubject?.enrollmentClass.programOffering.code,
+      heading: classSubject?.enrollmentClass.gradingPeriods.map((p) => ({
+        id: p.id,
+        title: p.title,
+      })),
       cells: Array.from(studentGradeMap.values()),
     })
   } catch (error) {

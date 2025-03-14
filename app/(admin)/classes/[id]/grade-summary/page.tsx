@@ -1,9 +1,9 @@
 import { type Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ClassSubjectGradingSummaryTable } from "@/features/enrollments/class-subject-grading-summary-table"
 import { getClassSubjectById } from "@/features/enrollments/queries"
-import { SlashIcon } from "lucide-react"
+import { StudentGradeSummaryTable } from "@/features/grading/student-grade-summary-table"
+import { FilePlusIcon, SlashIcon } from "lucide-react"
 
 import {
   Breadcrumb,
@@ -12,6 +12,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AppContent } from "@/components/app-content"
 import { AppHeader } from "@/components/app-header"
@@ -89,8 +90,12 @@ async function SchoolClassGradeSummaryPage({ params }: PageProps) {
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          <Button size="sm">
+            <FilePlusIcon /> Generate Certificates
+          </Button>
         </div>
-        <ClassSubjectGradingSummaryTable classSubject={classSubject} />
+        {/* <ClassSubjectGradingSummaryTable classSubject={classSubject} /> */}
+        <StudentGradeSummaryTable />
       </AppContent>
     </>
   )

@@ -47,7 +47,7 @@ export function ClassSubjectGradingTable({
             </p>
             <p className="text-muted-foreground">
               It looks like you have not set up the grading components for this
-              class yet. Set them up first.
+              class grading period yet. Set them up first.
             </p>
             <RoleAccess role={ROLE.TEACHER}>
               <GradeComponentPicker gradingPeriodId={currentGradingPeriodId!} />

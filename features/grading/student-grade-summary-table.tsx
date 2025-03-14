@@ -1,5 +1,6 @@
 "use client"
 
+import { Gender } from "@prisma/client"
 import { Loader2Icon } from "lucide-react"
 
 import { useGradeSummary } from "@/hooks/use-grade-summary"
@@ -27,6 +28,10 @@ export function StudentGradeSummaryTable() {
 
   const d = gradeSummary.data
 
+  const male = d?.cells.filter((c) => c.student.gender === Gender.MALE)
+
+  const female = d?.cells.filter((c) => c.student.gender === Gender.FEMALE)
+
   return (
     <Table className="table-auto">
       <TableHeader>
@@ -35,7 +40,7 @@ export function StudentGradeSummaryTable() {
           <TableHeadPlain className="whitespace-nowrap">
             Learner&apos;s Name
           </TableHeadPlain>
-          <TableHeadPlain className="whitespace-nowrap">
+          <TableHeadPlain className="whitespace-nowrap text-center">
             Student Number (LRN)
           </TableHeadPlain>
           {gradeSummary.data?.heading.map((period) => (
@@ -58,7 +63,15 @@ export function StudentGradeSummaryTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {d?.cells.map((cell, studentIndex) => (
+        <TableRow className="hover:bg-transparent">
+          <TableCell
+            colSpan={5 + (d?.heading.length ?? 0)}
+            className="bg-accent/30 h-8 border-x py-0 text-xs font-semibold uppercase"
+          >
+            Male
+          </TableCell>
+        </TableRow>
+        {male?.map((cell, studentIndex) => (
           <TableRow>
             <TableCell className="w-10 whitespace-nowrap border-r text-center first:border-l last:border-r">
               {studentIndex + 1}
@@ -69,16 +82,16 @@ export function StudentGradeSummaryTable() {
                 {cell.student.middleName} {cell.student.suffix}
               </p>
             </TableCell>
-            <TableCell className="whitespace-nowrap border-r first:border-l last:border-r">
+            <TableCell className="whitespace-nowrap border-r text-center first:border-l last:border-r">
               {cell.student.studentId}
             </TableCell>
-            {d.heading.map((h) => (
+            {d?.heading?.map((h) => (
               <TableCell
                 key={`row-${studentIndex}-cell-${h.id}`}
                 className="whitespace-nowrap border-r text-center font-mono first:border-l last:border-r"
               >
-                {cell[h.title].grade ? (
-                  cell[h.title].grade.toFixed(1)
+                {cell[h.title]?.grade ? (
+                  cell[h.title]?.grade.toFixed(0)
                 ) : (
                   <span className="text-muted-foreground">N/A</span>
                 )}
@@ -86,13 +99,61 @@ export function StudentGradeSummaryTable() {
             ))}
             <TableCell className="whitespace-nowrap border-r text-center font-mono first:border-l last:border-r">
               {getAverageGrade(
-                d.heading.map((h) => cell[h.title].grade).filter(Boolean)
+                d!.heading.map((h) => cell[h.title]?.grade).filter(Boolean)
               )}
             </TableCell>
-            {["ELEM", "JHS", "SHS"].includes(d.program) ? (
+            {["ELEM", "JHS", "SHS"].includes(d!.program) ? (
               <TableCell className="whitespace-nowrap border-r text-center first:border-l last:border-r">
                 {getRemark(
-                  d.heading.map((h) => cell[h.title].grade).filter(Boolean)
+                  d!.heading.map((h) => cell[h.title]?.grade).filter(Boolean)
+                )}
+              </TableCell>
+            ) : null}
+          </TableRow>
+        ))}
+        <TableRow className="hover:bg-transparent">
+          <TableCell
+            colSpan={5 + (d?.heading.length ?? 0)}
+            className="bg-accent/30 h-8 border-x py-0 text-xs font-semibold uppercase"
+          >
+            Female
+          </TableCell>
+        </TableRow>
+        {female?.map((cell, studentIndex) => (
+          <TableRow>
+            <TableCell className="w-10 whitespace-nowrap border-r text-center first:border-l last:border-r">
+              {studentIndex + 1}
+            </TableCell>
+            <TableCell className="whitespace-nowrap border-r first:border-l last:border-r">
+              <p>
+                {cell.student.lastName}, {cell.student.firstName}{" "}
+                {cell.student.middleName} {cell.student.suffix}
+              </p>
+            </TableCell>
+            <TableCell className="whitespace-nowrap border-r text-center first:border-l last:border-r">
+              {cell.student.studentId}
+            </TableCell>
+            {d!.heading.map((h) => (
+              <TableCell
+                key={`row-${studentIndex}-cell-${h.id}`}
+                className="whitespace-nowrap border-r text-center font-mono first:border-l last:border-r"
+              >
+                {cell[h.title]?.grade ? (
+                  cell[h.title]?.grade.toFixed(0)
+                ) : (
+                  <span className="text-muted-foreground">N/A</span>
+                )}
+              </TableCell>
+            ))}
+            <TableCell className="whitespace-nowrap border-r text-center font-mono first:border-l last:border-r">
+              {getAverageGrade(
+                d!.heading.map((h) => cell[h.title]?.grade).filter(Boolean)
+              )}
+            </TableCell>
+            {["ELEM", "JHS", "SHS"].includes(d!.program) ? (
+              <TableCell className="whitespace-nowrap border-r text-center first:border-l last:border-r">
+                {getRemark(
+                  d!.heading.map((h) => cell[h.title]?.grade).filter(Boolean)
                 )}
               </TableCell>
             ) : null}

@@ -18,18 +18,18 @@ export type GradeSummary = {
   >
 }
 
-async function getGradeSummary(classId?: string) {
+async function getGradeSummary(classSubjectId?: string) {
   const response = await apiClient.get<GradeSummary>(
-    `/grade-summary/${classId}`
+    `/grade-summary/${classSubjectId}`
   )
   return response.data
 }
 
 export function useGradeSummary() {
-  const { id: classId } = useParams<{ id: string }>()
+  const { id: classSubjectId } = useParams<{ id: string }>()
 
   return useQuery({
-    queryKey: ["grade-summary", classId],
-    queryFn: () => getGradeSummary(classId),
+    queryKey: ["grade-summary", classSubjectId],
+    queryFn: () => getGradeSummary(classSubjectId),
   })
 }
