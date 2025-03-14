@@ -1,7 +1,6 @@
 "use client"
 
 import { Fragment, useMemo } from "react"
-import { GradeComponentPicker } from "@/features/grading/grade-component-picker"
 import {
   Class,
   Gender,
@@ -9,7 +8,6 @@ import {
   GradeComponentPart,
   GradeYearLevel,
   GradingPeriod,
-  ROLE,
   SchoolYear,
   Section,
   Semester,
@@ -26,7 +24,6 @@ import {
   TableHeadPlain,
   TableRow,
 } from "@/components/ui/table"
-import { RoleAccess } from "@/components/role-access"
 
 import { StudentGradeRows } from "../grading/student-grade-rows"
 
@@ -72,9 +69,6 @@ export function SchoolClassGradingTable({
             It looks like you have not defined the grading components for this
             class yet. Define them first.
           </p>
-          <RoleAccess role={ROLE.TEACHER}>
-            <GradeComponentPicker />
-          </RoleAccess>
         </div>
       ) : null}
       <div className="w-full max-w-full">
