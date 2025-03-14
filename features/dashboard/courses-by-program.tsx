@@ -29,15 +29,6 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]
-
 const chartConfig = {
   male: {
     label: "Male",
@@ -59,12 +50,14 @@ export function CoursesByProgram() {
     setCourseId(courses.data?.at(0)?.id)
   }, [courses.data])
 
-  const currentCourse = courses.data?.find((c) => c.id === courseId)
+  const coursesData = courses.data ?? []
 
-  if (courses.isLoading) return <Skeleton className="w-full h-[350px]" />
+  const currentCourse = coursesData.find((c) => c.id === courseId)
+
+  if (courses.isLoading) return <Skeleton className="h-[323px] w-full" />
 
   const dataToDisplay = currentCourse?.gradeYearLevels?.map((g) => {
-    const students = g.classes.map((c) => c.students).flat()
+    const students = g.enrolledClasses?.map((c) => c.students).flat() ?? []
 
     const male = students.filter((s) => s.gender === Gender.MALE).length
     //   Math.ceil(50 * Math.random())
@@ -82,14 +75,14 @@ export function CoursesByProgram() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row space-y-0 items-start justify-between">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div className="flex-1">
           <CardTitle>Student Stats by Grade Level</CardTitle>
-          <CardDescription>All Time</CardDescription>
+          <CardDescription className="hidden">All Time</CardDescription>
         </div>
         {courses.data?.length === 1 ? null : (
           <Select value={courseId} onValueChange={setCourseId}>
-            <SelectTrigger className="bg-secondary w-min dark:bg-secondary/40">
+            <SelectTrigger className="bg-secondary dark:bg-secondary/40 w-min">
               <SelectValue placeholder="Courses" />
             </SelectTrigger>
             <SelectContent className="w-trigger-width">
@@ -104,13 +97,13 @@ export function CoursesByProgram() {
       </CardHeader>
 
       {noData ? (
-        <CardContent className="flex h-[266px] flex-col items-center justify-center text-muted-foreground">
+        <CardContent className="text-muted-foreground flex h-[266px] flex-col items-center justify-center">
           <ChartNoAxesColumnIcon className="size-4" />
           <p>No data to display.</p>
         </CardContent>
       ) : (
         <>
-          <CardContent>
+          <CardContent className="pb-0">
             <ChartContainer config={chartConfig}>
               <BarChart accessibilityLayer data={dataToDisplay}>
                 <CartesianGrid vertical={false} />
@@ -129,20 +122,20 @@ export function CoursesByProgram() {
                   dataKey="male"
                   fill="var(--color-male)"
                   barSize={20}
-                  radius={6}
+                  radius={0}
                 />
                 <Bar
                   dataKey="female"
                   fill="var(--color-female)"
                   barSize={20}
-                  radius={6}
+                  radius={0}
                 />
               </BarChart>
             </ChartContainer>
           </CardContent>
           <CardFooter className="flex-col items-start gap-2 text-sm">
             <div className="text-muted-foreground leading-none">
-              Showing students statistics by gender per grade level.
+              Enrolled students by gender per grade level.
             </div>
           </CardFooter>
         </>

@@ -26,6 +26,7 @@ export const API_ROUTES = [
   "/api/student-grades",
   "/api/grade-summary",
   "/api/dashboard/courses-by-program",
+  "/api/dashboard/simple-numbers",
   "/api/periodic-grades",
 ]
 

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       include: {
         gradeYearLevels: {
           include: {
-            classes: {
+            enrolledClasses: {
               where: { schoolYearId: schoolYearId ?? undefined },
               include: { students: true },
             },

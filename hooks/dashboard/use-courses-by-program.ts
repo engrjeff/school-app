@@ -1,14 +1,21 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { Class, Course, GradeYearLevel, Student } from "@prisma/client"
+import {
+  Course,
+  EnrollmentClass,
+  GradeYearLevel,
+  Student,
+} from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
 
 import { apiClient } from "@/lib/api-client"
 
 interface DetailedCourse extends Course {
   gradeYearLevels: Array<
-    GradeYearLevel & { classes: Array<Class & { students: Student[] }> }
+    GradeYearLevel & {
+      enrolledClasses: Array<EnrollmentClass & { students: Student[] }>
+    }
   >
 }
 

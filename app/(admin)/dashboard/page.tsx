@@ -1,5 +1,6 @@
 import { type Metadata } from "next"
 import { CoursesByProgram } from "@/features/dashboard/courses-by-program"
+import { SchoolSimpleNumbers } from "@/features/dashboard/school-simple-numbers"
 import { ProgramOfferingSelector } from "@/features/programs/progam-offering-selector"
 import { SlashIcon } from "lucide-react"
 
@@ -42,8 +43,11 @@ function DashboardPage({
           <SchoolYearFilter initialProgramId={searchParams.program} />
         </div>
       </AppHeader>
-      <AppContent className="grid grid-cols-1 items-start lg:grid-cols-3">
-        <CoursesByProgram />
+      <AppContent>
+        <SchoolSimpleNumbers />
+        <div className="grid grid-cols-1 items-start lg:grid-cols-3">
+          <CoursesByProgram />
+        </div>
       </AppContent>
     </>
   )
