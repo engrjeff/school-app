@@ -78,7 +78,7 @@ export function StudentGradeRows({
                             gradeRow.id,
                             gc.id,
                             p.id
-                          ).score
+                          )?.score
                         }
                       </span>
                     }

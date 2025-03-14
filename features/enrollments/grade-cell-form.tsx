@@ -43,8 +43,8 @@ export function GradeCellForm({
   const form = useForm<GradeSubComponentScoreInputs>({
     resolver: zodResolver(gradeSubComponentScoreSchema),
     defaultValues: {
-      scoreId: cellScore.id,
-      score: cellScore.score ?? undefined,
+      scoreId: cellScore?.id,
+      score: cellScore?.score ?? undefined,
       subjectGradeId: subjectGrade?.id,
       subjectGradeComponentId: gradeSubComponent.gradeComponentId,
       subjectGradeSubComponentId: gradeSubComponent.id,
