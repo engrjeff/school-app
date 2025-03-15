@@ -153,6 +153,10 @@ export async function getStudentsOfTeacher(args: GetStudentsArgs) {
 
   const programFilter = args?.program ? args.program : undefined
   const courseFilter = args?.course ? args.course.split(",") : undefined
+  const gradeYearLevelFilter = args?.gradeYearLevel
+    ? args.gradeYearLevel
+    : undefined
+  const sectionFilter = args?.section ? args.section : undefined
 
   const userTeacher = await prisma.teacher.findUnique({
     where: { userId: session.user.id },
@@ -198,6 +202,8 @@ export async function getStudentsOfTeacher(args: GetStudentsArgs) {
       },
       programOfferingId: programFilter,
     },
+    currentGradeYearLevelId: gradeYearLevelFilter,
+    currentSectionId: sectionFilter,
   }
 
   const totalFilteredPromise = prisma.student.count({
