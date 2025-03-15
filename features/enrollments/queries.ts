@@ -98,7 +98,9 @@ export async function getEnrollments(args: GetEnrollmentsArgs) {
   }
 
   return {
-    enrollments: enrollments,
+    enrollments: teacherFilter
+      ? enrollments.filter((e) => e.subjects.length > 0)
+      : enrollments,
     pageInfo,
   }
 }
