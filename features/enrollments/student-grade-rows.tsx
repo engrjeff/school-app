@@ -25,17 +25,23 @@ export function StudentGradeRows({
   rowStart,
   refetchFunction,
   gradeComponents,
+  rankedGrade,
 }: {
   gender: Gender
   periodicGrades: PeriodicGrade[]
   rowStart: number
   refetchFunction: VoidFunction
   gradeComponents: PeriodicGradeComponents[]
+  rankedGrade: Map<
+    string,
+    {
+      grade: number
+      rank: number
+    }
+  >
 }) {
   const totalColumns =
     gradeComponents.reduce((t, i) => (t += i.subcomponents?.length + 2), 0) + 4
-
-  const rankedGrade = getRowGradeAndRank(periodicGrades, gradeComponents)
 
   return (
     <>
@@ -193,66 +199,4 @@ function getColumnsToAdd(
       currentIndex > index ? sum + item.subcomponents.length : sum,
     1
   )
-}
-
-function getRowGradeAndRank(
-  subjectGrades: Array<
-    SubjectGrade & { scores: SubjectGradeSubComponentScore[] }
-  >,
-  gradeComponents: Array<
-    SubjectGradeComponent & { subcomponents: SubjectGradeSubComponent[] }
-  >
-) {
-  const gradeRankMap = new Map<string, { grade: number; rank: number }>()
-
-  const studentWithGrades = subjectGrades.map((sg, index) => {
-    return {
-      ...getGrade(sg, gradeComponents),
-      rank: index,
-    }
-  })
-
-  studentWithGrades.sort((a, b) => b.grade - a.grade)
-
-  let currentRank = 1
-  for (let i = 0; i < studentWithGrades.length; i++) {
-    if (
-      i > 0 &&
-      studentWithGrades[i].grade !== studentWithGrades[i - 1].grade
-    ) {
-      // If the current grade is different from the previous one, update the rank
-      currentRank = i
-    }
-    studentWithGrades[i].rank = currentRank
-  }
-
-  studentWithGrades.forEach((sgg) => {
-    gradeRankMap.set(sgg.studentId, sgg)
-  })
-
-  return gradeRankMap
-}
-
-function getGrade(
-  subjectGrade: SubjectGrade & { scores: SubjectGradeSubComponentScore[] },
-  gradeComponents: Array<
-    SubjectGradeComponent & { subcomponents: SubjectGradeSubComponent[] }
-  >
-) {
-  const grade = gradeComponents.reduce((grade, gc) => {
-    const maxTotal = gc.subcomponents.reduce(
-      (sum, part) => (sum += part.highestPossibleScore),
-      0
-    )
-
-    const scoreTotal = subjectGrade.scores
-      .filter((s) => s.subjectGradeComponentId === gc.id && s.score !== null)
-      .reduce((sum, score) => (sum += score.score!), 0)
-
-    const ws = (scoreTotal / maxTotal) * gc.percentage * 100
-
-    return grade + ws
-  }, 0)
-
-  return { studentId: subjectGrade.studentId, grade }
 }

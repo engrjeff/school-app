@@ -1,6 +1,12 @@
 "use client"
 
-import { Gender } from "@prisma/client"
+import {
+  Gender,
+  SubjectGrade,
+  SubjectGradeComponent,
+  SubjectGradeSubComponent,
+  SubjectGradeSubComponentScore,
+} from "@prisma/client"
 
 import { handleGradeCellNavigation } from "@/lib/dom-helpers"
 import { usePeriodicGrades } from "@/hooks/use-periodic-grades"
@@ -58,6 +64,11 @@ export function ClassSubjectGradesTableBody({
       (d) => d.student.gender === Gender.FEMALE
     ) ?? []
 
+  const rankedGrade = getRowGradeAndRank(
+    periodicGradesQuery.data?.periodicGrades ?? [],
+    periodicGradesQuery.data?.gradeComponents ?? []
+  )
+
   return (
     <TableBody className="text-xs" onKeyDown={handleGradeCellNavigation}>
       <StudentGradeRows
@@ -66,6 +77,7 @@ export function ClassSubjectGradesTableBody({
         gradeComponents={periodicGradesQuery.data?.gradeComponents ?? []}
         rowStart={0}
         refetchFunction={periodicGradesQuery.refetch}
+        rankedGrade={rankedGrade}
       />
       <StudentGradeRows
         gender={Gender.FEMALE}
@@ -73,7 +85,70 @@ export function ClassSubjectGradesTableBody({
         gradeComponents={periodicGradesQuery.data?.gradeComponents ?? []}
         rowStart={male.length}
         refetchFunction={periodicGradesQuery.refetch}
+        rankedGrade={rankedGrade}
       />
     </TableBody>
   )
+}
+
+function getRowGradeAndRank(
+  subjectGrades: Array<
+    SubjectGrade & { scores: SubjectGradeSubComponentScore[] }
+  >,
+  gradeComponents: Array<
+    SubjectGradeComponent & { subcomponents: SubjectGradeSubComponent[] }
+  >
+) {
+  const gradeRankMap = new Map<string, { grade: number; rank: number }>()
+
+  const studentWithGrades = subjectGrades.map((sg, index) => {
+    return {
+      ...getGrade(sg, gradeComponents),
+      rank: index,
+    }
+  })
+
+  studentWithGrades.sort((a, b) => b.grade - a.grade)
+
+  let currentRank = 1
+  for (let i = 0; i < studentWithGrades.length; i++) {
+    if (
+      i > 0 &&
+      studentWithGrades[i].grade !== studentWithGrades[i - 1].grade
+    ) {
+      // If the current grade is different from the previous one, update the rank
+      currentRank = i
+    }
+    studentWithGrades[i].rank = currentRank
+  }
+
+  studentWithGrades.forEach((sgg) => {
+    gradeRankMap.set(sgg.studentId, sgg)
+  })
+
+  return gradeRankMap
+}
+
+function getGrade(
+  subjectGrade: SubjectGrade & { scores: SubjectGradeSubComponentScore[] },
+  gradeComponents: Array<
+    SubjectGradeComponent & { subcomponents: SubjectGradeSubComponent[] }
+  >
+) {
+  const grade = gradeComponents.reduce((grade, gc) => {
+    const maxTotal = gc.subcomponents.reduce(
+      (sum, part) => (sum += part.highestPossibleScore),
+      0
+    )
+
+    const scoreTotal = subjectGrade.scores
+      .filter((s) => s.subjectGradeComponentId === gc.id && s.score !== null)
+      .reduce((sum, score) => (sum += score.score!), 0)
+
+    const ws = (scoreTotal / maxTotal) * gc.percentage * 100
+
+    return grade + ws
+  }, 0)
+
+  return { studentId: subjectGrade.studentId, grade }
 }
