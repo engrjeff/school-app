@@ -14,6 +14,7 @@ export type GradeSummary = {
       [key: string]: { grade: number; id: string; title: string }
     } & {
       student: Student
+      average: number
     }
   >
 }
