@@ -1,5 +1,8 @@
 import { type Metadata } from "next"
-import { CoursesByProgram } from "@/features/dashboard/courses-by-program"
+import {
+  EnrolledStudentsByCourse,
+  EnrolledStudentsByGender,
+} from "@/features/dashboard/courses-by-program"
 import { SchoolSimpleNumbers } from "@/features/dashboard/school-simple-numbers"
 import { ProgramOfferingSelector } from "@/features/programs/progam-offering-selector"
 import { SlashIcon } from "lucide-react"
@@ -45,8 +48,9 @@ function DashboardPage({
       </AppHeader>
       <AppContent>
         <SchoolSimpleNumbers />
-        <div className="grid grid-cols-1 items-start lg:grid-cols-3">
-          <CoursesByProgram />
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[420px_auto]">
+          <EnrolledStudentsByGender />
+          <EnrolledStudentsByCourse />
         </div>
       </AppContent>
     </>

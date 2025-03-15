@@ -21,19 +21,34 @@ export async function GET(request: NextRequest) {
         programOfferingId: programId ?? undefined,
       },
       include: {
-        gradeYearLevels: {
+        enrolledClasses: {
+          where: { schoolYearId: schoolYearId ?? undefined },
           include: {
-            enrolledClasses: {
-              where: { schoolYearId: schoolYearId ?? undefined },
-              include: { students: true },
+            students: {
+              select: {
+                id: true,
+                gender: true,
+                currentGradeYearLevel: {
+                  select: { id: true, displayName: true, level: true },
+                },
+              },
             },
           },
         },
+        gradeYearLevels: true,
       },
       orderBy: { createdAt: "asc" },
     })
 
-    return NextResponse.json(courses)
+    return NextResponse.json(
+      courses.map(({ enrolledClasses, gradeYearLevels, ...course }) => {
+        return {
+          ...course,
+          gradeYearLevels,
+          students: enrolledClasses.map((e) => e.students).flat(),
+        }
+      })
+    )
   } catch (error) {
     console.log("Dashboard: Get Courses of Program Error: ", error)
 
