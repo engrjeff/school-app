@@ -13,11 +13,15 @@ interface DetailedCourse extends Course {
   gradeYearLevels: GradeYearLevel[]
 }
 
-async function getCoursesOfProgram(programId?: string, schoolYearId?: string) {
+async function getCoursesOfProgram(
+  programId?: string,
+  schoolYearId?: string,
+  semesterId?: string
+) {
   const response = await apiClient.get<DetailedCourse[]>(
     "/dashboard/courses-by-program",
     {
-      params: { programId, schoolYearId },
+      params: { programId, schoolYearId, semesterId },
     }
   )
   return response.data
@@ -28,10 +32,16 @@ export function useCoursesByProgram() {
 
   const programId = searchParams.get("program") ?? undefined
   const schoolYearId = searchParams.get("schoolYear") ?? undefined
+  const semesterId = searchParams.get("semester") ?? undefined
 
   return useQuery({
-    queryKey: ["dashboard-courses-by-program", programId, schoolYearId],
-    queryFn: () => getCoursesOfProgram(programId, schoolYearId),
+    queryKey: [
+      "dashboard-courses-by-program",
+      programId,
+      schoolYearId,
+      semesterId,
+    ],
+    queryFn: () => getCoursesOfProgram(programId, schoolYearId, semesterId),
     enabled: Boolean(programId),
   })
 }

@@ -204,7 +204,7 @@ export function EnrolledStudentsByCourse() {
           <CardDescription>Enrolled students by course/track</CardDescription>
         </div>
         <Select value={gradeLevel} onValueChange={setGradeLevel}>
-          <SelectTrigger className="bg-secondary dark:bg-secondary/40 h-7 w-min text-xs">
+          <SelectTrigger className="bg-secondary dark:bg-secondary/40 h-7 w-min -translate-y-2 translate-x-2 text-xs">
             <SelectValue placeholder="Grade Level" />
           </SelectTrigger>
           <SelectContent className="w-trigger-width">

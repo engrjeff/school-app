@@ -14,15 +14,19 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams
     const schoolYearId = searchParams.get("schoolYearId") ?? undefined
+    const semesterId = searchParams.get("semesterId") ?? undefined
 
     const simpleNumbers = await prisma.school.findUnique({
       where: { id: session.user.schoolId },
       select: {
         students: { select: { id: true } },
         enrolledClasses: {
-          where: { schoolYearId },
+          where: { schoolYearId, semesterId },
           select: {
             schoolYear: {
+              select: { title: true },
+            },
+            semester: {
               select: { title: true },
             },
           },
@@ -31,7 +35,7 @@ export async function GET(request: NextRequest) {
         _count: {
           select: {
             enrolledClasses: {
-              where: { schoolYearId },
+              where: { schoolYearId, semesterId },
             },
             students: {
               where: { status: StudentStatus.ENROLLED },
@@ -45,11 +49,12 @@ export async function GET(request: NextRequest) {
       },
     })
     const sy = simpleNumbers?.enrolledClasses?.at(0)?.schoolYear?.title
+    const sem = simpleNumbers?.enrolledClasses?.at(0)?.semester?.title
 
     return NextResponse.json({
       ...simpleNumbers?._count,
       schoolYear: sy
-        ? `for S.Y ${sy}`
+        ? `for S.Y ${sy}, ${sem}`
         : simpleNumbers?._count.enrolledClasses === 0
           ? "enrollments so far"
           : "all school years.",

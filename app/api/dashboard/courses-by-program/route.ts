@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const programId = searchParams.get("programId")
     const schoolYearId = searchParams.get("schoolYearId")
+    const semesterId = searchParams.get("semesterId")
 
     const courses = await prisma.course.findMany({
       where: {
@@ -22,7 +23,10 @@ export async function GET(request: NextRequest) {
       },
       include: {
         enrolledClasses: {
-          where: { schoolYearId: schoolYearId ?? undefined },
+          where: {
+            schoolYearId: schoolYearId ?? undefined,
+            semesterId: semesterId ?? undefined,
+          },
           include: {
             students: {
               select: {
