@@ -1,7 +1,10 @@
 import { type Metadata } from "next"
 import Link from "next/link"
+import { redirect } from "next/navigation"
+import { getSession } from "@/auth"
 import { EnrollmentForm } from "@/features/enrollments/enrollment-form"
 import { getEnrollmentById } from "@/features/enrollments/queries"
+import { ROLE } from "@prisma/client"
 import { ArrowLeftIcon, SlashIcon } from "lucide-react"
 
 import {
@@ -32,6 +35,10 @@ async function NewEnrollmentPage({
     section?: string
   }
 }) {
+  const session = await getSession()
+
+  if (session?.user?.role !== ROLE.SCHOOLADMIN) redirect("/enrollments")
+
   if (searchParams?.duplicateId) {
     const enrollment = await getEnrollmentById(searchParams.duplicateId)
 

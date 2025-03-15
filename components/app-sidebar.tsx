@@ -160,6 +160,11 @@ const teacherMenu = {
         icon: SquareSigmaIcon,
       },
       {
+        name: "Enrollment",
+        url: "/enrollments",
+        icon: LibraryIcon,
+      },
+      {
         name: "School Profile",
         url: "/school-profile",
         icon: SchoolIcon,

@@ -45,11 +45,18 @@ export function ClassSubjectGradingTable({
             <p className="text-lg font-semibold">
               No grading components found.
             </p>
-            <p className="text-muted-foreground">
-              It looks like you have not set up the grading components for this
-              class grading period yet. Set them up first.
-            </p>
+            <RoleAccess role={ROLE.SCHOOLADMIN}>
+              <p className="text-muted-foreground">
+                It looks like the subject teacher have not set up the grading
+                components for this class grading period yet. Please come back
+                later.
+              </p>
+            </RoleAccess>
             <RoleAccess role={ROLE.TEACHER}>
+              <p className="text-muted-foreground">
+                It looks like you have not set up the grading components for
+                this class grading period yet. Set them up first.
+              </p>
               <GradeComponentPicker gradingPeriodId={currentGradingPeriodId!} />
             </RoleAccess>
           </div>

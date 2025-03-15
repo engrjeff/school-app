@@ -86,7 +86,7 @@ async function StudentDetalPage({ params }: PageProps) {
       </AppHeader>
       <AppContent className="flex flex-row items-start px-0 pt-0">
         <div className="h-full space-y-6 border-r p-4">
-          <div className="flex items-start gap-4 pb-4">
+          <div className="flex items-start gap-4 pb-2">
             <Button
               type="button"
               size="iconXs"
@@ -115,7 +115,7 @@ async function StudentDetalPage({ params }: PageProps) {
             </div>
             <RoleAccess
               role={ROLE.SCHOOLADMIN}
-              loadingUi={<Skeleton className="size-7" />}
+              loadingUi={<Skeleton className="size-7 shrink-0" />}
             >
               <Button
                 asChild

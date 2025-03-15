@@ -5,7 +5,6 @@ import {
   API_ROUTES,
   AUTH_ROUTES,
   DEFAULT_LOGIN_REDIRECT,
-  PUBLIC_ROUTES,
   ROLE_ROUTES_MAP,
   SCHOOL_SETUP_REDIRECT,
 } from "@/routes"
@@ -19,7 +18,12 @@ export default auth((req) => {
 
   const { nextUrl } = req
 
-  if (PUBLIC_ROUTES.includes(nextUrl.pathname)) return NextResponse.next()
+  if (nextUrl.pathname === "/") return NextResponse.next()
+
+  if (nextUrl.pathname.startsWith("/school-directory"))
+    return NextResponse.next()
+
+  // if (PUBLIC_ROUTES.includes(nextUrl.pathname)) return NextResponse.next()
 
   if (nextUrl.pathname.startsWith("/verify")) return NextResponse.next()
 

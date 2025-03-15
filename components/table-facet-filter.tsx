@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChevronDown, PlusIcon } from "lucide-react"
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs"
 
@@ -26,6 +26,7 @@ interface TableFacetFilterProps {
   }[]
   singleSelection?: boolean
   onChangeCallback?: VoidFunction
+  shouldSetToOnlyOption?: boolean
 }
 
 export function TableFacetFilter({
@@ -35,6 +36,7 @@ export function TableFacetFilter({
   options,
   singleSelection,
   onChangeCallback,
+  shouldSetToOnlyOption,
 }: TableFacetFilterProps) {
   const [queryParam, setQueryParam] = useQueryState(
     filterKey,
@@ -42,6 +44,15 @@ export function TableFacetFilter({
       .withDefault([])
       .withOptions({ shallow: false })
   )
+
+  useEffect(() => {
+    if (!shouldSetToOnlyOption) return
+
+    if (options.length === 1 && !queryParam?.length) {
+      setQueryParam([options[0].value])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options, options.length, queryParam, shouldSetToOnlyOption])
 
   return (
     <FilterComponent

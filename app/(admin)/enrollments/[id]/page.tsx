@@ -121,21 +121,41 @@ async function EnrollmentDetailPage({ params }: PageProps) {
           </div>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead className="bg-accent/40">Subject Code</TableHead>
                 <TableHead className="bg-accent/40">Subject Title</TableHead>
                 <TableHead className="bg-accent/40">Teacher</TableHead>
+                <TableHead className="bg-accent/40 text-center">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {enrollment.subjects.map((classSubject) => (
-                <TableRow key={classSubject.id}>
-                  <TableCell>{classSubject.subject.code}</TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {classSubject.subject.title}
+                <TableRow
+                  key={classSubject.id}
+                  className="hover:bg-transparent"
+                >
+                  <TableCell>
+                    {["", undefined, "--"].includes(classSubject.subject.code)
+                      ? "No subject code"
+                      : classSubject.subject.code}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {getTeacherFullName(classSubject.teacher)}
+                  <TableCell>{classSubject.subject.title}</TableCell>
+                  <TableCell>
+                    <Link
+                      href={`/teachers/${classSubject.teacherId}`}
+                      className="hover:underline"
+                    >
+                      {getTeacherFullName(classSubject.teacher)}
+                    </Link>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Button size="sm" variant="link" asChild>
+                      <Link href={`/classes/${classSubject.id}`}>
+                        View Class
+                      </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -154,17 +174,19 @@ async function EnrollmentDetailPage({ params }: PageProps) {
                 List of students enrolled in this class.
               </p>
             </div>
-            <div className="ml-auto">
-              <Button asChild size="sm" variant="link">
-                <Link href={`/enrollments/${enrollment.id}/enroll-students`}>
-                  <PlusIcon className="size-4" /> Enroll Students
-                </Link>
-              </Button>
-            </div>
+            <RoleAccess role={ROLE.SCHOOLADMIN}>
+              <div className="ml-auto">
+                <Button asChild size="sm" variant="link">
+                  <Link href={`/enrollments/${enrollment.id}/enroll-students`}>
+                    <PlusIcon className="size-4" /> Enroll Students
+                  </Link>
+                </Button>
+              </div>
+            </RoleAccess>
           </div>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead className="bg-accent/40 w-10">#</TableHead>
                 <TableHead className="bg-accent/40">Name</TableHead>
                 <TableHead className="bg-accent/40 text-center">
@@ -175,7 +197,7 @@ async function EnrollmentDetailPage({ params }: PageProps) {
             </TableHeader>
             <TableBody>
               {enrollment.students.map((student, studentIndex) => (
-                <TableRow key={student.id}>
+                <TableRow key={student.id} className="hover:bg-transparent">
                   <TableCell>{studentIndex + 1}</TableCell>
                   <TableCell>
                     <div>

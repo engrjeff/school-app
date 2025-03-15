@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { SignOutDialog } from "@/features/auth/SignOutDialog"
 import { ROLE } from "@prisma/client"
-import { BadgeCheckIcon, ChevronsUpDown, LibraryIcon } from "lucide-react"
+import { BadgeCheckIcon, ChevronsUpDown, Table2Icon } from "lucide-react"
 import { useSession } from "next-auth/react"
 
 import { getInitials } from "@/lib/utils"
@@ -89,14 +89,16 @@ export function NavUser() {
               {user.role === ROLE.TEACHER ? (
                 <DropdownMenuItem asChild>
                   <Link href="/classes">
-                    <LibraryIcon />
+                    <Table2Icon />
                     Classes
                   </Link>
                 </DropdownMenuItem>
               ) : null}
-              <DropdownMenuItem>
-                <BadgeCheckIcon />
-                Account
+              <DropdownMenuItem asChild>
+                <Link href="/account">
+                  <BadgeCheckIcon />
+                  Account
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

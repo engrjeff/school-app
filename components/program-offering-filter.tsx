@@ -15,8 +15,6 @@ export function ProgramOfferingFilter() {
     faculty: parseAsString,
   })
 
-  if (programs.data?.length === 1) return null
-
   if (programs.isLoading) return <Skeleton className="h-11 w-[115px] md:h-8" />
 
   return (
@@ -26,6 +24,7 @@ export function ProgramOfferingFilter() {
       selectedLabelKey="label"
       singleSelection
       onChangeCallback={() => setOthers(null)}
+      shouldSetToOnlyOption
       options={
         programs.data?.map((c) => ({
           label: c.title,

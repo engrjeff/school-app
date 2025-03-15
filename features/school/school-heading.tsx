@@ -61,7 +61,7 @@ export function SchoolHeading({ school }: { school: School }) {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="gap-2 p-2" asChild>
-              <Link href={`#`}>
+              <Link href={`/school-directory/${school.id}`}>
                 <ExternalLink className="size-4 shrink-0" />
                 View in School Directory
               </Link>

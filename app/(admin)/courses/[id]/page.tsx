@@ -3,7 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { CourseDetail } from "@/features/courses/course-detail"
 import { getCourseById } from "@/features/courses/queries"
-import { ArrowLeft, BookCheck, UserCheck } from "lucide-react"
+import { ArrowLeft, Table2Icon, UserCheck } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { AppContent } from "@/components/app-content"
@@ -56,9 +56,11 @@ async function CourseDetailPage({ params }: { params: { id: string } }) {
               </Link>
             </Button>
             <Button type="button" size="sm" variant="secondaryOutline" asChild>
-              <Link href={`/teachers?course=${course.id}`}>
-                <BookCheck />
-                Teachers
+              <Link
+                href={`/classes?program=${course.programOfferingId}&course=${course.id}`}
+              >
+                <Table2Icon />
+                Classes
               </Link>
             </Button>
           </div>

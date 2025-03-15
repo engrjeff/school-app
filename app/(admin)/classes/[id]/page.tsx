@@ -152,7 +152,7 @@ async function SchoolClassPage({ params }: PageProps) {
               <TableHeadPlain className="whitespace-nowrap">
                 Learner&apos;s Name
               </TableHeadPlain>
-              <TableHeadPlain className="text-right">
+              <TableHeadPlain className="text-center">
                 Student ID (LRN)
               </TableHeadPlain>
               <TableHeadPlain>Email</TableHeadPlain>
@@ -203,7 +203,7 @@ function StudentRows({
               {student.suffix}
             </p>
           </TableCell>
-          <TableCell className="border-r-2 text-right first:border-l last:border-r">
+          <TableCell className="border-r-2 text-center first:border-l last:border-r">
             {student.studentId}
           </TableCell>
           <TableCell className="text-muted-foreground border-r-2 first:border-l last:border-r">

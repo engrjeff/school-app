@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
   PencilIcon,
   PlusIcon,
+  Table2Icon,
   UserCheckIcon,
   UserCogIcon,
 } from "lucide-react"
@@ -60,13 +61,18 @@ export function ProgramOfferingRowActions({
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/teachers?program=${program.id}`}>
-                <UserCogIcon className="size-4" /> View Teachers
+              <Link href={`/students?program=${program.id}`}>
+                <UserCheckIcon className="size-4" /> View Students
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={`/students?program=${program.id}`}>
-                <UserCheckIcon className="size-4" /> View Students
+              <Link href={`/classes?program=${program.id}`}>
+                <Table2Icon className="size-4" /> View Classes
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/teachers?program=${program.id}`}>
+                <UserCogIcon className="size-4" /> View Teachers
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>

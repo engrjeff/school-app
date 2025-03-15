@@ -60,7 +60,7 @@ export function EnrollmentForm({
       schoolYearId: initialValues?.schoolYearId ?? "",
       semesterId: initialValues?.semesterId ?? "",
       gradeYearLevelId: initialValues?.gradeYearLevelId ?? "",
-      sectionId: "",
+      sectionId: initialValues?.sectionId ?? "",
       subjects: initialValues?.subjects?.map((s) => ({
         subjectId: s.subjectId,
         teacherId: s.teacherId,

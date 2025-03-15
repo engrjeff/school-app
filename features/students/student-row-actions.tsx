@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Student } from "@prisma/client"
+import { ROLE, Student } from "@prisma/client"
 import {
+  EyeIcon,
   LibraryIcon,
   MoreHorizontal,
   PencilIcon,
@@ -18,6 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { RoleAccess } from "@/components/role-access"
 
 export function StudentRowActions({ student }: { student: Student }) {
   return (
@@ -34,10 +36,17 @@ export function StudentRowActions({ student }: { student: Student }) {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href={`/students/${student.id}/edit`}>
-              <PencilIcon className="size-3" /> Update
+            <Link href={`/students/${student.id}`}>
+              <EyeIcon className="size-3" /> View
             </Link>
           </DropdownMenuItem>
+          <RoleAccess role={ROLE.SCHOOLADMIN}>
+            <DropdownMenuItem asChild>
+              <Link href={`/students/${student.id}/edit`}>
+                <PencilIcon className="size-3" /> Update
+              </Link>
+            </DropdownMenuItem>
+          </RoleAccess>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href={`/courses/${student.currentCourseId}`}>

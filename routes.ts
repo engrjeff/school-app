@@ -1,6 +1,6 @@
 import { ROLE } from "@prisma/client"
 
-export const PUBLIC_ROUTES = ["/"]
+export const PUBLIC_ROUTES = ["/", "/school-directory"]
 
 export const AUTH_ROUTES = [
   "/entry",
@@ -56,6 +56,7 @@ export const SCHOOL_ADMIN_ROUTES = [
   "/setup-curriculum",
   "/classes",
   "/enrollments",
+  "/account",
 ]
 
 export const TEACHER_ROUTES = [
@@ -64,6 +65,8 @@ export const TEACHER_ROUTES = [
   "/classes",
   "/grading",
   "/school-profile",
+  "/enrollments",
+  "/account",
 ]
 
 export const STUDENT_ROUTES = ["/my-grades", "/classes"]

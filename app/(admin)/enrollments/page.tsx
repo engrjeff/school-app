@@ -1,10 +1,12 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import { getSession } from "@/auth"
 import { EnrollmentRowActions } from "@/features/enrollments/enrollment-row-actions"
 import {
   getEnrollments,
   GetEnrollmentsArgs,
 } from "@/features/enrollments/queries"
+import { ROLE } from "@prisma/client"
 import { InboxIcon, PlusIcon } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +24,7 @@ import { AppHeader } from "@/components/app-header"
 import { CourseFilter } from "@/components/course-filter"
 import { Pagination } from "@/components/pagination"
 import { ProgramOfferingFilter } from "@/components/program-offering-filter"
+import { SchoolYearFilter } from "@/components/school-year-filter"
 import { SortLink } from "@/components/sort-link"
 
 export const metadata: Metadata = {
@@ -33,7 +36,11 @@ async function EnrollmentsPage({
 }: {
   searchParams: GetEnrollmentsArgs
 }) {
+  const session = await getSession()
+
   const { enrollments, pageInfo } = await getEnrollments(searchParams)
+
+  const isNonAdmin = session?.user?.role !== ROLE.SCHOOLADMIN
 
   return (
     <>
@@ -42,25 +49,33 @@ async function EnrollmentsPage({
         <div className="flex items-center gap-4">
           <ProgramOfferingFilter />
           <CourseFilter />
-          <div className="ml-auto">
-            <Button asChild size="sm">
-              <Link href="/enrollments/new">
-                <PlusIcon className="size-4" /> Create Enrollment
-              </Link>
-            </Button>
-          </div>
+          <SchoolYearFilter />
+          {isNonAdmin ? null : (
+            <div className="ml-auto">
+              <Button asChild size="sm">
+                <Link href="/enrollments/new">
+                  <PlusIcon className="size-4" /> Create Enrollment
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
         {enrollments.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed">
             <InboxIcon className="text-muted-foreground" />
             <p className="text-muted-foreground text-center">
-              No enrollments found yet. Create one now.
+              No enrollments found yet.{" "}
+              {isNonAdmin
+                ? "The school admin must create them first."
+                : "Create one now."}
             </p>
-            <Button asChild size="sm">
-              <Link href="/enrollments/new">
-                <PlusIcon className="size-4" /> Create Enrollment
-              </Link>
-            </Button>
+            {isNonAdmin ? null : (
+              <Button asChild size="sm">
+                <Link href="/enrollments/new">
+                  <PlusIcon className="size-4" /> Create Enrollment
+                </Link>
+              </Button>
+            )}
           </div>
         ) : (
           <div className="max-w-full flex-1 overflow-auto">

@@ -8,6 +8,7 @@ import {
   LibraryIcon,
   MoreHorizontal,
   Pencil,
+  Table2Icon,
   UserCheck,
 } from "lucide-react"
 
@@ -56,8 +57,16 @@ export function CourseRowActions({ course }: { course: Course }) {
               <Link
                 href={`/classes?program=${course.programOfferingId}&course=${course.id}`}
               >
-                <LibraryIcon />
+                <Table2Icon />
                 Classes
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/enrollments?program=${course.programOfferingId}&course=${course.id}`}
+              >
+                <LibraryIcon />
+                Enrollments
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
