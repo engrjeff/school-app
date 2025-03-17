@@ -180,7 +180,7 @@ export function StudentRankings() {
                 <div className="space-y-4">
                   {section.subjectsWithGrades.map((subject) => (
                     <div className="space-y-4">
-                      <p className="text-sm font-semibold text-orange-500">
+                      <p className="text-primary text-sm font-semibold">
                         Subject: {subject.subject}
                       </p>
                       <RankingBySectionContent
@@ -201,7 +201,7 @@ export function StudentRankings() {
 const chartConfig = {
   grade: {
     label: "Grade",
-    color: "hsl(var(--chart-5))",
+    color: "hsl(var(--chart-4))",
   },
 } satisfies ChartConfig
 
@@ -216,7 +216,7 @@ function RankingByGradeLevelContent({
 
   const chartData = row?.subjectGrades.map((s) => ({
     subject: s.subjectCode,
-    grade: s.finalGrade,
+    grade: Math.round(s.finalGrade),
   }))
 
   return (
@@ -249,7 +249,7 @@ function RankingByGradeLevelContent({
                   </TableCell>
                   <TableCell>{row.sectionName}</TableCell>
                   <TableCell className="text-center">
-                    {row.allSubjectAverage.toFixed(1)}
+                    {Math.round(row.allSubjectAverage)}
                   </TableCell>
                   <TableCell className="text-center">
                     {getRemark(row.allSubjectAverage)}
@@ -351,7 +351,7 @@ function RankingBySectionContent({
 
   const chartData = row?.periodicFinalGrades.map((s) => ({
     period: s.periodName,
-    grade: s.periodicGrade,
+    grade: Math.round(s.periodicGrade),
   }))
 
   return (
@@ -382,7 +382,7 @@ function RankingBySectionContent({
                     </p>
                   </TableCell>
                   <TableCell className="text-center">
-                    {row.finalAverageGrade.toFixed(1)}
+                    {Math.round(row.finalAverageGrade)}
                   </TableCell>
                   <TableCell className="text-center">
                     {getRemark(row.finalAverageGrade)}
@@ -427,7 +427,9 @@ function RankingBySectionContent({
               <XIcon />
             </Button>
             <CardHeader>
-              <CardTitle>Subject Grade Breakdown</CardTitle>
+              <CardTitle>
+                Subject Grade Breakdown for {row.subjectCode}
+              </CardTitle>
               <CardDescription>{row.studentName}</CardDescription>
             </CardHeader>
             <CardContent>

@@ -7,5 +7,7 @@ export const k12Ranking = [
 ]
 
 export function getRemark(average: number) {
-  return k12Ranking.find((r) => average >= r.min && average <= r.max)?.remark
+  return k12Ranking.find(
+    (r) => Math.round(average) >= r.min && Math.round(average) <= r.max
+  )?.remark
 }
