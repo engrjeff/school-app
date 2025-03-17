@@ -23,6 +23,62 @@ export type GetEnrollmentsArgs = {
   view?: "grid" | "list"
 }
 
+function getSort(sort: string, order: "asc" | "desc") {
+  if (!sort && !order) return undefined
+
+  if (sort === "schoolYear")
+    return {
+      schoolYear: {
+        title: order,
+      },
+    }
+
+  if (sort === "semester")
+    return {
+      semester: {
+        title: order,
+      },
+    }
+
+  if (sort === "program")
+    return {
+      programOffering: {
+        title: order,
+      },
+    }
+
+  if (sort === "course")
+    return {
+      course: {
+        title: order,
+      },
+    }
+
+  if (sort === "gradeYearLevel")
+    return {
+      gradeYearLevel: {
+        level: order,
+      },
+    }
+
+  if (sort === "teacher")
+    return {
+      teacher: {
+        lastName: order,
+      },
+    }
+  if (sort === "student_count")
+    return {
+      students: {
+        _count: order,
+      },
+    }
+
+  return {
+    createdAt: order,
+  }
+}
+
 export async function getEnrollments(args: GetEnrollmentsArgs) {
   const session = await getSession()
 
@@ -77,9 +133,7 @@ export async function getEnrollments(args: GetEnrollmentsArgs) {
         select: { students: true },
       },
     },
-    orderBy: {
-      [sortKey]: sortOrder,
-    },
+    orderBy: getSort(sortKey, sortOrder),
     take: args?.pageSize ?? pageSize,
     skip: getSkip({ limit: pageSize, page: args?.page }),
   })
