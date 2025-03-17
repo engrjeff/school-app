@@ -55,7 +55,7 @@ export function EnrolledStudentsByGender() {
 
   const currentCourse = coursesData.find((c) => c.id === courseId)
 
-  if (courses.isLoading) return <Skeleton className="h-[340px] w-full" />
+  if (courses.isLoading) return <Skeleton className="h-[355px] w-full" />
 
   const dataToDisplay = currentCourse?.gradeYearLevels?.map((g) => {
     const students =
@@ -89,7 +89,7 @@ export function EnrolledStudentsByGender() {
             <SelectTrigger className="bg-secondary dark:bg-secondary/40 h-7 w-min -translate-y-2 translate-x-2 text-xs">
               <SelectValue placeholder="Courses" />
             </SelectTrigger>
-            <SelectContent className="w-trigger-width">
+            <SelectContent className="w-trigger-width" align="end">
               {courses.data?.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
                   {c.code}
@@ -162,7 +162,7 @@ export function EnrolledStudentsByCourse() {
 
   const [gradeLevel, setGradeLevel] = useState<string>("All levels")
 
-  if (coursesQuery.isLoading) return <Skeleton className="h-[340px] w-full" />
+  if (coursesQuery.isLoading) return <Skeleton className="h-[355px] w-full" />
 
   const dataToDisplay = coursesQuery.data?.map((course) => {
     const male =
@@ -207,7 +207,7 @@ export function EnrolledStudentsByCourse() {
           <SelectTrigger className="bg-secondary dark:bg-secondary/40 h-7 w-min -translate-y-2 translate-x-2 text-xs">
             <SelectValue placeholder="Grade Level" />
           </SelectTrigger>
-          <SelectContent className="w-trigger-width">
+          <SelectContent className="w-trigger-width" align="end">
             <SelectItem value="All levels">All levels</SelectItem>
             {coursesQuery.data?.at(0)?.gradeYearLevels?.map((g) => (
               <SelectItem key={g.id} value={`${g.displayName} ${g.level}`}>

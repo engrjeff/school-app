@@ -4,6 +4,7 @@ import {
   EnrolledStudentsByGender,
 } from "@/features/dashboard/courses-by-program"
 import { SchoolSimpleNumbers } from "@/features/dashboard/school-simple-numbers"
+import { StudentRankings } from "@/features/dashboard/student-rankings"
 import { ProgramOfferingSelector } from "@/features/programs/progam-offering-selector"
 import { SlashIcon } from "lucide-react"
 
@@ -43,7 +44,10 @@ function DashboardPage({
           </BreadcrumbList>
         </Breadcrumb>
         <div className="ml-auto space-x-2">
-          <SchoolYearFilter initialProgramId={searchParams.program} />
+          <SchoolYearFilter
+            initialProgramId={searchParams.program}
+            shouldSetToFirstOption
+          />
         </div>
       </AppHeader>
       <AppContent>
@@ -52,6 +56,7 @@ function DashboardPage({
           <EnrolledStudentsByGender />
           <EnrolledStudentsByCourse />
         </div>
+        <StudentRankings />
       </AppContent>
     </>
   )

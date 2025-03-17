@@ -24,7 +24,7 @@ export function ProgramOfferingFilter() {
       selectedLabelKey="label"
       singleSelection
       onChangeCallback={() => setOthers(null)}
-      shouldSetToOnlyOption
+      shouldSetToFirstOption
       options={
         programs.data?.map((c) => ({
           label: c.title,

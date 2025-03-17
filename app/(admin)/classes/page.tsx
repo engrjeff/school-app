@@ -34,9 +34,9 @@ async function EnrollmentClassesPage({
       <AppContent>
         <div className="flex items-center gap-4">
           <ProgramOfferingFilter />
+          <SchoolYearFilter shouldSetToFirstOption />
           <CourseFilter />
           <GradeSectionFilter />
-          <SchoolYearFilter />
         </div>
         {enrollments.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed">

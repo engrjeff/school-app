@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table"
 import { RoleAccess } from "@/components/role-access"
 
-import { k12Ranking } from "./ranking"
+import { getRemark } from "./ranking"
 
 export function StudentGradeSummaryTable() {
   const gradeSummary = useGradeSummary()
@@ -194,8 +194,4 @@ export function StudentGradeSummaryTable() {
       </Table>
     </div>
   )
-}
-
-function getRemark(average: number) {
-  return k12Ranking.find((r) => average >= r.min && average <= r.max)?.remark
 }

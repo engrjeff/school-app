@@ -94,7 +94,6 @@ async function SchoolClassGradeSummaryPage({ params }: PageProps) {
             <FilePlusIcon /> Generate Certificates
           </Button>
         </div>
-        {/* <ClassSubjectGradingSummaryTable classSubject={classSubject} /> */}
         <StudentGradeSummaryTable />
       </AppContent>
     </>

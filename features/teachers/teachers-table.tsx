@@ -1,6 +1,6 @@
 import Link from "next/link"
 import {
-  Class,
+  ClassSubject,
   Faculty,
   ProgramOffering,
   Subject,
@@ -25,8 +25,8 @@ type TeacherEntries = Array<
   Teacher & {
     programs: ProgramOffering[]
     faculties: Faculty[]
-    classes: Array<
-      Class & {
+    classSubjects: Array<
+      ClassSubject & {
         subject: Subject
       }
     >

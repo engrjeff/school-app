@@ -196,29 +196,46 @@ async function EnrollmentDetailPage({ params }: PageProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {enrollment.students.map((student, studentIndex) => (
-                <TableRow key={student.id} className="hover:bg-transparent">
-                  <TableCell>{studentIndex + 1}</TableCell>
-                  <TableCell>
-                    <div>
-                      <Link
-                        href={`/students/${student.id}`}
-                        className="hover:underline"
-                        prefetch
-                      >
-                        <p>
-                          {student.lastName}, {student.firstName}{" "}
-                          {student.middleName} {student.suffix}
-                        </p>
-                      </Link>
+              {enrollment.students.length ? (
+                enrollment.students.map((student, studentIndex) => (
+                  <TableRow key={student.id} className="hover:bg-transparent">
+                    <TableCell>{studentIndex + 1}</TableCell>
+                    <TableCell>
+                      <div>
+                        <Link
+                          href={`/students/${student.id}`}
+                          className="hover:underline"
+                          prefetch
+                        >
+                          <p>
+                            {student.lastName}, {student.firstName}{" "}
+                            {student.middleName} {student.suffix}
+                          </p>
+                        </Link>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center font-mono">
+                      {student.studentId}
+                    </TableCell>
+                    <TableCell>{student.email}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={4} height={300}>
+                    <div className="text-muted-foreground flex flex-col items-center justify-center gap-4 text-center">
+                      <p>No enrolled students listed yet.</p>
+                      <Button asChild size="sm">
+                        <Link
+                          href={`/enrollments/${enrollment.id}/enroll-students`}
+                        >
+                          <PlusIcon className="size-4" /> Enroll Students
+                        </Link>
+                      </Button>
                     </div>
                   </TableCell>
-                  <TableCell className="text-center font-mono">
-                    {student.studentId}
-                  </TableCell>
-                  <TableCell>{student.email}</TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>

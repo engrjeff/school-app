@@ -26,7 +26,7 @@ interface TableFacetFilterProps {
   }[]
   singleSelection?: boolean
   onChangeCallback?: VoidFunction
-  shouldSetToOnlyOption?: boolean
+  shouldSetToFirstOption?: boolean
 }
 
 export function TableFacetFilter({
@@ -36,7 +36,7 @@ export function TableFacetFilter({
   options,
   singleSelection,
   onChangeCallback,
-  shouldSetToOnlyOption,
+  shouldSetToFirstOption,
 }: TableFacetFilterProps) {
   const [queryParam, setQueryParam] = useQueryState(
     filterKey,
@@ -46,13 +46,13 @@ export function TableFacetFilter({
   )
 
   useEffect(() => {
-    if (!shouldSetToOnlyOption) return
+    if (!shouldSetToFirstOption) return
 
-    if (options.length === 1 && !queryParam?.length) {
+    if (options.length > 0 && !queryParam?.length) {
       setQueryParam([options[0].value])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options, options.length, queryParam, shouldSetToOnlyOption])
+  }, [options, options.length, queryParam, shouldSetToFirstOption])
 
   return (
     <FilterComponent

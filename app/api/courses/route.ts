@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
         schoolId: session?.user.schoolId,
         programOfferingId: programId ?? undefined,
       },
+      include: { gradeYearLevels: { orderBy: { level: "asc" } } },
       orderBy: { createdAt: "asc" },
     })
 

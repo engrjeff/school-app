@@ -8,8 +8,10 @@ import { TableFacetFilter } from "@/components/table-facet-filter"
 
 export function SchoolYearFilter({
   initialProgramId,
+  shouldSetToFirstOption,
 }: {
   initialProgramId?: string
+  shouldSetToFirstOption?: boolean
 }) {
   const schoolYears = useSchoolYears(initialProgramId)
   const searchParams = useSearchParams()
@@ -28,6 +30,7 @@ export function SchoolYearFilter({
         title="School Year"
         selectedLabelKey="label"
         singleSelection
+        shouldSetToFirstOption={shouldSetToFirstOption}
         options={
           schoolYears.data?.map((sy) => ({
             label: `S.Y. ${sy.title}`,
@@ -40,6 +43,7 @@ export function SchoolYearFilter({
         title="Semester"
         selectedLabelKey="label"
         singleSelection
+        shouldSetToFirstOption={shouldSetToFirstOption}
         options={
           currentSchoolYear?.semesters?.map((sy) => ({
             label: `S.Y. ${sy.title}`,

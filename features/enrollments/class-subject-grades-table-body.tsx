@@ -110,16 +110,20 @@ function getRowGradeAndRank(
 
   studentWithGrades.sort((a, b) => b.grade - a.grade)
 
-  let currentRank = 1
+  // let currentRank = 1
+  // for (let i = 0; i < studentWithGrades.length; i++) {
+  //   if (
+  //     i > 0 &&
+  //     studentWithGrades[i].grade !== studentWithGrades[i - 1].grade
+  //   ) {
+  //     // If the current grade is different from the previous one, update the rank
+  //     currentRank = i
+  //   }
+  //   studentWithGrades[i].rank = currentRank
+  // }
+
   for (let i = 0; i < studentWithGrades.length; i++) {
-    if (
-      i > 0 &&
-      studentWithGrades[i].grade !== studentWithGrades[i - 1].grade
-    ) {
-      // If the current grade is different from the previous one, update the rank
-      currentRank = i
-    }
-    studentWithGrades[i].rank = currentRank
+    studentWithGrades[i].rank = i + 1
   }
 
   studentWithGrades.forEach((sgg) => {

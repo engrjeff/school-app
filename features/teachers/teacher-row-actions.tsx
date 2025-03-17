@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Class, Subject, Teacher } from "@prisma/client"
+import { ClassSubject, Subject, Teacher } from "@prisma/client"
 import {
   CircleCheckIcon,
   CopyIcon,
@@ -49,8 +49,8 @@ function getFullName(teacher: Teacher) {
 }
 
 interface DetailedTeacher extends Teacher {
-  classes: Array<
-    Class & {
+  classSubjects: Array<
+    ClassSubject & {
       subject: Subject
     }
   >
@@ -59,19 +59,18 @@ interface DetailedTeacher extends Teacher {
 export function TeacherRowActions({ teacher }: { teacher: DetailedTeacher }) {
   const [action, setAction] = useState<"view-subjects">()
 
-  const uniqueSubjectsObj = teacher.classes.reduce<Record<string, Subject>>(
-    (subjects, c) => {
-      if (!subjects[c.subjectId as keyof typeof subjects]) {
-        return {
-          ...subjects,
-          [c.subjectId]: c.subject,
-        }
+  const uniqueSubjectsObj = teacher.classSubjects.reduce<
+    Record<string, Subject>
+  >((subjects, c) => {
+    if (!subjects[c.subjectId as keyof typeof subjects]) {
+      return {
+        ...subjects,
+        [c.subjectId]: c.subject,
       }
+    }
 
-      return subjects
-    },
-    {}
-  )
+    return subjects
+  }, {})
 
   const uniqueSubjects = Object.values(uniqueSubjectsObj)
 

@@ -72,7 +72,7 @@ export async function getTeachers(args: GetTeachersArgs) {
     include: {
       programs: true,
       faculties: true,
-      classes: {
+      classSubjects: {
         include: {
           subject: true,
         },
