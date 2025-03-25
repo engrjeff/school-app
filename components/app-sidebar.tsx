@@ -126,6 +126,11 @@ const data = {
         url: "/school-profile",
         icon: SchoolIcon,
       },
+      {
+        name: "Certificates",
+        url: "/certificates",
+        icon: AwardIcon,
+      },
     ],
   },
 }

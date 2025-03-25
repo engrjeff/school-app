@@ -48,6 +48,7 @@ model User {
   studentProfileId              Student? // student profile associated with this user
   teacherProfile                Teacher? // teacher profile associated with this user
   createdSubjectGradeComponents SubjectGradeComponent[]
+  createdCertificateTemplates   CertificateTemplate[]
 
   @@index([schoolId])
   @@index([role])
@@ -152,6 +153,8 @@ model School {
   faculties        Faculty[]
   classes          Class[]
   enrolledClasses  EnrollmentClass[]
+
+  certificateTemplates CertificateTemplate[]
 }
 
 enum StudentStatus {
@@ -783,4 +786,37 @@ model SubjectGrade {
   @@index([gradingPeriodId])
   @@index([subjectId])
   @@index([studentId])
+}
+
+// certificate template
+model CertificateTemplate {
+  id String @id @default(cuid())
+
+  name String
+
+  schoolId String
+  school   School @relation(references: [id], fields: [schoolId], onDelete: Cascade)
+
+  createdBy   User   @relation(references: [id], fields: [createdById], onDelete: Cascade)
+  createdById String
+
+  frameSrc     String
+  logo1        String
+  logo2        String
+  headingLine1 String
+  headingLine2 String
+  headingLine3 String
+  headingLine4 String
+  mainTitle    String
+  bodyLine1    String
+  bodyLine2    String
+  bodyLine3    String
+  signatories  Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
+  @@index([schoolId])
+  @@index([createdById])
 }

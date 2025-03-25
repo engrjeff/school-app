@@ -35,5 +35,6 @@ export function useSimpleNumbers() {
   return useQuery({
     queryKey: ["dashboard-simple-numbers", schoolYearId, semesterId],
     queryFn: () => getSimpleNumbers(schoolYearId, semesterId),
+    enabled: Boolean(schoolYearId) && Boolean(semesterId),
   })
 }

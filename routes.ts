@@ -58,6 +58,7 @@ export const SCHOOL_ADMIN_ROUTES = [
   "/classes",
   "/enrollments",
   "/account",
+  "/certificates",
 ]
 
 export const TEACHER_ROUTES = [

@@ -2,7 +2,12 @@
 
 import { useState } from "react"
 import { ROLE, SubjectGradeSubComponent } from "@prisma/client"
-import { MoreHorizontalIcon, PencilIcon, TrashIcon } from "lucide-react"
+import {
+  CheckIcon,
+  MoreHorizontalIcon,
+  PencilIcon,
+  TrashIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +21,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { RoleAccess } from "@/components/role-access"
@@ -23,7 +29,7 @@ import { RoleAccess } from "@/components/role-access"
 import { GradeSubcomponentDeleteDialog } from "./grade-subcomponent-delete-dialog"
 import { GradeSubComponentEditForm } from "./grade-subcomponent-edit-form"
 
-type Action = "edit" | "delete"
+type Action = "edit" | "delete" | "correct-response"
 
 export function GradeSubcomponentMenu({
   gradeSubcomponent,
@@ -62,6 +68,10 @@ export function GradeSubcomponentMenu({
             <DropdownMenuItem onClick={() => setAction("edit")}>
               <PencilIcon /> Edit
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setAction("correct-response")}>
+              <CheckIcon /> Correct Response
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"
               onClick={() => setAction("delete")}
@@ -93,6 +103,27 @@ export function GradeSubcomponentMenu({
             gradeSubcomponent={gradeSubcomponent}
             onAfterSave={() => setAction(undefined)}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={action === "correct-response"}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setAction(undefined)
+          }
+        }}
+      >
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle>
+              Create Correct Response Document: {gradeSubcomponent.title}
+            </DialogTitle>
+            <DialogDescription>
+              Make sure to save your changes.
+            </DialogDescription>
+          </DialogHeader>
+          Tadah
         </DialogContent>
       </Dialog>
 
