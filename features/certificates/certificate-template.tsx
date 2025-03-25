@@ -15,12 +15,12 @@ import {
 // Register font
 Font.register({
   family: "LibreBaskerville",
-  src: "http://fonts.gstatic.com/s/librebaskerville/v4/pR0sBQVcY0JZc_ciXjFsKwAUTJOA6-irsSazDq377BE.ttf",
+  src: "https://fonts.gstatic.com/s/librebaskerville/v4/pR0sBQVcY0JZc_ciXjFsKwAUTJOA6-irsSazDq377BE.ttf",
 })
 
 Font.register({
   family: "AlexBrush",
-  src: "http://fonts.gstatic.com/s/alexbrush/v6/IdwaSrUcr-IskDo5YUNTVS3USBnSvpkopQaUR-2r7iU.ttf",
+  src: "https://fonts.gstatic.com/s/alexbrush/v6/IdwaSrUcr-IskDo5YUNTVS3USBnSvpkopQaUR-2r7iU.ttf",
 })
 
 // Create styles

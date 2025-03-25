@@ -215,7 +215,7 @@ export function CertificateViewer(props: {
   details: CertificateInputs
 }) {
   return (
-    <PDFViewer showToolbar={false} className="w-full h-[85%]">
+    <PDFViewer showToolbar={false} className="h-[85%] w-full">
       <CertificateTemplate {...props} />
     </PDFViewer>
   )
@@ -545,7 +545,7 @@ export function CertificateForm({ school }: { school: School }) {
                 </TabsContent>
               </Tabs>
             </fieldset>
-            <div className="flex gap-3 mt-6 justify-end">
+            <div className="mt-6 flex justify-end gap-3">
               <Button
                 type="button"
                 size="sm"
