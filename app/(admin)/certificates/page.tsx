@@ -2,6 +2,7 @@ import { type Metadata } from "next"
 import Link from "next/link"
 import { getSession } from "@/auth"
 import { CertificateViewer } from "@/features/certificates/certificate-form"
+import { CertificateInputs } from "@/features/certificates/schema"
 import { InboxIcon, PlusIcon } from "lucide-react"
 
 import prisma from "@/lib/db"
@@ -13,14 +14,21 @@ export const metadata: Metadata = {
   title: "Certificates",
 }
 
-async function CertificatesPage() {
+async function getCertificateTemplates() {
   const session = await getSession()
 
+  if (!session?.user?.schoolId) return []
+
   const certificates = await prisma.certificateTemplate.findMany({
-    where: { schoolId: session?.user.schoolId! },
+    where: { schoolId: session?.user?.schoolId },
     include: { school: { select: { name: true } } },
   })
 
+  return certificates
+}
+
+async function CertificatesPage() {
+  const certificates = await getCertificateTemplates()
   return (
     <>
       <AppHeader pageTitle="Certificates" />
@@ -49,8 +57,8 @@ async function CertificatesPage() {
             {certificates.map((certificate) => {
               return (
                 <li key={certificate.id} className="h-[500px]">
-                  <div className="rounded-md border h-full flex flex-col items-center justify-center">
-                    <p className="text-sm mb-2 font-medium">
+                  <div className="flex h-full flex-col items-center justify-center rounded-md border">
+                    <p className="mb-2 text-sm font-medium">
                       {certificate.name}
                     </p>
                     <CertificateViewer
@@ -69,7 +77,8 @@ async function CertificatesPage() {
                         bodyLine1: certificate.bodyLine1,
                         bodyLine2: certificate.bodyLine2,
                         bodyLine3: certificate.bodyLine3,
-                        signatories: certificate.signatories as any,
+                        signatories:
+                          certificate.signatories as CertificateInputs["signatories"],
                       }}
                     />
                   </div>
