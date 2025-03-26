@@ -29,6 +29,7 @@ export const API_ROUTES = [
   "/api/dashboard/simple-numbers",
   "/api/dashboard/rankings-per-level",
   "/api/periodic-grades",
+  "/api/certificates",
 ]
 
 export const API_AUTH_PREFIX = "/api/auth"

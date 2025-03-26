@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
 "use client"
 
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "AlexBrush",
     marginVertical: 16,
+    width: "100%",
   },
   body: {
     fontSize: 20,
@@ -135,77 +137,103 @@ const styles = StyleSheet.create({
   },
 })
 
-export function CertificateTemplate({
-  schoolName,
-  name,
-  details,
-}: {
+interface CertProps {
   schoolName: string
   name: string
   details: CertificateInputs
-}) {
+  rank?: string
+  average?: number
+  schoolYear?: string
+}
+
+export function CertificateTemplate(props: CertProps) {
   return (
-    <Document title={details.name ?? "Name of Certificate"}>
-      <Page size="A4" orientation="landscape" style={styles.page}>
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: -1,
-          }}
-        >
-          <Image
-            src={process.env.NEXT_PUBLIC_SITE_URL + details.frameSrc}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </View>
-        <View style={styles.heading}>
-          <Image
-            src={process.env.NEXT_PUBLIC_SITE_URL + details.logo1}
-            style={styles.logo}
-          />
-          <View style={styles.headingText}>
-            <Text style={styles.headingTextLine1}>{details.headingLine1}</Text>
-            <Text style={styles.headingTextLine2}>{details.headingLine2}</Text>
-            <Text style={styles.headingTextLine3}>{details.headingLine3}</Text>
-            <Text style={styles.headingTextLine3}>{details.headingLine4}</Text>
-            <Text style={styles.headingTextLine4}>{schoolName}</Text>
-          </View>
-          <Image
-            src={process.env.NEXT_PUBLIC_SITE_URL + details.logo2}
-            style={styles.logo}
-          />
-        </View>
-
-        <Text style={styles.mainText}>{details.mainTitle}</Text>
-        <Text style={styles.mainText2}>{details.bodyLine1}</Text>
-        <Text style={styles.name}>{name}</Text>
-
-        <View style={{ marginVertical: 8 }}>
-          <Text style={styles.body}>{details.bodyLine2}</Text>
-          <Text style={styles.body}>{details.bodyLine3}</Text>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 40,
-            justifyContent:
-              details.signatories.length === 1 ? "center" : "space-between",
-          }}
-        >
-          {details.signatories.map((signatory, sIndex) => (
-            <View key={sIndex} style={{ alignItems: "center" }}>
-              <Text style={styles.signatory}>{signatory.name}</Text>
-              <Text style={styles.signatoryPos}>{signatory.designation}</Text>
-            </View>
-          ))}
-        </View>
-      </Page>
+    <Document title={props.details.name ?? "Name of Certificate"}>
+      <CertificateTemplatePage {...props} />
     </Document>
+  )
+}
+
+export function CertificateTemplatePage({
+  details,
+  schoolName,
+  name,
+  rank,
+  average,
+  schoolYear,
+}: CertProps) {
+  let bodyLine2Text = rank
+    ? details.bodyLine2.replaceAll("{{ rank }}", rank)
+    : details.bodyLine2
+
+  bodyLine2Text = average
+    ? bodyLine2Text.replaceAll("{{ average }}", average.toString() + "%")
+    : bodyLine2Text
+
+  bodyLine2Text = schoolYear
+    ? bodyLine2Text.replaceAll("{{ schoolYear }}", schoolYear)
+    : bodyLine2Text
+
+  return (
+    <Page size="A4" orientation="landscape" style={styles.page}>
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: -1,
+        }}
+      >
+        <Image
+          src={process.env.NEXT_PUBLIC_SITE_URL + details.frameSrc}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </View>
+      <View style={styles.heading}>
+        <Image
+          src={process.env.NEXT_PUBLIC_SITE_URL + details.logo1}
+          style={styles.logo}
+        />
+        <View style={styles.headingText}>
+          <Text style={styles.headingTextLine1}>{details.headingLine1}</Text>
+          <Text style={styles.headingTextLine2}>{details.headingLine2}</Text>
+          <Text style={styles.headingTextLine3}>{details.headingLine3}</Text>
+          <Text style={styles.headingTextLine3}>{details.headingLine4}</Text>
+          <Text style={styles.headingTextLine4}>{schoolName}</Text>
+        </View>
+        <Image
+          src={process.env.NEXT_PUBLIC_SITE_URL + details.logo2}
+          style={styles.logo}
+        />
+      </View>
+
+      <Text style={styles.mainText}>{details.mainTitle}</Text>
+      <Text style={styles.mainText2}>{details.bodyLine1}</Text>
+      <Text style={styles.name}>{name}</Text>
+
+      <View style={{ marginVertical: 8 }}>
+        <Text style={styles.body}>{bodyLine2Text}</Text>
+        <Text style={styles.body}>{details.bodyLine3}</Text>
+      </View>
+
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: 40,
+          justifyContent:
+            details.signatories.length === 1 ? "center" : "space-between",
+        }}
+      >
+        {details.signatories.map((signatory, sIndex) => (
+          <View key={sIndex} style={{ alignItems: "center" }}>
+            <Text style={styles.signatory}>{signatory.name}</Text>
+            <Text style={styles.signatoryPos}>{signatory.designation}</Text>
+          </View>
+        ))}
+      </View>
+    </Page>
   )
 }
 
@@ -215,7 +243,10 @@ export function CertificateViewer(props: {
   details: CertificateInputs
 }) {
   return (
-    <PDFViewer showToolbar={false} className="h-[85%] w-full">
+    <PDFViewer
+      showToolbar={false}
+      className="aspect-video w-full overflow-hidden"
+    >
       <CertificateTemplate {...props} />
     </PDFViewer>
   )
@@ -566,7 +597,7 @@ export function CertificateForm({ school }: { school: School }) {
       <div className="col-span-3 flex items-center justify-center">
         <PDFViewer showToolbar={false} className="size-full">
           <CertificateTemplate
-            name="Firstname Middle Lastname"
+            name="Aguilar, Sebastian Santos I"
             schoolName={school.name}
             details={certDetails}
           />

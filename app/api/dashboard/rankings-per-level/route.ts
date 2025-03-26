@@ -282,7 +282,5 @@ function getGrade(
 }
 
 function getStudentFullName(student: Student) {
-  return `${student.lastName}, 
-    ${student.firstName} ${student.middleName} 
-    ${student.suffix}`
+  return `${student.lastName}, ${student.firstName} ${student.middleName} ${student.suffix}`
 }

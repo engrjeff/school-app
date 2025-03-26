@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { Document, PDFViewer } from "@react-pdf/renderer"
 import { BarChart2Icon, ChartBarIcon, Loader2Icon, XIcon } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
 
@@ -9,7 +10,9 @@ import {
   RankingsQueryResponse,
   useRankings,
 } from "@/hooks/dashboard/use-rankings"
+import { useCertificateTemplates } from "@/hooks/use-certificate-templates"
 import { useCourses } from "@/hooks/use-courses"
+import { useSchoolYears } from "@/hooks/use-schoolyears"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -26,9 +29,18 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -42,6 +54,8 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+import { CertificateTemplatePage } from "../certificates/certificate-form"
+import { CertificateInputs } from "../certificates/schema"
 import { getRemark } from "../grading/ranking"
 
 export function StudentRankings() {
@@ -221,6 +235,9 @@ function RankingByGradeLevelContent({
 
   return (
     <>
+      <GenerateCertificateGradeLevel
+        rankingsPerGradeLevel={rankingsPerGradeLevel}
+      />
       <div className="flex gap-6">
         <Table className="table-auto">
           <TableHeader>
@@ -470,6 +487,141 @@ function RankingBySectionContent({
             </CardFooter>
           </Card>
         ) : null}
+      </div>
+    </>
+  )
+}
+
+function GenerateCertificateGradeLevel({
+  rankingsPerGradeLevel,
+}: {
+  rankingsPerGradeLevel: RankingsQueryResponse["rankingsPerGradeLevel"]
+}) {
+  const [pdfStatus, setPdfStatus] = useState<"loading" | "loaded">("loading")
+
+  const pdfIframeRef = useRef<HTMLIFrameElement | null>(null)
+
+  const schoolYearQuery = useSchoolYears()
+
+  const searchParams = useSearchParams()
+
+  const schoolYear = schoolYearQuery.data?.find(
+    (d) => d.id === searchParams.get("schoolYear")
+  )
+
+  const certificatesQuery = useCertificateTemplates()
+
+  const [selectedCertTemplateId, setSelectedCertTemplateId] = useState<string>()
+
+  const certTemplate = certificatesQuery.data?.find(
+    (c) => c.id === selectedCertTemplateId
+  )
+
+  useEffect(() => {
+    if (!pdfIframeRef.current) return
+
+    const iframe = pdfIframeRef.current
+
+    iframe.addEventListener("load", () => setPdfStatus("loaded"))
+
+    return () => {
+      iframe?.removeEventListener("load", () => setPdfStatus("loaded"))
+    }
+  }, [])
+
+  return (
+    <>
+      <Dialog
+        open={selectedCertTemplateId !== undefined}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedCertTemplateId(undefined)
+          }
+        }}
+      >
+        <DialogContent className="overflow-hidden sm:max-w-screen-lg">
+          <DialogHeader>
+            <DialogTitle>Generate Certificates</DialogTitle>
+            <DialogDescription>
+              Generate certificates using template:{" "}
+              <span className="font-medium text-white">
+                {certTemplate?.name}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="relative">
+            {pdfStatus === "loading" ? (
+              <div className="absolute inset-0 z-10 flex aspect-video w-full flex-col items-center justify-center">
+                <Loader2Icon className="size-5 animate-spin" />
+                <p className="text-sm">Loading certificates...</p>
+              </div>
+            ) : null}
+            {certTemplate && (
+              <PDFViewer
+                className="aspect-video w-full overflow-hidden"
+                innerRef={pdfIframeRef}
+              >
+                <Document
+                  title={certTemplate.name}
+                  pageLayout="singlePage"
+                  onRender={() => setPdfStatus("loaded")}
+                >
+                  {rankingsPerGradeLevel.map((row) => (
+                    <CertificateTemplatePage
+                      key={row.studentId}
+                      schoolName={certTemplate.school.name}
+                      name={row.studentName}
+                      average={Math.round(row.allSubjectAverage)}
+                      rank={getRemark(row.allSubjectAverage)}
+                      schoolYear={schoolYear?.title}
+                      details={{
+                        name: certTemplate.name,
+                        frameSrc: certTemplate.frameSrc,
+                        logo1: certTemplate.logo1,
+                        logo2: certTemplate.logo2,
+                        headingLine1: certTemplate.headingLine1,
+                        headingLine2: certTemplate.headingLine2,
+                        headingLine3: certTemplate.headingLine3,
+                        headingLine4: certTemplate.headingLine4,
+                        mainTitle: certTemplate.mainTitle,
+                        bodyLine1: certTemplate.bodyLine1,
+                        bodyLine2: certTemplate.bodyLine2,
+                        bodyLine3: certTemplate.bodyLine3,
+                        signatories:
+                          certTemplate.signatories as CertificateInputs["signatories"],
+                      }}
+                    />
+                  ))}
+                </Document>
+              </PDFViewer>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      <div className="mb-3 flex justify-end">
+        <Select
+          key={certTemplate?.id}
+          disabled={
+            certificatesQuery.isLoading || rankingsPerGradeLevel.length === 0
+          }
+          value={selectedCertTemplateId}
+          onValueChange={setSelectedCertTemplateId}
+        >
+          <SelectTrigger className="w-max min-w-[180px]">
+            <SelectValue placeholder="Generate Certificates" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectGroup>
+              <SelectLabel>Select template</SelectLabel>
+              {certificatesQuery.data?.map((cert) => (
+                <SelectItem key={cert.id} value={cert.id}>
+                  {cert.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </>
   )

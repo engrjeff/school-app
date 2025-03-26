@@ -21,7 +21,10 @@ async function getCertificateTemplates() {
 
   const certificates = await prisma.certificateTemplate.findMany({
     where: { schoolId: session?.user?.schoolId },
-    include: { school: { select: { name: true } } },
+    include: {
+      school: { select: { name: true } },
+      createdBy: { select: { name: true } },
+    },
   })
 
   return certificates
@@ -53,14 +56,11 @@ async function CertificatesPage() {
             </Button>
           </div>
         ) : (
-          <ul className="grid grid-cols-2 gap-6">
+          <ul className="grid grid-cols-4 gap-6">
             {certificates.map((certificate) => {
               return (
-                <li key={certificate.id} className="h-[500px]">
-                  <div className="flex h-full flex-col items-center justify-center rounded-md border">
-                    <p className="mb-2 text-sm font-medium">
-                      {certificate.name}
-                    </p>
+                <li key={certificate.id}>
+                  <div className="flex h-full flex-col justify-start overflow-hidden rounded-md border">
                     <CertificateViewer
                       schoolName={certificate.school.name}
                       name="Student Name"
@@ -81,6 +81,18 @@ async function CertificatesPage() {
                           certificate.signatories as CertificateInputs["signatories"],
                       }}
                     />
+                    <div className="p-3">
+                      <p className="mb-2 text-sm font-semibold">
+                        <span className="text-muted-foreground">Title:</span>{" "}
+                        {certificate.name}
+                      </p>
+                      <p className="mb-2 text-sm font-semibold">
+                        <span className="text-muted-foreground">
+                          Created by:
+                        </span>{" "}
+                        {certificate.createdBy.name}
+                      </p>
+                    </div>
                   </div>
                 </li>
               )
