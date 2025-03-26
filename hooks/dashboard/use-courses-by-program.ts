@@ -42,6 +42,6 @@ export function useCoursesByProgram() {
       semesterId,
     ],
     queryFn: () => getCoursesOfProgram(programId, schoolYearId, semesterId),
-    enabled: Boolean(programId),
+    enabled: Boolean(programId) && Boolean(schoolYearId) && Boolean(semesterId),
   })
 }
