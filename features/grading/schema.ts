@@ -137,3 +137,20 @@ export const gradeSubComponentScoreSchema = z.object({
 export type GradeSubComponentScoreInputs = z.infer<
   typeof gradeSubComponentScoreSchema
 >
+
+// correct response
+export const correctResponseSchema = z.object({
+  gradeSubComponentId: z
+    .string({ required_error: "Grade sub-component is required." })
+    .nonempty({ message: "Grade sub-component is required." }),
+  studentCount: z.number().int().gt(0, { message: "Invalid student count." }),
+  items: z
+    .object({
+      question: z.string().nonempty({ message: "Question is required." }),
+      correctCount: z.number().int().gt(0, { message: "Invalid count." }),
+    })
+    .array()
+    .min(1, { message: "At least one question is required." }),
+})
+
+export type CorrectResponseInputs = z.infer<typeof correctResponseSchema>

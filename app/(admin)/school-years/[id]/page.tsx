@@ -54,7 +54,7 @@ async function SchoolYearItemPage({ params }: { params: { id: string } }) {
             Showing semesters under {schoolYear.programOffering.code} during
             S.Y. {schoolYear.title}
           </p>
-          <Button size="sm">
+          <Button size="sm" className="hidden">
             <CalendarPlusIcon /> Add Semester
           </Button>
         </div>

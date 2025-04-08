@@ -7,6 +7,7 @@ import { teacherActionClient } from "@/lib/safe-action"
 
 import {
   assignGradeComponentsSchema,
+  correctResponseSchema,
   gradeComponentPartScoreSchema,
   gradeComponentSchema,
   gradeSubcomponentIdSchema,
@@ -362,4 +363,37 @@ export const deleteGradeSubComponent = teacherActionClient
     revalidatePath(`/classes/${found.classSubjectId}/grading`)
 
     return { success: true }
+  })
+
+// correct response
+export const createCorrectResponse = teacherActionClient
+  .metadata({ actionName: "createCorrectResponse" })
+  .schema(correctResponseSchema)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    if (!user.teacherProfileId)
+      throw new Error(
+        "Unauthorized: You have no permission to perform the action."
+      )
+
+    const correctResponse = await prisma.correctResponse.create({
+      data: {
+        createdById: user.id,
+        gradeSubComponentId: parsedInput.gradeSubComponentId,
+        studentCount: parsedInput.studentCount,
+        items: {
+          createMany: {
+            data: parsedInput.items.map((q) => ({
+              question: q.question,
+              correctCount: q.correctCount,
+              correctCountPercent:
+                (q.correctCount / parsedInput.studentCount) * 100,
+            })),
+          },
+        },
+      },
+    })
+
+    revalidatePath("/grading")
+
+    return { correctResponse }
   })

@@ -224,6 +224,13 @@ export async function getClassSubjectById(
                   gradingPeriodId: gradingPeriodFilter,
                   classSubjectId: id,
                 },
+                include: {
+                  correctResponse: {
+                    include: {
+                      items: true,
+                    },
+                  },
+                },
                 orderBy: { order: "asc" },
               },
             },

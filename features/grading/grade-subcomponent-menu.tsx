@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { ROLE, SubjectGradeSubComponent } from "@prisma/client"
+import {
+  CorrectResponse,
+  CorrectResponseItem,
+  ROLE,
+  SubjectGradeSubComponent,
+} from "@prisma/client"
+import { DialogClose } from "@radix-ui/react-dialog"
 import {
   CheckIcon,
   MoreHorizontalIcon,
@@ -14,6 +20,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -26,15 +33,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { RoleAccess } from "@/components/role-access"
 
+import { CorrectResponseForm } from "./correct-response-form"
+import { CorrectResponseTally } from "./correct-response-tally"
 import { GradeSubcomponentDeleteDialog } from "./grade-subcomponent-delete-dialog"
 import { GradeSubComponentEditForm } from "./grade-subcomponent-edit-form"
 
-type Action = "edit" | "delete" | "correct-response"
+type Action = "edit" | "delete" | "correct-response" | "view-correct-response"
 
 export function GradeSubcomponentMenu({
   gradeSubcomponent,
+  studentCount,
 }: {
-  gradeSubcomponent: SubjectGradeSubComponent
+  studentCount: number
+  gradeSubcomponent: SubjectGradeSubComponent & {
+    correctResponse: null | (CorrectResponse & { items: CorrectResponseItem[] })
+  }
 }) {
   const [action, setAction] = useState<Action>()
 
@@ -68,9 +81,17 @@ export function GradeSubcomponentMenu({
             <DropdownMenuItem onClick={() => setAction("edit")}>
               <PencilIcon /> Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setAction("correct-response")}>
-              <CheckIcon /> Correct Response
-            </DropdownMenuItem>
+            {gradeSubcomponent.correctResponse ? (
+              <DropdownMenuItem
+                onClick={() => setAction("view-correct-response")}
+              >
+                <CheckIcon /> View Correct Response
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => setAction("correct-response")}>
+                <CheckIcon /> Create Correct Response
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"
@@ -96,7 +117,7 @@ export function GradeSubcomponentMenu({
               Edit Grade Subcomponent: {gradeSubcomponent.title}
             </DialogTitle>
             <DialogDescription>
-              Make sure to save your changes.
+              Make sure to save after you are done.
             </DialogDescription>
           </DialogHeader>
           <GradeSubComponentEditForm
@@ -114,16 +135,58 @@ export function GradeSubcomponentMenu({
           }
         }}
       >
-        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+        <DialogContent
+          className="sm:max-w-screen-md"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>
-              Create Correct Response Document: {gradeSubcomponent.title}
+              Create Correct Response for: {gradeSubcomponent.title}
             </DialogTitle>
             <DialogDescription>
               Make sure to save your changes.
             </DialogDescription>
           </DialogHeader>
-          Tadah
+          <CorrectResponseForm
+            gradeSubComponentId={gradeSubcomponent.id}
+            studentCount={studentCount}
+            expectedQuestionCount={gradeSubcomponent.highestPossibleScore}
+            onAfterSave={() => setAction(undefined)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={action === "view-correct-response"}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setAction(undefined)
+          }
+        }}
+      >
+        <DialogContent
+          className="sm:max-w-screen-md"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>
+              Correct Response for: {gradeSubcomponent.title}
+            </DialogTitle>
+            <DialogDescription>
+              Showing correct response tally for{" "}
+              {gradeSubcomponent.correctResponse?.items?.length} questions.
+            </DialogDescription>
+          </DialogHeader>
+          {gradeSubcomponent.correctResponse ? (
+            <CorrectResponseTally
+              correctResponse={gradeSubcomponent.correctResponse}
+            />
+          ) : null}
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button">Close</Button>
+            </DialogClose>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

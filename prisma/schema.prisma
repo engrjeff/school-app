@@ -49,6 +49,7 @@ model User {
   teacherProfile                Teacher? // teacher profile associated with this user
   createdSubjectGradeComponents SubjectGradeComponent[]
   createdCertificateTemplates   CertificateTemplate[]
+  CorrectResponse               CorrectResponse[]
 
   @@index([schoolId])
   @@index([role])
@@ -714,6 +715,8 @@ model SubjectGradeSubComponent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  correctResponse CorrectResponse?
+
   @@index([gradeComponentId])
   @@index([classSubjectId])
   @@index([gradingPeriodId])
@@ -819,4 +822,39 @@ model CertificateTemplate {
   @@unique([schoolId, name])
   @@index([schoolId])
   @@index([createdById])
+}
+
+// correct response
+model CorrectResponse {
+  id String @id @default(cuid())
+
+  gradeSubComponent   SubjectGradeSubComponent @relation(references: [id], fields: [gradeSubComponentId], onDelete: Cascade)
+  gradeSubComponentId String                   @unique
+
+  items CorrectResponseItem[]
+
+  studentCount Int
+
+  createdBy   User   @relation(references: [id], fields: [createdById], onDelete: Cascade)
+  createdById String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([gradeSubComponentId])
+  @@index([createdById])
+}
+
+model CorrectResponseItem {
+  id String @id @default(cuid())
+
+  correctResponse   CorrectResponse @relation(fields: [correctResponseId], references: [id], onDelete: Cascade)
+  correctResponseId String
+
+  question            String
+  correctCount        Int
+  correctCountPercent Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

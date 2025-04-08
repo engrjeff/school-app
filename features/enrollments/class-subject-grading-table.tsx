@@ -158,7 +158,12 @@ export function ClassSubjectGradingTable({
                       key={`${gc.id}-${p.id}`}
                       className="size-10 whitespace-nowrap p-1 text-center text-xs"
                     >
-                      <GradeSubcomponentMenu gradeSubcomponent={p} />
+                      <GradeSubcomponentMenu
+                        gradeSubcomponent={p}
+                        studentCount={
+                          classSubject.enrollmentClass.students.length
+                        }
+                      />
                     </TableHeadPlain>
                   ))}
                   <TableHeadPlain className="text-primary p-1 text-center text-xs font-semibold">
