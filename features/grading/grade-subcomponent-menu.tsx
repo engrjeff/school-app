@@ -10,6 +10,7 @@ import {
 import { DialogClose } from "@radix-ui/react-dialog"
 import {
   CheckIcon,
+  InfoIcon,
   MoreHorizontalIcon,
   PencilIcon,
   TrashIcon,
@@ -53,34 +54,40 @@ export function GradeSubcomponentMenu({
 
   return (
     <>
-      <RoleAccess
-        role={ROLE.TEACHER}
-        fallback={<span>{gradeSubcomponent.title}</span>}
-      >
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              size="iconXXs"
-              variant="ghost"
-              className="group hover:bg-transparent"
-              aria-label={`View actions for ${gradeSubcomponent.title}`}
-            >
-              <span className="inline-block text-xs group-hover:hidden group-data-[state=open]:hidden">
-                {gradeSubcomponent.title}
-              </span>{" "}
-              <MoreHorizontalIcon
-                size={16}
-                strokeWidth={2}
-                aria-hidden="true"
-                className="hidden group-hover:inline-block group-data-[state=open]:inline-block"
-              />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            size="iconXXs"
+            variant="ghost"
+            className="group hover:bg-transparent"
+            aria-label={`View actions for ${gradeSubcomponent.title}`}
+          >
+            <span className="inline-block text-xs group-hover:hidden group-data-[state=open]:hidden">
+              {gradeSubcomponent.title}
+            </span>{" "}
+            <MoreHorizontalIcon
+              size={16}
+              strokeWidth={2}
+              aria-hidden="true"
+              className="hidden group-hover:inline-block group-data-[state=open]:inline-block"
+            />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <RoleAccess role={ROLE.TEACHER}>
             <DropdownMenuItem onClick={() => setAction("edit")}>
               <PencilIcon /> Edit
             </DropdownMenuItem>
+          </RoleAccess>
+          <RoleAccess role={ROLE.SCHOOLADMIN}>
+            <DropdownMenuItem
+              onClick={() => setAction("view-correct-response")}
+            >
+              <CheckIcon /> Correct Response
+            </DropdownMenuItem>
+          </RoleAccess>
+          <RoleAccess role={ROLE.TEACHER}>
             {gradeSubcomponent.correctResponse ? (
               <DropdownMenuItem
                 onClick={() => setAction("view-correct-response")}
@@ -92,6 +99,8 @@ export function GradeSubcomponentMenu({
                 <CheckIcon /> Create Correct Response
               </DropdownMenuItem>
             )}
+          </RoleAccess>
+          <RoleAccess role={ROLE.TEACHER}>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"
@@ -99,9 +108,9 @@ export function GradeSubcomponentMenu({
             >
               <TrashIcon /> Delete
             </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </RoleAccess>
+          </RoleAccess>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Dialog
         open={action === "edit"}
@@ -181,7 +190,20 @@ export function GradeSubcomponentMenu({
             <CorrectResponseTally
               correctResponse={gradeSubcomponent.correctResponse}
             />
-          ) : null}
+          ) : (
+            <div className="bg-accent rounded border border-l-2 border-l-blue-500 px-4 py-3">
+              <p className="text-sm">
+                <InfoIcon
+                  className="-mt-0.5 me-3 inline-flex text-blue-500"
+                  size={16}
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+                No correct response yet for {gradeSubcomponent.title}. Ask the
+                subject teacher to create one first.
+              </p>
+            </div>
+          )}
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button">Close</Button>
