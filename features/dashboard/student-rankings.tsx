@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { Document, PDFViewer } from "@react-pdf/renderer"
+import { Document, PDFViewer } from "@react-pdf/renderer/lib/react-pdf.browser"
 import { BarChart2Icon, ChartBarIcon, Loader2Icon, XIcon } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
 

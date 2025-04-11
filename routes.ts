@@ -30,6 +30,7 @@ export const API_ROUTES = [
   "/api/dashboard/rankings-per-level",
   "/api/periodic-grades",
   "/api/certificates",
+  "/api/student-grade-report",
 ]
 
 export const API_AUTH_PREFIX = "/api/auth"

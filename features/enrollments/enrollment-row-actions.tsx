@@ -7,7 +7,6 @@ import {
   MoreHorizontal,
   PencilIcon,
   PlusCircleIcon,
-  SigmaIcon,
   UserPlusIcon,
   UsersIcon,
 } from "lucide-react"
@@ -78,7 +77,7 @@ export function EnrollmentRowActions({
                 Actions
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className="hidden">
                 <Link href={`/enrollments/${enrollmentId}`}>
                   <PencilIcon />
                   Update
@@ -92,7 +91,7 @@ export function EnrollmentRowActions({
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`/enrollments/${enrollmentId}/students`}>
+                <Link href={`/enrollments/${enrollmentId}`}>
                   <UsersIcon />
                   View Students
                 </Link>
@@ -102,11 +101,6 @@ export function EnrollmentRowActions({
                   <UserPlusIcon />
                   Enroll Students
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <SigmaIcon />
-                View Subjects
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

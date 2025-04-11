@@ -186,7 +186,7 @@ export async function GET(request: NextRequest) {
                     {
                       subjectId: ssg.subjectId,
                       subjectCode: ssg.subjectCode,
-                      subjectName: ssg.studentName,
+                      subjectName: ssg.subjectName,
                       finalGrade: ssg.finalAverageGrade,
                       periodicFinalGrades: ssg.periodicFinalGrades,
                     },
@@ -205,7 +205,7 @@ export async function GET(request: NextRequest) {
                   {
                     subjectId: ssg.subjectId,
                     subjectCode: ssg.subjectCode,
-                    subjectName: ssg.studentName,
+                    subjectName: ssg.subjectName,
                     finalGrade: ssg.finalAverageGrade,
                     periodicFinalGrades: ssg.periodicFinalGrades,
                   },

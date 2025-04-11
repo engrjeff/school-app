@@ -263,3 +263,7 @@ export async function getClassSubjectById(
 export type DetailedClassSubject = NonNullable<
   Prisma.PromiseReturnType<typeof getClassSubjectById>
 >
+
+export type DetailedEnrollment = NonNullable<
+  Prisma.PromiseReturnType<typeof getEnrollmentById>
+>

@@ -94,12 +94,18 @@ async function EnrollmentDetailPage({ params }: PageProps) {
             <p className="text-muted-foreground text-xs">{schoolYear}</p>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <Button asChild type="button" size="sm">
+              <Link href={`/enrollments/${enrollment.id}/student-grades`}>
+                View Student Grades
+              </Link>
+            </Button>
             <RoleAccess role={ROLE.SCHOOLADMIN}>
               <Button
                 asChild
                 type="button"
                 size="iconXXs"
                 variant="secondaryOutline"
+                className="hidden"
                 aria-label="Edit enrollment details"
               >
                 <Link href={`/enrollments/${enrollment.id}/edit`}>
@@ -110,7 +116,6 @@ async function EnrollmentDetailPage({ params }: PageProps) {
             </RoleAccess>
           </div>
         </div>
-
         {/* list of subjects */}
         <div className="max-w-full space-y-3 overflow-auto">
           <div>

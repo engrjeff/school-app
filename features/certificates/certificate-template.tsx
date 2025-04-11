@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
-} from "@react-pdf/renderer"
+} from "@react-pdf/renderer/lib/react-pdf.browser"
 
 // Register font
 Font.register({

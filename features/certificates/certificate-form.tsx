@@ -15,7 +15,7 @@ import {
   StyleSheet,
   Text,
   View,
-} from "@react-pdf/renderer"
+} from "@react-pdf/renderer/lib/react-pdf.browser"
 import { PlusIcon, XCircleIcon } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import {
