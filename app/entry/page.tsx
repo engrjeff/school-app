@@ -28,11 +28,8 @@ export default async function EntryPage() {
             </Link>
           </Button>
           <Button size="xl" variant="outline" className="w-full" asChild>
-            <Link
-              href="/sign-in?role=student"
-              className="bg-accent/50 pointer-events-none cursor-not-allowed"
-            >
-              <BookCheck /> Student (WIP)
+            <Link href="/sign-in?role=student" className="bg-accent/50">
+              <BookCheck /> Student
             </Link>
           </Button>
         </div>

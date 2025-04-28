@@ -74,3 +74,9 @@ export const teacherSignUpSchema = z.object({
 })
 
 export type TeacherSignUpInputs = z.infer<typeof teacherSignUpSchema>
+
+export const loginStudentSchema = z.object({
+  studentNumber: z
+    .string({ required_error: "Student number is required." })
+    .nonempty({ message: "Student number is required." }),
+})

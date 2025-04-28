@@ -23,6 +23,8 @@ export default auth((req) => {
   if (nextUrl.pathname.startsWith("/school-directory"))
     return NextResponse.next()
 
+  if (nextUrl.pathname.startsWith("/student-portal")) return NextResponse.next()
+
   // if (PUBLIC_ROUTES.includes(nextUrl.pathname)) return NextResponse.next()
 
   if (nextUrl.pathname.startsWith("/verify")) return NextResponse.next()

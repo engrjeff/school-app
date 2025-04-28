@@ -8,7 +8,12 @@ import bcrypt from "bcryptjs"
 import prisma from "@/lib/db"
 import { actionClient } from "@/lib/safe-action"
 
-import { loginSchema, registerSchema, teacherSignUpSchema } from "./schema"
+import {
+  loginSchema,
+  loginStudentSchema,
+  registerSchema,
+  teacherSignUpSchema,
+} from "./schema"
 
 export const loginAdmin = actionClient
   .metadata({ actionName: "loginAdmin" })
@@ -120,4 +125,19 @@ export const registerSchoolTeacher = actionClient
     return {
       data: teacherUser,
     }
+  })
+
+export const loginStudent = actionClient
+  .metadata({ actionName: "loginStudent" })
+  .schema(loginStudentSchema)
+  .action(async ({ parsedInput }) => {
+    const student = await prisma.student.findFirst({
+      where: { studentId: parsedInput.studentNumber },
+    })
+
+    if (!student) {
+      throw new Error("Student not found.")
+    }
+
+    return student
   })
